@@ -169,6 +169,30 @@
             margin-right: 8px;
         }
 
+        /* User Info Section */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: var(--sidebar-text);
+        }
+        .user-info i {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+        .user-email {
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+
         /* Main Content Styles */
         .main {
             flex: 1;
@@ -615,6 +639,78 @@
         .message-action-btn i {
             margin-right: 5px;
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1001; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--chat-bg);
+            margin: auto;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            animation: fadeInScale 0.3s ease-out forwards;
+        }
+
+        .modal-content h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .modal-btn.confirm {
+            background-color: #ff6b6b; /* Red for destructive action */
+            color: white;
+        }
+
+        .modal-btn.confirm:hover {
+            background-color: #e65a5a;
+        }
+
+        .modal-btn.cancel {
+            background-color: #ccc;
+            color: var(--text-color);
+        }
+
+        .modal-btn.cancel:hover {
+            background-color: #bbb;
+        }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
     </style>
 </head>
 <body>
@@ -631,10 +727,14 @@
         <div id="chat-history-list"></div>
 
         <div class="sidebar-footer">
+            <div id="user-info" class="user-info" style="display: none;">
+                <i class="fas fa-user-circle"></i>
+                <span id="user-email" class="user-email"></span>
+            </div>
             <button class="sidebar-btn" onclick="toggleDarkMode()">
                 <i class="fas fa-moon"></i> Dark Mode
             </button>
-            <button class="sidebar-btn" onclick="clearAllChats()">
+            <button class="sidebar-btn" id="clearAllChatsBtn">
                 <i class="fas fa-trash"></i> Clear All Chats
             </button>
             <a href="/logout" class="sidebar-btn" style="color: #ff6b6b;">
@@ -690,6 +790,18 @@
         </div>
     </div>
 
+    <!-- Confirmation Modal for Clear All Chats -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h3>Clear All Chats?</h3>
+            <p>Are you sure you want to clear all chat history? This action cannot be undone.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="hideModal()">Cancel</button>
+                <button class="modal-btn confirm" id="confirmClearBtn">Clear All</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.0/marked.min.js"></script>
     <script>
@@ -704,6 +816,41 @@
             const chatbox = document.getElementById('chatbox');
             chatbox.scrollTop = chatbox.scrollHeight;
         }
+
+        // Custom Marked.js Renderer for Code Blocks
+        const renderer = new marked.Renderer();
+        renderer.code = function(code, lang, escaped) {
+            const language = lang || 'plaintext';
+            const escapedCode = escaped ? code : escapeHtml(code); // Escape HTML if not already escaped
+            return `
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-language">${language.toUpperCase()}</span>
+                        <button class="copy-btn" onclick="copyToClipboard(this)">
+                            <i class="far fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <pre><code class="language-${language}">${escapedCode}</code></pre>
+                </div>
+            `;
+        };
+
+        // Helper to escape HTML entities for code blocks
+        function escapeHtml(html) {
+            const text = document.createTextNode(html);
+            const p = document.createElement('p');
+            p.appendChild(text);
+            return p.innerHTML;
+        }
+
+        marked.setOptions({
+            breaks: true,
+            highlight: function(code, lang) {
+                const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+                return hljs.highlight(code, { language }).value;
+            },
+            renderer: renderer // Use the custom renderer
+        });
 
         // Function to copy code to clipboard
         window.copyToClipboard = function(button) {
@@ -745,7 +892,7 @@
             
             const content = document.createElement('div');
             content.className = 'message-content';
-            content.innerHTML = marked.parse(text); // Always parse text first
+            content.innerHTML = marked.parse(text); // Use marked with custom renderer
             msg.appendChild(content);
 
             // Handle optional content (e.g., user uploaded image preview or generated image URLs from history)
@@ -773,11 +920,6 @@
             
             chatbox.appendChild(msg);
             scrollToBottom();
-            
-            // Highlight any code blocks that were added
-            document.querySelectorAll('pre code').forEach((block) => {
-                hljs.highlightElement(block);
-            });
         }
 
         // Function to type out bot messages character by character
@@ -804,8 +946,10 @@
             scrollToBottom();
 
             const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = marked.parse(text);
+            // Parse content with marked for correct HTML structure (including code blocks)
+            tempDiv.innerHTML = marked.parse(text); 
 
+            // Type out text nodes and append other nodes directly
             for (const node of Array.from(tempDiv.childNodes)) {
                 if (node.nodeType === Node.TEXT_NODE) {
                     const textContent = node.textContent;
@@ -816,7 +960,12 @@
                         await new Promise(resolve => setTimeout(resolve, 5));
                         i++;
                     }
-                } else {
+                } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'PRE') {
+                    // If it's a <pre> tag (code block), append directly and highlight
+                    content.appendChild(node.cloneNode(true));
+                    hljs.highlightElement(content.lastChild.querySelector('code')); // Highlight the code inside
+                }
+                else {
                     content.appendChild(node.cloneNode(true));
                     scrollToBottom();
                 }
@@ -866,7 +1015,7 @@
                 msg.appendChild(messageActionsDiv);
             }
 
-
+            // Ensure all code blocks are highlighted after final content is added
             document.querySelectorAll('pre code').forEach((block) => {
                 hljs.highlightElement(block);
             });
@@ -1028,6 +1177,38 @@
             }
         }
 
+        // --- Modal Functions ---
+        function showModal() {
+            document.getElementById('confirmModal').style.display = 'flex';
+        }
+
+        function hideModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+        }
+
+        // Clear all chat history (now uses modal)
+        window.clearAllChats = function() {
+            showModal();
+        };
+        
+        // This function executes when the 'Clear All' button inside the modal is clicked
+        document.addEventListener('DOMContentLoaded', function() {
+            const confirmClearBtn = document.getElementById('confirmClearBtn');
+            if (confirmClearBtn) {
+                confirmClearBtn.addEventListener('click', function() {
+                    const chatbox = document.getElementById('chatbox');
+                    Object.keys(localStorage).filter(key => key.startsWith('chat_')).forEach(key => {
+                        localStorage.removeItem(key);
+                    });
+                    currentChatId = null;
+                    chatbox.innerHTML = '';
+                    addMessage("All chat history cleared. How can I help you?", 'bot', null, new Date());
+                    updateChatHistory();
+                    hideModal(); // Hide modal after clearing
+                });
+            }
+        });
+
 
         // Load chat history from localStorage and display in sidebar
         function updateChatHistory() {
@@ -1147,21 +1328,6 @@
             }
         };
 
-        // Clear all chat history
-        window.clearAllChats = function() {
-            const chatbox = document.getElementById('chatbox');
-            // Using confirm for simplicity, ideally a custom modal would be used
-            if (confirm("Are you sure you want to clear all chat history? This cannot be undone.")) { 
-                Object.keys(localStorage).filter(key => key.startsWith('chat_')).forEach(key => {
-                    localStorage.removeItem(key);
-                });
-                currentChatId = null;
-                chatbox.innerHTML = '';
-                addMessage("All chat history cleared. How can I help you?", 'bot', null, new Date());
-                updateChatHistory();
-            }
-        };
-
         // Toggle Dark Mode
         window.toggleDarkMode = function() {
             document.body.classList.toggle('dark-mode');
@@ -1181,15 +1347,6 @@
 
             // Initialize Highlight.js
             hljs.highlightAll();
-
-            // Configure marked (Markdown parser)
-            marked.setOptions({
-                breaks: true,
-                highlight: function(code, lang) {
-                    const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-                    return hljs.highlight(code, { language }).value;
-                }
-            });
 
             // --- Event Listeners for DOM elements (defined within DOMContentLoaded) ---
             const sidebar = document.getElementById('sidebar');
@@ -1417,6 +1574,21 @@
                 // If currentChatId already set (e.g. from a previous load or new chat action)
                 loadChat(currentChatId);
             }
+
+            // Fetch and display user info
+            fetch('/user_info')
+                .then(response => response.json())
+                .then(data => {
+                    const userInfoDiv = document.getElementById('user-info');
+                    const userEmailSpan = document.getElementById('user-email');
+                    if (data.user_email) {
+                        userEmailSpan.textContent = data.user_email;
+                        userInfoDiv.style.display = 'flex';
+                    } else {
+                        userInfoDiv.style.display = 'none';
+                    }
+                })
+                .catch(error => console.error('Error fetching user info:', error));
             
         });
     </script>
