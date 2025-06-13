@@ -3,6 +3,7 @@ import json
 import base64
 import requests
 import time
+import uuid # Import uuid for unique user and chat IDs
 from flask import Flask, render_template, request, jsonify, redirect, session, url_for
 from flask_dance.contrib.google import make_google_blueprint, google
 from authlib.integrations.flask_client import OAuth
@@ -10,15 +11,15 @@ from PIL import Image
 import pytesseract # Assuming tesseract is installed and configured
 import google.generativeai as genai
 import tempfile
-import uuid # For unique user and chat IDs
 
 app = Flask(__name__)
 # Use an environment variable for the secret key for better security
+# Replace "your_fallback_secret_key_here" with a strong, random key in production
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "your_fallback_secret_key_here")
 
 # API KEYS from environment variables, with fallbacks for development.
 # For Canvas, GEMINI_API_KEY can be left empty; Canvas will inject it.
-GEMINI_API_KEY = "AIzaSyDQJcS5wwBi65AdfW5zHT2ayu1ShWgWcJg"
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "") # Keep this empty, Canvas will provide it
 HUGGINGFACE_API_KEY = os.environ.get("HUGGINGFACE_API_KEY", "your_huggingface_api_key_here") # Replace with your actual Huggingface API key if used
 
 # Configure Gemini models
@@ -119,12 +120,10 @@ def ask_ai_with_memory(user_id, chat_id, instruction):
             "Ensure code blocks are clearly marked with ```language_name."
         )
         
-        # Add historical messages. Gemini API expects alternating 'user' and 'model' roles.
-        # Ensure 'user' is always followed by 'model' or vice versa.
-        # If the history is not empty, ensure the last role is 'model' before adding new 'user' input.
-        
-        # Add system instruction only if the chat is new
+        # Add system instruction only if the chat is new.
+        # For existing chats, the instruction is implicit in past interactions.
         if not current_chat_history:
+             # The first message in the history sets the tone and context
              gemini_chat_history.append({"role": "user", "parts": [{"text": system_instruction}]})
              gemini_chat_history.append({"role": "model", "parts": [{"text": "Hello! How can I assist you today?"}]})
         
@@ -259,8 +258,10 @@ def check_tesseract_installed():
 @app.route('/')
 def index():
     """Renders the main application page. Assigns a temporary user ID if not logged in."""
+    # If not logged in (no 'user_id' in session), redirect to login page.
+    # Otherwise, render the main app.
     if 'user_id' not in session:
-        session['user_id'] = str(uuid.uuid4()) # Assign a temp user ID if not logged in
+        return redirect(url_for('login'))
     return render_template('index.html')
 
 @app.route('/ask', methods=['POST'])
@@ -365,20 +366,10 @@ def upload_image_endpoint():
         # Prepare for Gemini Vision. Combine text and image content.
         # Gemini Vision model requires parts in the correct format.
         # If the model expects alternating roles and this is a new turn for the user:
-        gemini_vision_content = [
-            {"role": "user", "parts": [{"text": user_message_text_part}, gemini_image_part]}
-        ]
-        
-        # You might need to retrieve the full chat history if context is critical for vision model
-        # For simplicity, for /upload_image, we primarily focus on the image and its caption/extracted text.
-        # If full multimodal history is needed, current_chat_history (with image parts) would be used.
         
         try:
-            response_model_for_vision = genai.GenerativeModel("gemini-1.5-flash") 
-            # Note: For multi-modal inputs, `generate_content` directly expects a list of parts,
-            # not a list of message objects with roles, if it's a single turn.
-            # If you want to retain conversation history, you need to format it as a list of dictionaries with 'role' and 'parts'.
-            # For this endpoint, we'll treat it as a fresh multimodal prompt.
+            response_model_for_vision = genai.GenerativeModel("gemini-1.5-flash") # Gemini-1.5-Flash supports multimodal input
+            
             gemini_vision_response = response_model_for_vision.generate_content([{"text": user_message_text_part}, gemini_image_part])
             ai_response_text = gemini_vision_response.text.strip()
         except genai.types.StopCandidateException as e:
@@ -473,7 +464,7 @@ def start_new_chat_endpoint():
     # We can clear previous chat history from the frontend's perspective.
     return jsonify({"response": "New chat session signal received."})
 
-# --- Authentication Routes (unchanged) ---
+# --- Authentication Routes ---
 @app.route('/google_login/authorized')
 def google_login_authorized():
     """Handles Google OAuth callback."""
@@ -500,6 +491,15 @@ def login():
     if 'user_id' in session: # Check for our custom user_id
         return redirect(url_for('index'))
     return render_template('login.html') # Serve the new login.html
+
+@app.route('/login_as_guest')
+def login_as_guest():
+    """Allows a user to continue as a guest."""
+    session['temp_user_id'] = str(uuid.uuid4()) # Generate a temporary user ID
+    session['user_id'] = session['temp_user_id'] # Use this as the primary user_id
+    session['user'] = "Guest User" # Set a placeholder for display
+    return redirect(url_for('index'))
+
 
 @app.route('/google-login')
 def google_login():
@@ -545,6 +545,13 @@ def logout():
     session.pop('temp_user_id', None) # Clear temporary ID too
     return redirect(url_for('login'))
 
+@app.route('/user_info')
+def user_info():
+    """Returns user information if logged in."""
+    user_email = session.get('user', 'Not logged in')
+    return jsonify({"user_email": user_email})
+
+
 if __name__ == "__main__":
     # Check Tesseract installation at startup
     if not check_tesseract_installed():
@@ -555,4 +562,4 @@ if __name__ == "__main__":
         print("macOS: Run 'brew install tesseract'")
         print("Linux: Run 'sudo apt install tesseract-ocr'\n")
     
-    app.run(debug=True, host='0.0.0.0', port=5000) # Listen on all interfaces and port 5000
+    app.run(debug=True, host='0.0.0.0', port=5000)
