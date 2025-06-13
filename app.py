@@ -59,7 +59,7 @@ def save_users(users):
 def ask_ai_with_memory(memory_messages):
     try:
         system_instruction = (
-            "You are Aivora, a smart and friendly AI assistant. "
+            "You are Vexara, a smart and friendly AI assistant. "
             "You respond like a helpful expert — clear, friendly, and with enough depth to be useful. "
             "Give full answers, not just short replies. "
             "Explain code when needed. If the user asks for 'only code', provide only the code. "
