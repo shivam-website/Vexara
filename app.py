@@ -9,15 +9,14 @@ import google.generativeai as genai
 import tempfile
 import time
 
-
 app = Flask(__name__)
 app.secret_key = "your_fallback_secret"
 
 # API KEYS
 GEMINI_API_KEY = "AIzaSyDQJcS5wwBi65AdfW5zHT2ayu1ShWgWcJg"
-HUGGINGFACE_API_KEY = os.getenv
+HUGGINGFACE_API_KEY = "your_huggingface_api_key_here"  # Replace with your actual Huggingface API key
 
-genai.configure(api_key=GEMINI_API_KEY)
+genai.configure(api_key="AIzaSyDQJcS5wwBi65AdfW5zHT2ayu1ShWgWcJg")
 model = genai.GenerativeModel("gemini-1.5-flash")
 
 # Configure Tesseract path (uncomment and modify for your OS if needed)
@@ -35,8 +34,8 @@ app.register_blueprint(google_bp, url_prefix="/google_login")
 oauth = OAuth(app)
 microsoft = oauth.register(
     name='microsoft',
-    client_id="your_microsoft_client_id",
-    client_secret="your_microsoft_client_secret",
+    client_id="your_microsoft_client_id",            # Replace with your Microsoft client ID
+    client_secret="your_microsoft_client_secret",    # Replace with your Microsoft client secret
     access_token_url='https://login.microsoftonline.com/common/oauth2/v2.0/token',
     authorize_url='https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
     api_base_url='https://graph.microsoft.com/v1.0/',
@@ -99,8 +98,6 @@ def handle_query():
     ai_response = ask_ai_with_memory(chat_memory)
     chat_memory.append({"role": "assistant", "content": ai_response})
     return jsonify({"response": ai_response})
-
-
 
 @app.route('/upload_image', methods=['POST'])
 def upload_image():
