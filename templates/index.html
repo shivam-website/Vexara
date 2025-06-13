@@ -84,6 +84,7 @@
 
         .sidebar-logo i {
             color: var(--primary-color);
+            filter: drop-shadow(0 0 5px var(--secondary-color)); /* Glow effect for sparkle */
         }
 
         .sidebar-toggle {
@@ -128,6 +129,8 @@
             overflow: hidden;
             text-overflow: ellipsis;
             transition: background 0.2s;
+            color: var(--sidebar-text); /* Ensure history links are visible */
+            text-decoration: none; /* Remove underline */
         }
 
         .chat-link:hover {
@@ -155,6 +158,7 @@
             margin-bottom: 5px;
             cursor: pointer;
             transition: background 0.2s;
+            text-decoration: none; /* For the logout link */
         }
 
         .sidebar-btn:hover {
@@ -188,6 +192,10 @@
         .top-bar-title {
             font-weight: 600;
             font-size: 1.1rem;
+        }
+         .top-bar-title i {
+            color: var(--primary-color);
+            filter: drop-shadow(0 0 5px var(--secondary-color)); /* Glow effect for sparkle */
         }
 
         .top-bar-actions {
@@ -231,6 +239,7 @@
             line-height: 1.6;
             position: relative;
             box-shadow: var(--shadow);
+            word-wrap: break-word; /* Ensure long words wrap */
         }
 
         .user-message {
@@ -250,7 +259,15 @@
             align-items: center;
             margin-bottom: 8px;
             font-weight: 600;
+            font-size: 0.9em; /* Slightly smaller for timestamps */
         }
+        .message-timestamp {
+            font-weight: normal;
+            font-size: 0.8em;
+            opacity: 0.7;
+            margin-left: auto; /* Push timestamp to the right */
+        }
+
 
         .message-header i {
             margin-right: 8px;
@@ -268,6 +285,7 @@
             padding: 15px !important;
             margin: 15px 0;
             overflow-x: auto;
+            white-space: pre-wrap; /* Ensure code wraps */
         }
 
         code {
@@ -284,6 +302,7 @@
             border-top-left-radius: var(--border-radius);
             border-top-right-radius: var(--border-radius);
             margin-bottom: -10px;
+            color: white; /* Ensure header text is visible */
         }
 
         .code-language {
@@ -337,6 +356,10 @@
             background-color: var(--chat-bg);
             color: var(--text-color);
             font-size: 1rem;
+            resize: none; /* Disable manual resize */
+            overflow-y: hidden; /* Hide scrollbar initially */
+            min-height: 48px; /* Match button height */
+            line-height: 1.5;
         }
 
         #file-input {
@@ -352,6 +375,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: background 0.2s;
         }
 
         .submit-btn {
@@ -431,6 +455,7 @@
                 height: 40px;
                 border-radius: 50%;
                 font-size: 1.2rem;
+                padding: 0; /* Remove padding for better circle shape */
             }
 
             .chat-message {
@@ -475,17 +500,29 @@
             gap: 10px;
         }
 
-        .message-with-image img {
+        .message-images-container img { /* Styling for generated images */
             max-width: 100%;
             max-height: 300px;
             border-radius: 8px;
             border: 1px solid rgba(0,0,0,0.1);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            object-fit: contain; /* Ensure image fits without cropping */
+            margin-bottom: 10px;
+        }
+        
+        .uploaded-image-preview { /* Styling for user uploaded images */
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            object-fit: contain;
         }
 
         /* Make sure file input is properly styled */
         #file-input-label {
-            display: none;
+            display: none; /* Controlled by JS */
             align-items: center;
             justify-content: center;
             padding: 12px;
@@ -503,24 +540,7 @@
         #file-input-label i {
             margin-right: 8px;
         }
-        .uploaded-image-preview {
-            max-width: 100%;
-            max-height: 300px;
-            border-radius: 8px;
-            margin-top: 10px;
-            border: 1px solid rgba(0,0,0,0.1);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-
-        .new-chat-btn {
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .new-chat-btn:hover {
-            transform: scale(1.02);
-        }
+        
         /* Add to your existing CSS */
         .file-input-label {
             position: relative;
@@ -545,7 +565,7 @@
         }
 
         .camera-options {
-            display: none;
+            display: none; /* Hidden by default, shown on mobile for image upload */
             position: fixed;
             bottom: 80px;
             left: 0;
@@ -565,13 +585,42 @@
             border-radius: var(--border-radius);
             text-align: center;
             cursor: pointer;
+            transition: background 0.2s;
+        }
+        .camera-option:hover {
+            background: var(--secondary-color);
+        }
+
+        .message-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 5px;
+            justify-content: flex-end; /* Align actions to the right */
+        }
+
+        .message-action-btn {
+            background: rgba(0,0,0,0.05); /* Light background for action buttons */
+            color: var(--text-color);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: background 0.2s;
+        }
+
+        .message-action-btn:hover {
+            background: rgba(0,0,0,0.1);
+        }
+        .message-action-btn i {
+            margin-right: 5px;
         }
     </style>
 </head>
 <body>
     <div id="sidebar" class="sidebar">
         <div class="sidebar-header">
-            <span class="sidebar-logo"><i class="fas fa-robot"></i> Vexara</span>
+            <span class="sidebar-logo"><i class="fas fa-robot"></i><i class="fas fa-sparkle"></i> Vexara</span>
             <button id="hideSidebarBtn" class="sidebar-toggle"><i class="fas fa-times"></i></button>
         </div>
 
@@ -601,9 +650,9 @@
 
     <div class="main">
         <div class="top-bar">
-            <div class="top-bar-title">Vexara AI Assistant</div>
+            <div class="top-bar-title"><i class="fas fa-robot"></i><i class="fas fa-sparkle"></i> Vexara AI Assistant</div>
             <div class="top-bar-actions">
-                <button class="action-btn" onclick="toggleDarkMode()">
+                <button class="action-btn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
                     <i class="fas fa-moon"></i>
                 </button>
             </div>
@@ -613,19 +662,20 @@
 
         <div class="input-area">
             <form id="multi-action-form" enctype="multipart/form-data">
-                <select id="action-type">
+                <select id="action-type" title="Select action type">
                     <option value="ask">Ask AI</option>
+                    <option value="generate_image">✨ Generate Image</option>
                     <option value="upload_image">Upload Image</option>
                 </select>
             
-                <input type="text" id="text-input" name="instruction" placeholder="Ask Vexara anything..." required />
+                <textarea id="text-input" name="instruction" placeholder="Ask Vexara anything..." rows="1" required title="Enter your message"></textarea>
                 
-                <label for="file-input" class="file-input-label" id="file-input-label" style="display: none;">
-                    <i class="fas fa-camera"></i>
-                    <input type="file" id="file-input" name="image" accept="image/*" capture="environment" />
+                <label for="file-input" class="file-input-label" id="file-input-label" style="display: none;" title="Select an image to upload">
+                    <i class="fas fa-camera"></i> Select Image
+                    <input type="file" id="file-input" name="image" accept="image/*" />
                 </label>
             
-                <button type="submit" class="submit-btn">
+                <button type="submit" class="submit-btn" title="Send message">
                     <i class="fas fa-paper-plane"></i> Send
                 </button>
             </form>
@@ -643,25 +693,511 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.0/marked.min.js"></script>
     <script>
+        // Global variables for chat management
+        let currentChatId = null;
+        let chatTitle = '';
+
+        // --- Helper Functions (Globally accessible for inline onclicks) ---
+
+        // Function to scroll chatbox to the bottom
+        function scrollToBottom() {
+            const chatbox = document.getElementById('chatbox');
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        // Function to copy code to clipboard
+        window.copyToClipboard = function(button) {
+            const codeBlock = button.closest('.code-block').querySelector('code');
+            if (codeBlock) {
+                const textToCopy = codeBlock.textContent || codeBlock.innerText;
+                const textarea = document.createElement('textarea');
+                textarea.value = textToCopy;
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    button.textContent = 'Copied!';
+                    setTimeout(() => {
+                        button.innerHTML = '<i class="far fa-copy"></i> Copy';
+                    }, 2000);
+                } catch (err) {
+                    console.error('Failed to copy text: ', err);
+                }
+                document.body.removeChild(textarea);
+            }
+        };
+
+        // Function to add a message to the chatbox (for user messages and history loading)
+        function addMessage(text, type = 'bot', optionalContent = null, timestamp = new Date()) { 
+            const chatbox = document.getElementById('chatbox');
+            const msg = document.createElement('div');
+            msg.className = `chat-message ${type}-message`;
+            
+            const header = document.createElement('div');
+            header.className = 'message-header';
+            header.innerHTML = type === 'user' ? '<i class="fas fa-user"></i> You' : '<i class="fas fa-robot"></i> Vexara';
+            
+            const timestampSpan = document.createElement('span');
+            timestampSpan.className = 'message-timestamp';
+            timestampSpan.textContent = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            header.appendChild(timestampSpan);
+            msg.appendChild(header);
+            
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            content.innerHTML = marked.parse(text); // Always parse text first
+            msg.appendChild(content);
+
+            // Handle optional content (e.g., user uploaded image preview or generated image URLs from history)
+            if (optionalContent) {
+                if (optionalContent instanceof HTMLElement) { // For user's uploaded image preview
+                    msg.appendChild(optionalContent);
+                } else if (Array.isArray(optionalContent)) { // For generated images (base64 URLs) from history
+                    const imageContainer = document.createElement('div');
+                    imageContainer.className = 'message-images-container'; // Reuse class for styling
+                    optionalContent.forEach(imageUrl => {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = imageUrl;
+                        imgElement.alt = "Generated Image";
+                        imgElement.style.maxWidth = '100%';
+                        imgElement.style.maxHeight = '300px';
+                        imgElement.style.borderRadius = '8px';
+                        imgElement.style.marginTop = '10px';
+                        imgElement.style.border = '1px solid rgba(0,0,0,0.1)';
+                        imgElement.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                        imageContainer.appendChild(imgElement);
+                    });
+                    msg.appendChild(imageContainer);
+                }
+            }
+            
+            chatbox.appendChild(msg);
+            scrollToBottom();
+            
+            // Highlight any code blocks that were added
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        }
+
+        // Function to type out bot messages character by character
+        async function typeBotMessage(text, type = 'bot', image_urls = [], timestamp = new Date()) {
+            const chatbox = document.getElementById('chatbox');
+            const msg = document.createElement('div');
+            msg.className = `chat-message ${type}-message`;
+            
+            const header = document.createElement('div');
+            header.className = 'message-header';
+            header.innerHTML = '<i class="fas fa-robot"></i> Vexara';
+            
+            const timestampSpan = document.createElement('span');
+            timestampSpan.className = 'message-timestamp';
+            timestampSpan.textContent = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            header.appendChild(timestampSpan);
+            msg.appendChild(header);
+
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            msg.appendChild(content);
+
+            chatbox.appendChild(msg);
+            scrollToBottom();
+
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = marked.parse(text);
+
+            for (const node of Array.from(tempDiv.childNodes)) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    const textContent = node.textContent;
+                    let i = 0;
+                    while (i < textContent.length) {
+                        content.textContent += textContent[i]; 
+                        scrollToBottom();
+                        await new Promise(resolve => setTimeout(resolve, 5));
+                        i++;
+                    }
+                } else {
+                    content.appendChild(node.cloneNode(true));
+                    scrollToBottom();
+                }
+            }
+
+            if (image_urls && image_urls.length > 0) {
+                const imageContainer = document.createElement('div');
+                imageContainer.className = 'message-images-container'; 
+                image_urls.forEach(imageUrl => {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = imageUrl;
+                    imgElement.alt = "Generated Image";
+                    imgElement.style.maxWidth = '100%';
+                    imgElement.style.maxHeight = '300px'; 
+                    imgElement.style.borderRadius = '8px';
+                    imgElement.style.marginTop = '10px';
+                    imgElement.style.border = '1px solid rgba(0,0,0,0.1)';
+                    imgElement.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                    imageContainer.appendChild(imgElement);
+                });
+                msg.appendChild(imageContainer);
+                scrollToBottom();
+            }
+
+            // Add summarization button for bot messages
+            if (type === 'bot' && text.length > 100) { // Only add if message is reasonably long
+                const messageActionsDiv = document.createElement('div');
+                messageActionsDiv.className = 'message-actions';
+
+                const summarizeButton = document.createElement('button');
+                summarizeButton.className = 'message-action-btn';
+                summarizeButton.innerHTML = '<i class="fas fa-sparkle"></i> Summarize';
+                summarizeButton.title = 'Summarize this message using AI';
+                summarizeButton.onclick = async () => {
+                    summarizeButton.disabled = true; // Disable to prevent multiple clicks
+                    summarizeButton.innerHTML = '<i class="fas fa-hourglass-half"></i> Summarizing...';
+                    const summary = await summarizeText(text);
+                    if (summary) {
+                        addMessage(`**Summary:** ${summary}`, 'bot', null, new Date()); // Add summary as new bot message
+                    } else {
+                        console.error('Failed to summarize text.'); // Use console.error instead of alert
+                    }
+                    summarizeButton.disabled = false;
+                    summarizeButton.innerHTML = '<i class="fas fa-sparkle"></i> Summarize';
+                };
+                messageActionsDiv.appendChild(summarizeButton);
+                msg.appendChild(messageActionsDiv);
+            }
+
+
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+
+            // Save message to history after typing is complete
+            try {
+                const chat = JSON.parse(localStorage.getItem(currentChatId)) || [];
+                if (image_urls.length > 0) {
+                    chat.push({ type: 'bot', text: text, image_urls: image_urls, timestamp: timestamp.toISOString() });
+                } else {
+                    chat.push({ type: 'bot', text: text, timestamp: timestamp.toISOString() });
+                }
+                localStorage.setItem(currentChatId, JSON.stringify(chat));
+            } catch (e) {
+                console.error("Error saving message to local storage:", e);
+                // Optionally inform the user if local storage is full/unavailable
+            }
+            updateChatHistory();
+        }
+
+        // Function to send query to AI via backend
+        async function askAI(instruction) {
+            const textInput = document.getElementById('text-input');
+            const loader = document.getElementById('loader');
+            try {
+                const formData = new FormData();
+                formData.append('instruction', instruction);
+
+                const response = await fetch(`${window.location.origin}/ask`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                const data = await response.json();
+                
+                loader.style.display = 'none';
+                
+                if (data.image_urls && data.image_urls.length > 0) {
+                    await typeBotMessage(data.response, 'bot', data.image_urls, new Date()); 
+                } else {
+                    await typeBotMessage(data.response, 'bot', null, new Date());
+                }
+
+            } catch (error) {
+                console.error("Error asking AI:", error);
+                loader.style.display = 'none';
+                await typeBotMessage("Sorry, there was an error processing your request. Please try again.", 'bot', null, new Date());
+            } finally {
+                textInput.value = ''; 
+                textInput.style.height = 'auto'; // Reset textarea height
+                textInput.focus();
+            }
+        }
+
+        // Function to generate image via backend
+        async function generateImage(prompt) {
+            const textInput = document.getElementById('text-input');
+            const loader = document.getElementById('loader');
+            loader.style.display = 'block'; // Ensure loader is visible for image generation
+            
+            try {
+                const formData = new FormData();
+                formData.append('instruction', prompt); // Use 'instruction' for consistency with /ask endpoint
+
+                const response = await fetch(`${window.location.origin}/generate_image`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                const data = await response.json();
+
+                loader.style.display = 'none';
+
+                if (data.image_urls && data.image_urls.length > 0) {
+                    await typeBotMessage(data.response, 'bot', data.image_urls, new Date()); 
+                } else {
+                    console.error("Image generation failed: " + (data.response || "No response.")); // Use console.error
+                    await typeBotMessage(data.response || "Image generation failed.", 'bot', null, new Date());
+                }
+            } catch (error) {
+                console.error("Error generating image:", error);
+                loader.style.display = 'none';
+                await typeBotMessage("Sorry, there was an error generating the image. Please try again.", 'bot', null, new Date());
+            } finally {
+                textInput.value = '';
+                textInput.style.height = 'auto'; // Reset textarea height
+                textInput.focus();
+            }
+        }
+
+        // Function to upload image to backend
+        async function uploadImage(file, caption) {
+            const textInput = document.getElementById('text-input');
+            const loader = document.getElementById('loader');
+            loader.style.display = 'block'; // Ensure loader is visible for upload
+            try {
+                const formData = new FormData();
+                formData.append('image', file);
+                if (caption) {
+                    formData.append('caption', caption);
+                }
+
+                const response = await fetch(`${window.location.origin}/upload_image`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                const data = await response.json(); // Parse response
+                
+                loader.style.display = 'none';
+
+                if (data && data.response) {
+                    if (data.image_url) { // This is the URL of the *uploaded* image (not generated)
+                        await typeBotMessage(data.response, 'bot', [data.image_url], new Date());
+                    } else {
+                        await typeBotMessage(data.response, 'bot', null, new Date());
+                    }
+                } else {
+                    console.error("Image upload failed: Received an empty response."); // Use console.error
+                    await typeBotMessage("Received an empty response from the server.", 'bot', null, new Date());
+                }
+            } catch (error) {
+                console.error("Error uploading image:", error);
+                loader.style.display = 'none';
+                await typeBotMessage("Failed to upload image due to network error. Please try again.", 'bot', null, new Date());
+            } finally {
+                textInput.value = '';
+                textInput.style.height = 'auto'; // Reset textarea height
+                textInput.focus();
+                // Reset action type and hide file input after successful upload
+                document.getElementById('action-type').value = 'ask';
+                document.getElementById('file-input-label').style.display = 'none';
+                document.getElementById('file-input').value = ''; // Clear selected file
+                textInput.setAttribute('required', '');
+                textInput.placeholder = 'Ask Vexara anything...';
+            }
+        }
+
+        // Function to summarize text using backend
+        async function summarizeText(textToSummarize) {
+            try {
+                const response = await fetch(`${window.location.origin}/summarize_text`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: textToSummarize }),
+                });
+                const data = await response.json();
+                if (data && data.summary) {
+                    return data.summary;
+                } else {
+                    console.error("Summarization failed:", data.error || "No summary returned.");
+                    return null;
+                }
+            } catch (error) {
+                console.error("Error summarizing text:", error);
+                return null;
+            }
+        }
+
+
+        // Load chat history from localStorage and display in sidebar
+        function updateChatHistory() {
+            const chatHistoryList = document.getElementById('chat-history-list');
+            chatHistoryList.innerHTML = '';
+            // Filter keys starting with 'chat_' and sort by timestamp (most recent first)
+            const chatIds = Object.keys(localStorage)
+                .filter(key => key.startsWith('chat_'))
+                .map(id => {
+                    try {
+                        const chatData = JSON.parse(localStorage.getItem(id)) || [];
+                        // Get timestamp of the first message to sort by, or use current time if empty
+                        const firstMsgTimestamp = chatData.length > 0 && chatData[0].timestamp ? new Date(chatData[0].timestamp) : new Date();
+                        return { id, timestamp: firstMsgTimestamp.getTime() };
+                    } catch (e) {
+                        console.error(`Error parsing chat history for ${id}:`, e);
+                        return { id, timestamp: 0 }; // Handle corrupted data gracefully
+                    }
+                })
+                .sort((a, b) => b.timestamp - a.timestamp) // Sort descending by timestamp
+                .map(item => item.id); // Get back only the IDs
+
+            chatIds.forEach(id => {
+                let displayTitle = "New Chat";
+                try {
+                    const chatData = JSON.parse(localStorage.getItem(id));
+                    const firstUserMessage = chatData.find(msg => msg.type === 'user');
+                    if (firstUserMessage) {
+                        displayTitle = firstUserMessage.text.substring(0, 30) + (firstUserMessage.text.length > 30 ? '...' : '');
+                    }
+                } catch (e) {
+                    console.error(`Error processing chat history for display: ${id}`, e);
+                    // displayTitle remains "New Chat"
+                }
+
+                const chatLink = document.createElement('a');
+                chatLink.href = "#";
+                chatLink.className = `chat-link ${id === currentChatId ? 'active' : ''}`;
+                chatLink.textContent = displayTitle;
+                chatLink.onclick = (e) => {
+                    e.preventDefault();
+                    loadChat(id);
+                };
+                chatHistoryList.appendChild(chatLink);
+            });
+        }
+
+        // Load a specific chat from history into the chatbox
+        function loadChat(id) {
+            const chatbox = document.getElementById('chatbox');
+            currentChatId = id;
+            chatbox.innerHTML = ''; 
+            let chatData = [];
+            try {
+                chatData = JSON.parse(localStorage.getItem(id)) || [];
+            } catch (e) {
+                console.error(`Error loading chat data for ${id}:`, e);
+                // Fallback to empty array
+            }
+            
+
+            chatData.forEach(msg => {
+                const msgTimestamp = msg.timestamp ? new Date(msg.timestamp) : new Date();
+                if (msg.type === 'bot' && msg.image_urls) {
+                    addMessage(msg.text, msg.type, msg.image_urls, msgTimestamp);
+                } else if (msg.type === 'user' && msg.image_url) { 
+                    const imgElement = document.createElement('img');
+                    imgElement.src = msg.image_url;
+                    imgElement.classList.add('uploaded-image-preview');
+                    addMessage(msg.text, msg.type, imgElement, msgTimestamp);
+                } else {
+                    addMessage(msg.text, msg.type, null, msgTimestamp);
+                }
+            });
+            // Update active state in sidebar.
+            document.querySelectorAll('.chat-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            // Find the active link using the currentChatId
+            const activeLink = document.querySelector(`.chat-link[onclick*="${currentChatId}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+
+            scrollToBottom();
+        }
+
+        // Start a new chat session
+        window.startNewChat = async function() {
+            const chatbox = document.getElementById('chatbox');
+            const textInput = document.getElementById('text-input');
+            const actionType = document.getElementById('action-type');
+            const fileInputLabel = document.getElementById('file-input-label');
+            const fileInput = document.getElementById('file-input');
+
+            try {
+                // Backend call to signify new chat, clears server-side history if any
+                await fetch(`${window.location.origin}/start_new_chat`, { method: 'POST' }); 
+                currentChatId = 'chat_' + Date.now(); // Generate a new ID for the new chat
+                chatbox.innerHTML = ''; 
+                textInput.value = '';
+                textInput.style.height = 'auto'; // Reset textarea height
+                textInput.focus();
+                // Reset input area to default 'Ask AI' state
+                actionType.value = 'ask';
+                fileInputLabel.style.display = 'none';
+                fileInput.value = '';
+                textInput.setAttribute('required', '');
+                textInput.placeholder = 'Ask Vexara anything...';
+                
+                addMessage("New chat started. How can I assist you today?", 'bot', null, new Date()); 
+                updateChatHistory(); 
+            } catch (error) {
+                console.error("Error starting new chat:", error);
+                // Inform user about error without blocking with alert
+                addMessage("Failed to start new chat. Please try refreshing the page.", 'bot', null, new Date());
+            }
+        };
+
+        // Clear all chat history
+        window.clearAllChats = function() {
+            const chatbox = document.getElementById('chatbox');
+            // Using confirm for simplicity, ideally a custom modal would be used
+            if (confirm("Are you sure you want to clear all chat history? This cannot be undone.")) { 
+                Object.keys(localStorage).filter(key => key.startsWith('chat_')).forEach(key => {
+                    localStorage.removeItem(key);
+                });
+                currentChatId = null;
+                chatbox.innerHTML = '';
+                addMessage("All chat history cleared. How can I help you?", 'bot', null, new Date());
+                updateChatHistory();
+            }
+        };
+
+        // Toggle Dark Mode
+        window.toggleDarkMode = function() {
+            document.body.classList.toggle('dark-mode');
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                localStorage.removeItem('darkMode');
+            }
+        };
+
+        // --- DOMContentLoaded for initial setup ---
         document.addEventListener('DOMContentLoaded', function () {
-            // Initialize dark mode
+            // Initialize dark mode based on local storage
             if (localStorage.getItem('darkMode') === 'enabled') {
                 document.body.classList.add('dark-mode');
             }
 
-            // DOM Elements
-            const chatbox = document.getElementById('chatbox');
-            const chatHistoryList = document.getElementById('chat-history-list');
-            const textInput = document.getElementById('text-input');
-            const fileInput = document.getElementById('file-input');
-            const fileInputLabel = document.getElementById('file-input-label');
-            const actionType = document.getElementById('action-type');
-            const loader = document.getElementById('loader');
+            // Initialize Highlight.js
+            hljs.highlightAll();
+
+            // Configure marked (Markdown parser)
+            marked.setOptions({
+                breaks: true,
+                highlight: function(code, lang) {
+                    const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+                    return hljs.highlight(code, { language }).value;
+                }
+            });
+
+            // --- Event Listeners for DOM elements (defined within DOMContentLoaded) ---
             const sidebar = document.getElementById('sidebar');
             const showSidebarBtn = document.getElementById('showSidebarBtn');
-            const hideSidebarBtn = document.getElementById('hideSidebarBtn');
-            const newChatBtn = document.querySelector('.new-chat-btn');
-
+            const hideSidebarBtn = document.getElementById('hideSidebarBtn'); 
+            const actionType = document.getElementById('action-type');
+            const fileInputLabel = document.getElementById('file-input-label');
+            const textInput = document.getElementById('text-input');
+            const fileInput = document.getElementById('file-input');
+            const multiActionForm = document.getElementById('multi-action-form');
+            // Dynamically create camera options div and append to body
             const cameraOptions = document.createElement('div');
             cameraOptions.className = 'camera-options';
             cameraOptions.innerHTML = `
@@ -677,461 +1213,204 @@
             `;
             document.body.appendChild(cameraOptions);
 
-            let currentChatId = null;
-            let chatTitle = '';
 
-            // Initialize Highlight.js
-            hljs.highlightAll();
+            // Get the specific camera option buttons here after they are created and appended
+            const takePhotoBtn = document.getElementById('take-photo');
+            const uploadPhotoBtn = document.getElementById('upload-photo');
+            const cancelCameraBtn = document.getElementById('cancel-camera');
 
-            // Configure marked (Markdown parser)
-            marked.setOptions({
-                breaks: true,
-                highlight: function(code, lang) {
-                    const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-                    return hljs.highlight(code, { language }).value;
-                }
-            });
+            // Sidebar toggle functionality for mobile
+            if (showSidebarBtn) { // Defensive check
+                showSidebarBtn.addEventListener('click', () => {
+                    sidebar.classList.add('visible');
+                });
+            }
 
-            // Sidebar toggle functionality
-            showSidebarBtn.addEventListener('click', () => {
-                sidebar.classList.add('visible');
-            });
+            if (hideSidebarBtn) { 
+                hideSidebarBtn.addEventListener('click', () => {
+                    sidebar.classList.remove('visible');
+                });
+            }
 
-            hideSidebarBtn.addEventListener('click', () => {
-                sidebar.classList.remove('visible');
-            });
-
-            // New chat button functionality
-            if (newChatBtn) {
-                newChatBtn.addEventListener('click', startNewChat);
+            // Auto-resize textarea
+            if (textInput) {
+                textInput.addEventListener('input', () => {
+                    textInput.style.height = 'auto';
+                    textInput.style.height = (textInput.scrollHeight) + 'px';
+                });
             }
 
             // Toggle file input visibility and camera options based on action type
-            actionType.addEventListener('change', function() {
-                if (this.value === 'upload_image') {
-                    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                        cameraOptions.style.display = 'block';
-                    } else {
-                        fileInputLabel.style.display = 'flex';
-                        fileInput.removeAttribute('capture');
+            if (actionType) {
+                actionType.addEventListener('change', function() {
+                    const selectedAction = this.value;
+                    if (selectedAction === 'upload_image') {
+                        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                            if (cameraOptions) cameraOptions.style.display = 'block';
+                        } else {
+                            if (fileInputLabel) fileInputLabel.style.display = 'flex';
+                            if (fileInput) fileInput.removeAttribute('capture');
+                        }
+                        if (textInput) {
+                            textInput.placeholder = 'Add optional caption for the image...';
+                            textInput.removeAttribute('required');
+                        }
+                    } else if (selectedAction === 'generate_image') { // Handle generate_image selection
+                        if (cameraOptions) cameraOptions.style.display = 'none';
+                        if (fileInputLabel) fileInputLabel.style.display = 'none';
+                        if (textInput) {
+                            textInput.placeholder = 'Enter a prompt for image generation...';
+                            textInput.setAttribute('required', '');
+                        }
+                    } else { // Default 'ask' action
+                        if (cameraOptions) cameraOptions.style.display = 'none';
+                        if (fileInputLabel) fileInputLabel.style.display = 'none';
+                        if (textInput) {
+                            textInput.placeholder = 'Ask Vexara anything...';
+                            textInput.setAttribute('required', '');
+                        }
                     }
-                    textInput.placeholder = 'Add optional caption...';
-                } else {
-                    cameraOptions.style.display = 'none';
-                    fileInputLabel.style.display = 'none';
-                    textInput.placeholder = 'Ask Vexara anything...';
-                }
-            });
+                });
+            }
 
-            // Add camera option handlers
-            document.getElementById('take-photo').addEventListener('click', function() {
-                fileInput.setAttribute('capture', 'environment');
-                fileInput.click();
-                cameraOptions.style.display = 'none';
-            });
+            // Camera option handlers (for mobile image upload) - these are now guaranteed to exist
+            if (takePhotoBtn) {
+                takePhotoBtn.addEventListener('click', function() {
+                    if (fileInput) fileInput.setAttribute('capture', 'environment');
+                    if (fileInput) fileInput.click();
+                    if (cameraOptions) cameraOptions.style.display = 'none';
+                });
+            }
 
-            document.getElementById('upload-photo').addEventListener('click', function() {
-                fileInput.removeAttribute('capture');
-                fileInput.click();
-                cameraOptions.style.display = 'none';
-            });
+            if (uploadPhotoBtn) {
+                uploadPhotoBtn.addEventListener('click', function() {
+                    if (fileInput) fileInput.removeAttribute('capture');
+                    if (fileInput) fileInput.click();
+                    if (cameraOptions) cameraOptions.style.display = 'none';
+                });
+            }
 
-            document.getElementById('cancel-camera').addEventListener('click', function() {
-                cameraOptions.style.display = 'none';
-                actionType.value = 'ask';
-                fileInputLabel.style.display = 'none';
-            });
+            if (cancelCameraBtn) {
+                cancelCameraBtn.addEventListener('click', function() {
+                    if (cameraOptions) cameraOptions.style.display = 'none';
+                    if (actionType) actionType.value = 'ask';
+                    if (fileInputLabel) fileInputLabel.style.display = 'none';
+                    if (textInput) {
+                        textInput.placeholder = 'Ask Vexara anything...';
+                        textInput.setAttribute('required', '');
+                    }
+                    if (fileInput) fileInput.value = ''; // Clear selected file
+                });
+            }
 
-            // Modify file input change handler
-            fileInput.addEventListener('change', function() {
-                if (this.files.length > 0) {
-                    cameraOptions.style.display = 'none';
-                }
-            });
+            // Hide camera options if a file is selected directly (e.g., from file picker opened by JS)
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    if (this.files.length > 0) {
+                        if (cameraOptions) cameraOptions.style.display = 'none';
+                    }
+                });
+            }
 
             // Form submission handler
-            document.getElementById('multi-action-form').addEventListener('submit', async function (e) {
-                e.preventDefault();
-                const type = actionType.value;
-                loader.style.display = 'block';
+            if (multiActionForm) {
+                multiActionForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    const type = actionType.value;
+                    const loaderElement = document.getElementById('loader');
+                    if (loaderElement) loaderElement.style.display = 'block';
 
-                if (type === 'ask') {
-                    const userText = textInput.value.trim();
-                    if (!userText) {
-                        alert("Please enter your question");
-                        loader.style.display = 'none';
-                        return;
-                    }
-                    addMessage(userText, 'user');
-                    const response = await askAI(userText);
-                    await typeBotMessage(response, 'bot'); // Use typeBotMessage for typing effect
-                } else if (type === 'upload_image') {
-                    if (fileInput.files.length === 0) {
-                        alert("Please select an image to upload");
-                        loader.style.display = 'none';
-                        return;
-                    }
+                    if (type === 'ask') {
+                        const userText = textInput.value.trim();
+                        if (!userText) {
+                            console.error("Please enter your question"); 
+                            if (loaderElement) loaderElement.style.display = 'none';
+                            return;
+                        }
+                        addMessage(userText, 'user', null, new Date()); 
+                        await askAI(userText);
+                    } else if (type === 'generate_image') {
+                        const userPrompt = textInput.value.trim();
+                        if (!userPrompt) {
+                            console.error("Please enter a prompt for image generation."); 
+                            if (loaderElement) loaderElement.style.display = 'none';
+                            return;
+                        }
+                        addMessage(userPrompt, 'user', null, new Date()); 
+                        await generateImage(userPrompt);
+                    } else if (type === 'upload_image') {
+                        if (fileInput.files.length === 0) {
+                            console.error("Please select an image to upload"); 
+                            if (loaderElement) loaderElement.style.display = 'none';
+                            return;
+                        }
 
-                    // Create preview of the image
-                    const file = fileInput.files[0];
-                    const reader = new FileReader();
-                    
-                    reader.onload = async function(e) { // Changed to async to await typeBotMessage
-                        const imgPreview = document.createElement('img');
-                        imgPreview.src = e.target.result;
-                        imgPreview.classList.add('uploaded-image-preview');
+                        const file = fileInput.files[0];
+                        const reader = new FileReader();
                         
-                        const caption = textInput.value.trim();
-                        let messageContent = caption ? `Image with caption: "${caption}"` : 'Uploaded image';
-                        
-                        addMessage(messageContent, 'user', imgPreview);
+                        reader.onload = async function(e) {
+                            const imgPreview = document.createElement('img');
+                            imgPreview.src = e.target.result;
+                            imgPreview.classList.add('uploaded-image-preview');
+                            
+                            const caption = textInput.value.trim();
+                            let messageContent = caption ? `Image with caption: "${caption}"` : 'Uploaded image';
+                            
+                            addMessage(messageContent, 'user', imgPreview, new Date()); 
 
-                        try {
-                            const response = await uploadImage(fileInput.files[0], caption);
-                            if (response && response.response) {
-                                if (response.image_url) {
-                                    const imgElement = document.createElement('img');
-                                    imgElement.src = response.image_url;
-                                    imgElement.classList.add('uploaded-image-preview');
-                                    await typeBotMessage(response.response, 'bot', imgElement); // Type out bot response
-                                } else {
-                                    await typeBotMessage(response.response, 'bot'); // Type out bot response
-                                }
-                            } else {
-                                await typeBotMessage("Received an empty response from the server", 'bot');
+                            try {
+                                const response = await uploadImage(file, caption); 
+                                // uploadImage already calls typeBotMessage internally
+                            } catch (error) {
+                                console.error("Upload handler error:", error);
+                                // Error handling is done in uploadImage now.
+                            } finally {
+                                // Final clean-up is done in uploadImage now.
                             }
-                        } catch (error) {
-                            console.error("Upload error:", error);
-                            await typeBotMessage("Failed to process image upload", 'bot');
-                        } finally {
-                            loader.style.display = 'none';
-                            textInput.value = '';
-                            textInput.focus();
-                            actionType.value = 'ask';
-                            fileInputLabel.style.display = 'none';
-                            fileInput.value = '';
-                        }
-                    };
-                    reader.readAsDataURL(file);
-                    return; // Prevent immediate clearing and loader hide
-                }
-
-                textInput.value = '';
-                loader.style.display = 'none';
-                textInput.focus();
-            });
-
-            // Function to add a message to the chatbox immediately (for user messages)
-            function addMessage(text, type = 'bot', imageElement = null) {
-                const msg = document.createElement('div');
-                msg.className = `chat-message ${type}-message`;
-                
-                const header = document.createElement('div');
-                header.className = 'message-header';
-                header.innerHTML = type === 'user' ? '<i class="fas fa-user"></i> You' : '<i class="fas fa-robot"></i> Vexara';
-                msg.appendChild(header);
-                
-                const content = document.createElement('div');
-                content.className = 'message-content';
-                
-                if (type === 'bot' && text.includes('**Concise Direct Answer:**')) {
-                    const sections = text.split(/\d+\.\s+\*\*.*?\*\*:/g).slice(1);
-                    const titles = text.match(/\d+\.\s+\*\*(.*?)\*\*:/g) || [];
-                    
-                    titles.forEach((title, index) => {
-                        const cleanTitle = title.replace(/\d+\.\s+\*\*|\*\*:/g, '');
-                        const sectionDiv = document.createElement('div');
-                        sectionDiv.className = 'message-section';
-                        
-                        const titleDiv = document.createElement('div');
-                        titleDiv.className = 'section-title';
-                        
-                        let icon = 'fa-info-circle';
-                        if (cleanTitle.includes('Examples')) icon = 'fa-list-ul';
-                        else if (cleanTitle.includes('Explanation')) icon = 'fa-lightbulb';
-                        else if (cleanTitle.includes('Context')) icon = 'fa-book';
-                        
-                        titleDiv.innerHTML = `<i class="fas ${icon}"></i> ${cleanTitle}`;
-                        sectionDiv.appendChild(titleDiv);
-                        
-                        const contentDiv = document.createElement('div');
-                        let sectionContent = sections[index]?.trim() || '';
-                        
-                        if (cleanTitle.includes('Answer') && sectionContent.includes('```')) {
-                            sectionContent = sectionContent.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
-                                return `<div class="code-block"><div class="code-header"><span class="code-language">${lang || 'python'}</span><button class="copy-btn" onclick="copyToClipboard(this)"><i class="far fa-copy"></i> Copy</button></div><pre><code class="${lang || 'python'}">${code.trim()}</code></pre></div>`;
-                            });
-                        }
-                        
-                        contentDiv.innerHTML = marked.parse(sectionContent);
-                        sectionDiv.appendChild(contentDiv);
-                        content.appendChild(sectionDiv);
-                    });
-                } else {
-                    content.innerHTML = marked.parse(text);
-                }
-                
-                msg.appendChild(content);
-                
-                if (imageElement) {
-                    msg.appendChild(imageElement);
-                }
-                
-                chatbox.appendChild(msg);
-                scrollToBottom(); // Scroll after adding message
-            
-                document.querySelectorAll('pre code').forEach((block) => {
-                    hljs.highlightElement(block);
-                });
-
-                if (!currentChatId) {
-                    const userQuery = textInput.value.trim();
-                    chatTitle = userQuery.substring(0, 30) || "New Chat";
-                    currentChatId = 'chat_' + Date.now();
-                    localStorage.setItem(currentChatId, JSON.stringify([]));
-                }
-            
-                const chat = JSON.parse(localStorage.getItem(currentChatId)) || [];
-                chat.push({ type, text });
-                localStorage.setItem(currentChatId, JSON.stringify(chat));
-                updateChatHistory();
-            }
-
-            // Function to type out bot messages character by character
-            async function typeBotMessage(text, type = 'bot', imageElement = null) {
-                const msg = document.createElement('div');
-                msg.className = `chat-message ${type}-message`;
-                
-                const header = document.createElement('div');
-                header.className = 'message-header';
-                header.innerHTML = '<i class="fas fa-robot"></i> Vexara';
-                msg.appendChild(header);
-                
-                const content = document.createElement('div');
-                content.className = 'message-content';
-                msg.appendChild(content);
-
-                if (imageElement) {
-                    msg.appendChild(imageElement);
-                }
-
-                chatbox.appendChild(msg);
-                scrollToBottom();
-
-                const fullContentHtml = marked.parse(text);
-
-                // Simulate typing effect
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = fullContentHtml;
-                const elementsToType = Array.from(tempDiv.childNodes);
-
-                let typedContent = '';
-                for (const element of elementsToType) {
-                    if (element.nodeType === Node.TEXT_NODE) {
-                        const textChars = element.textContent.split('');
-                        for (const char of textChars) {
-                            typedContent += char;
-                            content.innerHTML = typedContent;
-                            scrollToBottom(); // Scroll during typing
-                            await new Promise(resolve => setTimeout(resolve, 10)); // Adjust typing speed here
-                        }
-                    } else {
-                        // For HTML elements (like paragraphs, code blocks, etc.)
-                        const outerHTML = element.outerHTML;
-                        for (let i = 0; i < outerHTML.length; i++) {
-                            typedContent += outerHTML[i];
-                            content.innerHTML = typedContent;
-                            scrollToBottom(); // Scroll during typing
-                            await new Promise(resolve => setTimeout(resolve, 1)); // Faster for tags
-                        }
+                        };
+                        reader.readAsDataURL(file);
+                        return; 
                     }
-                    scrollToBottom(); // Ensure scroll after each chunk
-                }
-                
-                // After typing, re-highlight code blocks
-                document.querySelectorAll('pre code').forEach((block) => {
-                    hljs.highlightElement(block);
-                });
 
-                // Save to chat history after full message is typed
-                if (!currentChatId) {
-                    const userQuery = textInput.value.trim();
-                    chatTitle = userQuery.substring(0, 30) || "New Chat";
-                    currentChatId = 'chat_' + Date.now();
-                    localStorage.setItem(currentChatId, JSON.stringify([]));
-                }
-                const chat = JSON.parse(localStorage.getItem(currentChatId)) || [];
-                chat.push({ type, text });
-                localStorage.setItem(currentChatId, JSON.stringify(chat));
-                updateChatHistory();
-            }
-
-            // Function to scroll to the bottom of the chatbox
-            function scrollToBottom() {
-                chatbox.scrollTop = chatbox.scrollHeight;
-            }
-            
-            // Update chat history list
-            function updateChatHistory() {
-                chatHistoryList.innerHTML = '';
-                Object.keys(localStorage).forEach(key => {
-                    if (key.startsWith('chat_')) {
-                        const chatItem = document.createElement('div');
-                        chatItem.className = 'chat-link';
-                        if (key === currentChatId) chatItem.classList.add('active');
-                        
-                        let title = 'Chat';
-                        try {
-                            const messages = JSON.parse(localStorage.getItem(key));
-                            const firstUserMsg = messages.find(m => m.type === 'user');
-                            if (firstUserMsg) {
-                                title = firstUserMsg.text.substring(0, 30);
-                                if (firstUserMsg.text.length > 30) title += '...';
-                            }
-                        } catch (e) {
-                            console.error('Error parsing chat history:', e);
-                        }
-                        
-                        chatItem.innerHTML = `<i class="far fa-comment"></i> ${title}`;
-                        chatItem.onclick = () => loadChat(key);
-                        chatHistoryList.appendChild(chatItem);
-                    }
-                });
-            }
-
-            // Load chat from history
-            function loadChat(key) {
-                currentChatId = key;
-                chatbox.innerHTML = '';
-                try {
-                    const messages = JSON.parse(localStorage.getItem(key));
-                    messages.forEach(msg => {
-                        // Reconstruct image if applicable
-                        let imageElement = null;
-                        if (msg.image_data) { // Assuming you save image data in localStorage
-                            imageElement = document.createElement('img');
-                            imageElement.src = msg.image_data;
-                            imageElement.classList.add('uploaded-image-preview');
-                        }
-                        addMessage(msg.text, msg.type, imageElement);
-                    });
-                    
-                    // Update active state in sidebar
-                    document.querySelectorAll('.chat-link').forEach(link => {
-                        link.classList.remove('active');
-                    });
-                    document.querySelector(`.chat-link[onclick="loadChat('${key}')"]`).classList.add('active');
-                    scrollToBottom(); // Scroll after loading chat
-                } catch (e) {
-                    console.error('Error loading chat:', e);
-                }
-            }
-
-            // Start new chat
-            async function startNewChat() {
-                try {
-                    const response = await fetch('/start_new_chat', { method: 'POST' });
-                    const data = await response.json();
-                    
-                    chatbox.innerHTML = '';
+                    if (loaderElement) loaderElement.style.display = 'none';
                     textInput.value = '';
-                    fileInput.value = '';
-                    actionType.value = 'ask';
-                    fileInputLabel.style.display = 'none';
-                    
-                    currentChatId = null;
-                    updateChatHistory();
-                    
-                    await typeBotMessage("New chat started. How can I assist you today?", 'bot'); // Type out welcome message
-                } catch (error) {
-                    console.error("Error starting new chat:", error);
-                    await typeBotMessage("Failed to start new chat. Please try again.", 'bot');
-                }
+                    textInput.style.height = 'auto'; 
+                    if (textInput) textInput.focus();
+                });
             }
 
-            // Clear all chats
-            window.clearAllChats = function() {
-                if (confirm('Are you sure you want to clear all chat history?')) {
-                    Object.keys(localStorage).forEach(key => {
-                        if (key.startsWith('chat_')) {
-                            localStorage.removeItem(key);
-                        }
-                    });
-                    chatbox.innerHTML = '';
-                    chatHistoryList.innerHTML = '';
-                    currentChatId = null;
-                    typeBotMessage("All chats cleared. How can I assist you today?", 'bot');
-                }
-            };
-
-            // Toggle dark mode
-            window.toggleDarkMode = function() {
-                document.body.classList.toggle('dark-mode');
-                localStorage.setItem('darkMode', 
-                    document.body.classList.contains('dark-mode') ? 'enabled' : 'disabled');
-            };
-
-            // API call functions
-            async function askAI(query) {
-                const formData = new FormData();
-                formData.append('instruction', query);
-
-                try {
-                    const response = await fetch('/ask', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    const data = await response.json();
-                    return data.response || "Sorry, I couldn't process your request.";
-                } catch (error) {
-                    console.error("Error asking AI:", error);
-                    return "There was an error contacting the AI service.";
-                }
-            }
-
-            // Upload image function
-            async function uploadImage(file, caption = '') {
-                const formData = new FormData();
-                formData.append('image', file);
-                if (caption) {
-                    formData.append('caption', caption);
-                }
-
-                try {
-                    const response = await fetch('/upload_image', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    return await response.json();
-                } catch (error) {
-                    console.error("Error uploading image:", error);
-                    return { response: "There was an error processing your image." };
-                }
-            }
-
-            // Copy to clipboard function
-            window.copyToClipboard = function(button) {
-                const codeBlock = button.closest('.code-block').querySelector('code');
-                navigator.clipboard.writeText(codeBlock.textContent)
-                    .then(() => {
-                        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                        setTimeout(() => {
-                            button.innerHTML = '<i class="far fa-copy"></i> Copy';
-                        }, 2000);
-                    })
-                    .catch(err => {
-                        console.error('Failed to copy:', err);
-                    });
-            };
-
-            // Initialize chat history and add initial welcome message
+            // Initial load of chat history
             updateChatHistory();
-            if (chatbox.children.length === 0) { // Only add welcome message if chatbox is empty
-                typeBotMessage("Hello! I'm Vexara AI. How can I help you today?", 'bot');
+            // Assign a new currentChatId if none exists (first load)
+            if (!currentChatId) {
+                const latestChatId = Object.keys(localStorage).filter(key => key.startsWith('chat_')).sort((a, b) => {
+                    try {
+                        const chatA = JSON.parse(localStorage.getItem(a));
+                        const chatB = JSON.parse(localStorage.getItem(b));
+                        const tsA = chatA.length > 0 && chatA[0].timestamp ? new Date(chatA[0].timestamp).getTime() : 0;
+                        const tsB = chatB.length > 0 && chatB[0].timestamp ? new Date(chatB[0].timestamp).getTime() : 0;
+                        return tsB - tsA; 
+                    } catch (e) {
+                        console.error("Error sorting chat history:", e);
+                        return 0;
+                    }
+                })[0];
+                if (latestChatId) {
+                    loadChat(latestChatId);
+                } else {
+                    currentChatId = 'chat_' + Date.now(); // Generate new ID if no previous chats
+                    addMessage("Welcome to Vexara AI Assistant! How can I help you today?", 'bot', null, new Date());
+                    try {
+                        localStorage.setItem(currentChatId, JSON.stringify([])); // Initialize new chat in local storage
+                    } catch (e) {
+                        console.error("Error initializing new chat in local storage:", e);
+                    }
+                }
+            } else {
+                // If currentChatId already set (e.g. from a previous load or new chat action)
+                loadChat(currentChatId);
             }
-
-            // Focus input field on load
-            textInput.focus();
+            
         });
     </script>
 </body>
