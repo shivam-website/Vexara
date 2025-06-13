@@ -3,7 +3,7 @@ Flask-Cors==5.0.1
 Flask-Dance==7.0.0
 authlib==1.2.1
 Pillow==10.3.0
-pytesseract==0.3.10  # Python wrapper
+pytesseract==0.3.10
 gunicorn==20.1.0
 python-dotenv==1.0.1
 requests==2.32.3
