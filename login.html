@@ -3,83 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - OpenAI</title>
+    <title>Login to Vexara AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Lighter background for login page */
         }
         .gradient-bg {
-            background: linear-gradient(135deg, #4a72ff 0%, #7c4dff 100%);
+            background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%); /* Vexara's primary colors */
         }
         .input-focus:focus {
-            box-shadow: 0 0 0 3px rgba(74, 114, 255, 0.25);
+            box-shadow: 0 0 0 3px rgba(110, 72, 170, 0.25); /* Focus ring with Vexara's primary color */
+            border-color: #6e48aa;
         }
         .btn-hover:hover {
-            transform: translateY(-1px);
+            transform: translateY(-2px); /* Slightly more pronounced lift */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow on hover */
         }
         .transition-all {
-            transition: all 0.2s ease;
+            transition: all 0.2s ease-in-out; /* Smoother transitions */
+        }
+        .card-animation {
+            animation: fadeInScale 0.5s ease-out forwards;
+        }
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        .sparkle-icon {
+            filter: drop-shadow(0 0 5px #9d50bb); /* Glow effect for sparkle */
+            color: #6e48aa; /* Primary color */
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center p-4">
     <div class="max-w-md w-full">
-        <!-- Logo Container -->
+        <!-- Logo and Welcome Message -->
         <div class="text-center mb-8">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-16 h-16 mx-auto text-indigo-600">
-                <path fill-rule="evenodd" d="M9.315 7.584C12.195 3.883 16.695 1.5 21.75 1.5a.75.75 0 01.75.75c0 5.056-2.383 9.555-6.084 12.436A6.75 6.75 0 019.75 22.5a.75.75 0 01-.75-.75v-4.131A15.838 15.838 0 016.382 15H2.25a.75.75 0 01-.75-.75 6.75 6.75 0 017.815-6.666zM15 6.75a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" clip-rule="evenodd" />
-                <path d="M5.26 17.242a.75.75 0 10-.71-1.327 5.25 5.25 0 00-2.306 5.644.75.75 0 101.45-.388 3.75 3.75 0 011.566-3.929z" />
-            </svg>
-            <h1 class="text-3xl font-bold text-gray-900 mt-4">Welcome back</h1>
-            <p class="text-gray-500 mt-2">Enter your credentials to continue</p>
+            <div class="flex items-center justify-center mb-4">
+                <i class="fas fa-robot text-indigo-600 w-12 h-12 mr-2 sparkle-icon"></i>
+                <i class="fas fa-sparkle text-indigo-600 w-8 h-8 sparkle-icon"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold text-gray-900 mt-4">Welcome to Vexara AI</h1>
+            <p class="text-gray-600 mt-2">Sign in to unlock powerful AI capabilities.</p>
         </div>
 
-        <!-- Login Form -->
-        <div class="bg-white rounded-xl shadow-lg p-8 mb-6 border border-gray-100">
-            <form id="loginForm" class="space-y-6">
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email address</label>
-                    <input type="email" id="email" name="email" required 
-                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all input-focus"
-                           placeholder="you@example.com">
-                </div>
-                
-                <button type="submit" id="continueBtn" 
-                        class="w-full gradient-bg text-white py-3 px-4 rounded-lg font-medium flex items-center justify-center transition-all btn-hover">
-                    Continue
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 ml-2">
-                        <path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd" />
-                    </svg>
-                </button>
-            </form>
-
-            <!-- Divider -->
-            <div class="relative my-6">
-                <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-gray-300"></div>
-                </div>
-                <div class="relative flex justify-center text-sm">
-                    <span class="px-2 bg-white text-gray-500">OR</span>
-                </div>
-            </div>
-
-            <!-- Social Login Options -->
+        <!-- Social Login Options -->
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-6 border border-gray-100 card-animation">
+            <h2 class="text-xl font-semibold text-gray-800 mb-6 text-center">Continue with:</h2>
             <div class="space-y-4">
-                <button class="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-all btn-hover">
+                <a href="/google-login" class="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all btn-hover">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google logo" class="h-5 w-5 mr-3">
-                    Continue with Google
-                </button>
+                    Google
+                </a>
                 
-                <button class="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-all btn-hover">
+                <a href="/microsoft_login" class="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all btn-hover">
                     <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 48 48" class="mr-3">
                         <path fill="#ff5722" d="M6 6H22V22H6z" transform="rotate(-180 14 14)"></path><path fill="#4caf50" d="M26 6H42V22H26z" transform="rotate(-180 34 14)"></path><path fill="#ffc107" d="M26 26H42V42H26z" transform="rotate(-180 34 34)"></path><path fill="#03a9f4" d="M6 26H22V42H6z" transform="rotate(-180 14 34)"></path>
                     </svg>
-                    Continue with Microsoft
-                </button>
+                    Microsoft
+                </a>
                 
-                <button class="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-all btn-hover">
+                <!-- Apple Login (Placeholder, requires specific setup) -->
+                <button class="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all btn-hover opacity-70 cursor-not-allowed" disabled title="Apple login requires specific backend setup">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" class="w-5 h-5 mr-3">
                         <path d="M318.7 268.7c-.2-36.7 16.4-64.4 54-64.4h1.3c66.3 0 91.9 124.5 92.3 200 .4 71-42.4 106.3-78.3 106.3-26.3 0-54.2-15.4-58.3-42.7l-84.9-61.5c-6.9-51.8 10.5-94.2 62.9-138.7zM155.3 256c0 18.7 2.8 19.5 20.3 19.5 44.4 0 77-26.7 77-80 0-15.3-2.8-19.5-20.3-19.5-44.4 0-77 26.6-77 80zM2.3 157.3s41.9-3 70.1 13.5c13.3 7.9 20.4 20.3 44.6 20.3 30.9 0 42.2-20.3 44.7-20.3 28.2-16.5 70.1-13.5 70.1-13.5 15 1.1 32.5 14.5 32.5 44.3 0 9.3-6.6 36.5-6.6 36.5-24.2 70.5-63 98-63 155.5 0 23.8 4.3 48.4 4.3 48.4H2.8s-4.8-25.8-4.8-48.4c0-54.9 30.4-90.3 51.2-126.1 13.6-23.9 20.1-49.5 20.1-72.1C69.3 172.3 2.3 157.3 2.3 157.3z"/>
                     </svg>
@@ -88,51 +83,12 @@
             </div>
         </div>
 
-        <!-- Sign Up Link -->
-        <p class="text-center text-gray-600">
-            Don't have an account? 
-            <a href="#" class="text-indigo-600 font-medium hover:text-indigo-800">Sign up</a>
-        </p>
-
         <!-- Footer Links -->
-        <div class="flex justify-center space-x-4 mt-8 text-sm text-gray-500">
-            <a href="#" class="hover:text-gray-700">Terms of Use</a>
+        <div class="flex justify-center space-x-4 mt-8 text-sm text-gray-600">
+            <a href="#" class="hover:text-gray-800 transition-colors">Terms of Service</a>
             <span>•</span>
-            <a href="#" class="hover:text-gray-700">Privacy Policy</a>
+            <a href="#" class="hover:text-gray-800 transition-colors">Privacy Policy</a>
         </div>
     </div>
-
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const continueBtn = document.getElementById('continueBtn');
-            
-            // Show loading state
-            continueBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Authenticating...';
-            continueBtn.disabled = true;
-            
-            // Simulate API call
-            setTimeout(() => {
-                // In a real app, you would handle the login response here
-                console.log('Logging in with email:', email);
-                alert(`A login link would be sent to ${email}`);
-                
-                // Reset button
-                continueBtn.innerHTML = 'Continue <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 ml-2"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd" /></svg>';
-                continueBtn.disabled = false;
-            }, 2000);
-        });
-
-        // Add hover effects programmatically
-        document.querySelectorAll('button').forEach(button => {
-            button.addEventListener('mouseenter', () => {
-                button.classList.add('transform', 'hover:scale-102');
-            });
-            button.addEventListener('mouseleave', () => {
-                button.classList.remove('transform', 'hover:scale-102');
-            });
-        });
-    </script>
 </body>
 </html>
