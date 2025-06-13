@@ -52,157 +52,115 @@
 
         /* Sidebar Styles */
         .sidebar {
-            width: 280px;
+            width: 280px; /* Default width */
             background-color: var(--sidebar-bg);
             color: var(--sidebar-text);
             padding: 20px;
             display: flex;
             flex-direction: column;
             height: 100vh;
-            position: fixed;
-            z-index: 100;
-            transition: transform 0.3s ease;
+            flex-shrink: 0; /* Prevent sidebar from shrinking below its width */
+            transition: width 0.3s ease, padding 0.3s ease, transform 0.3s ease; /* Combined transition */
+            overflow: hidden; /* Hide content when collapsed */
+            position: relative; /* Default for desktop, allowing flexible layout */
         }
 
-        .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        .sidebar.collapsed {
+            width: 0;
+            padding: 0;
+            min-width: 0; /* Ensures it collapses fully */
         }
-
-        .sidebar-logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .sidebar-logo i {
-            color: var(--primary-color);
-            filter: drop-shadow(0 0 5px var(--secondary-color)); /* Glow effect for sparkle */
-        }
-
-        .sidebar-toggle {
-            background: none;
-            border: none;
-            color: var(--sidebar-text);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .new-chat-btn {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: var(--border-radius);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .new-chat-btn:hover {
-            background: var(--secondary-color);
-        }
-
-        #chat-history-list {
-            flex: 1;
-            overflow-y: auto;
-            margin-bottom: 20px;
-        }
-
-        .chat-link {
-            padding: 10px 12px;
-            border-radius: var(--border-radius);
-            margin-bottom: 5px;
-            cursor: pointer;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            transition: background 0.2s;
-            color: var(--sidebar-text); /* Ensure history links are visible */
-            text-decoration: none; /* Remove underline */
-        }
-
-        .chat-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .chat-link.active {
-            background: var(--primary-color);
-        }
-
-        .sidebar-footer {
-            padding-top: 15px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar-btn {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            text-align: left;
-            background: none;
-            border: none;
-            color: var(--sidebar-text);
-            border-radius: var(--border-radius);
-            margin-bottom: 5px;
-            cursor: pointer;
-            transition: background 0.2s;
-            text-decoration: none; /* For the logout link */
-        }
-
-        .sidebar-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar-btn i {
-            margin-right: 8px;
-        }
-
-        /* User Info Section */
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: var(--border-radius);
-            margin-bottom: 15px;
-            font-size: 0.9rem;
-            color: var(--sidebar-text);
-        }
-        .user-info i {
-            font-size: 1.2rem;
-            color: var(--primary-color);
-        }
-        .user-email {
-            font-weight: 500;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
 
         /* Main Content Styles */
         .main {
-            flex: 1;
-            margin-left: 280px;
+            flex: 1; /* Takes remaining space */
+            margin-left: 0; /* Start with 0 margin, adjust dynamically */
             display: flex;
             flex-direction: column;
             height: 100vh;
             transition: margin-left 0.3s ease;
         }
 
+        .main.full-width {
+            margin-left: 0;
+        }
+
+        /* Floating button for mobile and desktop */
+        #showSidebarBtn {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1000;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            padding: 0;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        /* Sidebar Toggle button inside the sidebar header */
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: var(--sidebar-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: block; /* Always visible for now */
+        }
+
+
+        /* Responsive Adjustments */
+        @media (min-width: 769px) {
+            /* On desktop, sidebar is part of flex layout */
+            .main {
+                margin-left: 280px; /* Adjusted by JS based on sidebar.collapsed */
+            }
+            .sidebar.collapsed + .main { /* When sidebar is collapsed, main takes full width */
+                margin-left: 0;
+            }
+            #showSidebarBtn {
+                display: none !important; /* Hide floating button on desktop */
+            }
+            .sidebar-toggle { /* Keep the close button inside sidebar visible */
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* On mobile, sidebar is fixed and slides out */
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100%;
+                transform: translateX(-100%); /* Hidden off-screen */
+                width: 280px; /* Fixed width when visible */
+                z-index: 100; /* Ensure it's above main content */
+                box-shadow: var(--shadow);
+            }
+            .sidebar.visible { /* Class to show sidebar on mobile */
+                transform: translateX(0);
+            }
+            .main {
+                margin-left: 0; /* Main content always full width on mobile */
+            }
+            #showSidebarBtn {
+                display: block !important; /* Show floating button on mobile */
+            }
+            /* Hide the internal close button on mobile, it's redundant with floating button */
+            #hideSidebarBtn {
+                display: block; /* We need it to hide the sidebar once open */
+            }
+        }
+
+        /* General styles, largely unchanged from previous version */
         .top-bar {
             padding: 15px 20px;
             background-color: var(--chat-bg);
@@ -452,38 +410,29 @@
 
         /* Responsive Styles */
         @media (max-width: 768px) {
+            /* On mobile, sidebar is fixed and slides out */
             .sidebar {
-                transform: translateX(-100%);
                 position: fixed;
+                left: 0;
+                top: 0;
                 height: 100%;
+                transform: translateX(-100%); /* Hidden off-screen */
+                width: 280px; /* Fixed width when visible */
+                z-index: 100; /* Ensure it's above main content */
+                box-shadow: var(--shadow);
             }
-
-            .sidebar.visible {
+            .sidebar.visible { /* Class to show sidebar on mobile */
                 transform: translateX(0);
             }
-
             .main {
-                margin-left: 0;
+                margin-left: 0; /* Main content always full width on mobile */
             }
-
             #showSidebarBtn {
-                display: block !important;
-                position: fixed;
-                top: 15px;
-                left: 15px;
-                z-index: 1000;
-                background: var(--primary-color);
-                color: white;
-                border: none;
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                font-size: 1.2rem;
-                padding: 0; /* Remove padding for better circle shape */
+                display: block !important; /* Show floating button on mobile */
             }
-
-            .chat-message {
-                max-width: 90%;
+            /* Hide the internal close button on mobile, it's redundant with floating button */
+            #hideSidebarBtn {
+                display: block; /* We need it to hide the sidebar once open */
             }
         }
 
@@ -807,7 +756,7 @@
     <script>
         // Global variables for chat management
         let currentChatId = null;
-        let chatTitle = '';
+        let sidebarHidden = false; // Track sidebar state
 
         // --- Helper Functions (Globally accessible for inline onclicks) ---
 
@@ -920,9 +869,14 @@
             
             chatbox.appendChild(msg);
             scrollToBottom();
+
+            // Highlight all code blocks after adding message
+            document.querySelectorAll('.chat-message code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
         }
 
-        // Function to type out bot messages character by character
+        // Function to type out bot messages character by character (improved for code blocks)
         async function typeBotMessage(text, type = 'bot', image_urls = [], timestamp = new Date()) {
             const chatbox = document.getElementById('chatbox');
             const msg = document.createElement('div');
@@ -945,27 +899,41 @@
             chatbox.appendChild(msg);
             scrollToBottom();
 
+            // Parse the entire text to HTML first to get the correct structure
+            const fullParsedHtml = marked.parse(text);
             const tempDiv = document.createElement('div');
-            // Parse content with marked for correct HTML structure (including code blocks)
-            tempDiv.innerHTML = marked.parse(text); 
+            tempDiv.innerHTML = fullParsedHtml;
 
-            // Type out text nodes and append other nodes directly
-            for (const node of Array.from(tempDiv.childNodes)) {
+            // Iterate through the parsed nodes and append them to the content div
+            // For text nodes, type them out. For code blocks and other elements, append fully.
+            const nodesToAnimate = Array.from(tempDiv.childNodes);
+            for (const node of nodesToAnimate) {
                 if (node.nodeType === Node.TEXT_NODE) {
-                    const textContent = node.textContent;
+                    const textNodeContent = node.textContent;
+                    const span = document.createElement('span'); // Use a span to append text
+                    content.appendChild(span);
                     let i = 0;
-                    while (i < textContent.length) {
-                        content.textContent += textContent[i]; 
+                    while (i < textNodeContent.length) {
+                        span.textContent += textNodeContent[i]; 
                         scrollToBottom();
-                        await new Promise(resolve => setTimeout(resolve, 5));
+                        await new Promise(resolve => setTimeout(resolve, 5)); // Typing speed
                         i++;
                     }
-                } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'PRE') {
-                    // If it's a <pre> tag (code block), append directly and highlight
+                } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'P' && node.innerHTML.includes('<pre>')) {
+                    // This handles cases where marked wraps a code block in a <p> tag
+                    // (though with custom renderer, <pre> should be direct child)
+                    // If marked puts <pre> directly, the 'PRE' case below handles it.
+                    // For robustness, if <p> contains <pre>, append <p> fully.
                     content.appendChild(node.cloneNode(true));
-                    hljs.highlightElement(content.lastChild.querySelector('code')); // Highlight the code inside
-                }
-                else {
+                    scrollToBottom();
+                } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'PRE') {
+                    // Directly append the preformatted code block
+                    content.appendChild(node.cloneNode(true));
+                    scrollToBottom();
+                    // Highlight the code block immediately after it's added
+                    hljs.highlightElement(content.lastChild.querySelector('code'));
+                } else {
+                    // For other HTML elements (like lists, paragraphs without code, etc.), append them fully
                     content.appendChild(node.cloneNode(true));
                     scrollToBottom();
                 }
@@ -1004,9 +972,10 @@
                     summarizeButton.innerHTML = '<i class="fas fa-hourglass-half"></i> Summarizing...';
                     const summary = await summarizeText(text);
                     if (summary) {
-                        addMessage(`**Summary:** ${summary}`, 'bot', null, new Date()); // Add summary as new bot message
+                        // The summary is a new bot message, so we call addMessage directly.
+                        addMessage(`**Summary:** ${summary}`, 'bot', null, new Date()); 
                     } else {
-                        console.error('Failed to summarize text.'); // Use console.error instead of alert
+                        console.error('Failed to summarize text.');
                     }
                     summarizeButton.disabled = false;
                     summarizeButton.innerHTML = '<i class="fas fa-sparkle"></i> Summarize';
@@ -1014,26 +983,6 @@
                 messageActionsDiv.appendChild(summarizeButton);
                 msg.appendChild(messageActionsDiv);
             }
-
-            // Ensure all code blocks are highlighted after final content is added
-            document.querySelectorAll('pre code').forEach((block) => {
-                hljs.highlightElement(block);
-            });
-
-            // Save message to history after typing is complete
-            try {
-                const chat = JSON.parse(localStorage.getItem(currentChatId)) || [];
-                if (image_urls.length > 0) {
-                    chat.push({ type: 'bot', text: text, image_urls: image_urls, timestamp: timestamp.toISOString() });
-                } else {
-                    chat.push({ type: 'bot', text: text, timestamp: timestamp.toISOString() });
-                }
-                localStorage.setItem(currentChatId, JSON.stringify(chat));
-            } catch (e) {
-                console.error("Error saving message to local storage:", e);
-                // Optionally inform the user if local storage is full/unavailable
-            }
-            updateChatHistory();
         }
 
         // Function to send query to AI via backend
@@ -1041,9 +990,10 @@
             const textInput = document.getElementById('text-input');
             const loader = document.getElementById('loader');
             try {
+                loader.style.display = 'block'; // Show loader
                 const formData = new FormData();
                 formData.append('instruction', instruction);
-                formData.append('chat_id', currentChatId); // Add chat_id
+                formData.append('chat_id', currentChatId);
 
                 const response = await fetch(`${window.location.origin}/ask`, {
                     method: 'POST',
@@ -1051,7 +1001,7 @@
                 });
                 const data = await response.json();
                 
-                loader.style.display = 'none';
+                loader.style.display = 'none'; // Hide loader
                 
                 if (data.image_urls && data.image_urls.length > 0) {
                     await typeBotMessage(data.response, 'bot', data.image_urls, new Date()); 
@@ -1074,14 +1024,14 @@
         async function generateImage(prompt) {
             const textInput = document.getElementById('text-input');
             const loader = document.getElementById('loader');
-            loader.style.display = 'block'; // Ensure loader is visible for image generation
+            loader.style.display = 'block'; 
             
             try {
                 const formData = new FormData();
-                formData.append('instruction', prompt); // Use 'instruction' for consistency with /ask endpoint
-                formData.append('chat_id', currentChatId); // Add chat_id
+                formData.append('instruction', prompt); 
+                formData.append('chat_id', currentChatId); 
 
-                const response = await fetch(`${window.location.origin}/generate_image`, { // New endpoint for image generation
+                const response = await fetch(`${window.location.origin}/generate_image`, { 
                     method: 'POST',
                     body: formData,
                 });
@@ -1092,7 +1042,7 @@
                 if (data.image_urls && data.image_urls.length > 0) {
                     await typeBotMessage(data.response, 'bot', data.image_urls, new Date()); 
                 } else {
-                    console.error("Image generation failed: " + (data.response || "No response.")); // Use console.error
+                    console.error("Image generation failed: " + (data.response || "No response.")); 
                     await typeBotMessage(data.response || "Image generation failed.", 'bot', null, new Date());
                 }
             } catch (error) {
@@ -1101,7 +1051,7 @@
                 await typeBotMessage("Sorry, there was an error generating the image. Please try again.", 'bot', null, new Date());
             } finally {
                 textInput.value = '';
-                textInput.style.height = 'auto'; // Reset textarea height
+                textInput.style.height = 'auto'; 
                 textInput.focus();
             }
         }
@@ -1110,31 +1060,31 @@
         async function uploadImage(file, caption) {
             const textInput = document.getElementById('text-input');
             const loader = document.getElementById('loader');
-            loader.style.display = 'block'; // Ensure loader is visible for upload
+            loader.style.display = 'block'; 
             try {
                 const formData = new FormData();
                 formData.append('image', file);
                 if (caption) {
                     formData.append('caption', caption);
                 }
-                formData.append('chat_id', currentChatId); // Add chat_id
+                formData.append('chat_id', currentChatId); 
 
                 const response = await fetch(`${window.location.origin}/upload_image`, {
                     method: 'POST',
                     body: formData,
                 });
-                const data = await response.json(); // Parse response
+                const data = await response.json(); 
                 
                 loader.style.display = 'none';
 
                 if (data && data.response) {
-                    if (data.image_url) { // This is the URL of the *uploaded* image (not generated)
+                    if (data.image_url) { 
                         await typeBotMessage(data.response, 'bot', [data.image_url], new Date());
                     } else {
                         await typeBotMessage(data.response, 'bot', null, new Date());
                     }
                 } else {
-                    console.error("Image upload failed: Received an empty response."); // Use console.error
+                    console.error("Image upload failed: Received an empty response."); 
                     await typeBotMessage("Received an empty response from the server.", 'bot', null, new Date());
                 }
             } catch (error) {
@@ -1143,12 +1093,11 @@
                 await typeBotMessage("Failed to upload image due to network error. Please try again.", 'bot', null, new Date());
             } finally {
                 textInput.value = '';
-                textInput.style.height = 'auto'; // Reset textarea height
+                textInput.style.height = 'auto'; 
                 textInput.focus();
-                // Reset action type and hide file input after successful upload
                 document.getElementById('action-type').value = 'ask';
                 document.getElementById('file-input-label').style.display = 'none';
-                document.getElementById('file-input').value = ''; // Clear selected file
+                document.getElementById('file-input').value = ''; 
                 textInput.setAttribute('required', '');
                 textInput.placeholder = 'Ask Vexara anything...';
             }
@@ -1162,7 +1111,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ text: textToSummarize, chat_id: currentChatId }), // Add chat_id
+                    body: JSON.stringify({ text: textToSummarize, chat_id: currentChatId }), 
                 });
                 const data = await response.json();
                 if (data && data.summary) {
@@ -1195,109 +1144,116 @@
         document.addEventListener('DOMContentLoaded', function() {
             const confirmClearBtn = document.getElementById('confirmClearBtn');
             if (confirmClearBtn) {
-                confirmClearBtn.addEventListener('click', function() {
+                confirmClearBtn.addEventListener('click', async function() {
                     const chatbox = document.getElementById('chatbox');
-                    Object.keys(localStorage).filter(key => key.startsWith('chat_')).forEach(key => {
-                        localStorage.removeItem(key);
-                    });
-                    currentChatId = null;
-                    chatbox.innerHTML = '';
-                    addMessage("All chat history cleared. How can I help you?", 'bot', null, new Date());
-                    updateChatHistory();
-                    hideModal(); // Hide modal after clearing
+                    try {
+                        const response = await fetch(`${window.location.origin}/clear_all_chats`, { method: 'POST' });
+                        const result = await response.json();
+                        if (result.status === 'success') {
+                            currentChatId = null; // Important: Clear currentChatId locally
+                            chatbox.innerHTML = ''; // Clear chatbox UI
+                            addMessage("All chat history cleared. How can I help you?", 'bot', null, new Date());
+                            await updateChatHistory(); // Re-fetch history (should be empty, triggering new chat creation)
+                            hideModal();
+                        } else {
+                            console.error("Failed to clear chats on server:", result.error);
+                            // Using native alert for critical error feedback as requested in original instructions.
+                            alert("Failed to clear chats. Please try again."); 
+                        }
+                    } catch (error) {
+                        console.error("Error clearing chats:", error);
+                        alert("Network error while clearing chats. Please try again.");
+                    }
                 });
             }
         });
 
 
-        // Load chat history from localStorage and display in sidebar
-        function updateChatHistory() {
+        // Load chat history from backend and display in sidebar
+        async function updateChatHistory() {
             const chatHistoryList = document.getElementById('chat-history-list');
-            chatHistoryList.innerHTML = '';
-            // Filter keys starting with 'chat_' and sort by timestamp (most recent first)
-            const chatIds = Object.keys(localStorage)
-                .filter(key => key.startsWith('chat_'))
-                .map(id => {
-                    try {
-                        const chatData = JSON.parse(localStorage.getItem(id)) || [];
-                        // Get timestamp of the first message to sort by, or use current time if empty
-                        const firstMsgTimestamp = chatData.length > 0 && chatData[0].timestamp ? new Date(chatData[0].timestamp) : new Date();
-                        return { id, timestamp: firstMsgTimestamp.getTime() };
-                    } catch (e) {
-                        console.error(`Error parsing chat history for ${id}:`, e);
-                        return { id, timestamp: 0 }; // Handle corrupted data gracefully
-                    }
-                })
-                .sort((a, b) => b.timestamp - a.timestamp) // Sort descending by timestamp
-                .map(item => item.id); // Get back only the IDs
+            chatHistoryList.innerHTML = ''; // Clear existing history links
+            try {
+                const response = await fetch(`${window.location.origin}/get_chat_history_list`);
+                const chatSummaries = await response.json(); 
 
-            chatIds.forEach(id => {
-                let displayTitle = "New Chat";
-                try {
-                    const chatData = JSON.parse(localStorage.getItem(id));
-                    const firstUserMessage = chatData.find(msg => msg.type === 'user');
-                    if (firstUserMessage) {
-                        displayTitle = firstUserMessage.text.substring(0, 30) + (firstUserMessage.text.length > 30 ? '...' : '');
+                if (chatSummaries.length === 0) {
+                    // If no chat history exists for the user, start a new chat
+                    await startNewChat(true); // Pass true to indicate it's an initial setup, not a user-initiated new chat
+                } else {
+                    // Populate sidebar with chat summaries
+                    chatSummaries.forEach(chatSummary => {
+                        const chatLink = document.createElement('a');
+                        chatLink.href = "#";
+                        chatLink.className = `chat-link ${chatSummary.id === currentChatId ? 'active' : ''}`;
+                        chatLink.textContent = chatSummary.title;
+                        chatLink.onclick = (e) => {
+                            e.preventDefault();
+                            loadChat(chatSummary.id);
+                        };
+                        chatHistoryList.appendChild(chatLink);
+                    });
+
+                    // If currentChatId is not set or not in the retrieved list, load the most recent one
+                    const isCurrentChatInList = chatSummaries.some(summary => summary.id === currentChatId);
+                    if (!currentChatId || !isCurrentChatInList) {
+                        currentChatId = chatSummaries[0].id; // Set to the most recent chat
+                        await loadChat(currentChatId);
+                    } else {
+                        // If currentChatId is already valid, just ensure it's loaded
+                        await loadChat(currentChatId);
                     }
-                } catch (e) {
-                    console.error(`Error processing chat history for display: ${id}`, e);
-                    // displayTitle remains "New Chat"
                 }
-
-                const chatLink = document.createElement('a');
-                chatLink.href = "#";
-                chatLink.className = `chat-link ${id === currentChatId ? 'active' : ''}`;
-                chatLink.textContent = displayTitle;
-                chatLink.onclick = (e) => {
-                    e.preventDefault();
-                    loadChat(id);
-                };
-                chatHistoryList.appendChild(chatLink);
-            });
+            } catch (error) {
+                console.error("Error fetching chat history list:", error);
+                addMessage("Failed to load chat history. Please try refreshing.", 'bot', null, new Date());
+            }
         }
 
-        // Load a specific chat from history into the chatbox
-        function loadChat(id) {
+        // Load a specific chat from backend into the chatbox
+        async function loadChat(id) {
             const chatbox = document.getElementById('chatbox');
             currentChatId = id;
-            chatbox.innerHTML = ''; 
-            let chatData = [];
+            chatbox.innerHTML = ''; // Clear current messages
+
             try {
-                chatData = JSON.parse(localStorage.getItem(id)) || [];
-            } catch (e) {
-                console.error(`Error loading chat data for ${id}:`, e);
-                // Fallback to empty array
-            }
-            
+                const response = await fetch(`${window.location.origin}/get_chat_messages/${id}`);
+                const chatData = await response.json(); 
 
-            chatData.forEach(msg => {
-                const msgTimestamp = msg.timestamp ? new Date(msg.timestamp) : new Date();
-                if (msg.type === 'bot' && msg.image_urls) {
-                    addMessage(msg.text, msg.type, msg.image_urls, msgTimestamp);
-                } else if (msg.type === 'user' && msg.image_url) { 
-                    const imgElement = document.createElement('img');
-                    imgElement.src = msg.image_url;
-                    imgElement.classList.add('uploaded-image-preview');
-                    addMessage(msg.text, msg.type, imgElement, msgTimestamp);
-                } else {
-                    addMessage(msg.text, msg.type, null, msgTimestamp);
+                chatData.forEach(msg => {
+                    const msgTimestamp = msg.timestamp ? new Date(msg.timestamp * 1000) : new Date(); // Convert Unix timestamp to Date object
+                    if (msg.type === 'bot' && msg.image_urls) {
+                        // For messages loaded from history, use addMessage which does full rendering.
+                        // We do not animate typing for historical messages.
+                        addMessage(msg.text, msg.type, msg.image_urls, msgTimestamp);
+                    } else if (msg.type === 'user' && msg.image_url) { 
+                        const imgElement = document.createElement('img');
+                        imgElement.src = msg.image_url;
+                        imgElement.classList.add('uploaded-image-preview');
+                        addMessage(msg.text, msg.type, imgElement, msgTimestamp);
+                    } else {
+                        addMessage(msg.text, msg.type, null, msgTimestamp);
+                    }
+                });
+
+                // Update active state in sidebar.
+                document.querySelectorAll('.chat-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                const activeLink = document.querySelector(`.chat-link[onclick*="${currentChatId}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
                 }
-            });
-            // Update active state in sidebar.
-            document.querySelectorAll('.chat-link').forEach(link => {
-                link.classList.remove('active');
-            });
-            // Find the active link using the currentChatId
-            const activeLink = document.querySelector(`.chat-link[onclick*="${currentChatId}"]`);
-            if (activeLink) {
-                activeLink.classList.add('active');
-            }
 
-            scrollToBottom();
+                scrollToBottom();
+            } catch (error) {
+                console.error(`Error loading chat data for ${id}:`, error);
+                addMessage("Failed to load chat. It might have been deleted or corrupted.", 'bot', null, new Date());
+            }
         }
 
         // Start a new chat session
-        window.startNewChat = async function() {
+        window.startNewChat = async function(isInitialLoad = false) {
             const chatbox = document.getElementById('chatbox');
             const textInput = document.getElementById('text-input');
             const actionType = document.getElementById('action-type');
@@ -1305,26 +1261,33 @@
             const fileInput = document.getElementById('file-input');
 
             try {
-                // Backend call to signify new chat, clears server-side history if any
-                await fetch(`${window.location.origin}/start_new_chat`, { method: 'POST' }); 
-                currentChatId = 'chat_' + Date.now(); // Generate a new ID for the new chat
-                chatbox.innerHTML = ''; 
-                textInput.value = '';
-                textInput.style.height = 'auto'; // Reset textarea height
-                textInput.focus();
-                // Reset input area to default 'Ask AI' state
-                actionType.value = 'ask';
-                fileInputLabel.style.display = 'none';
-                fileInput.value = '';
-                textInput.setAttribute('required', '');
-                textInput.placeholder = 'Ask Vexara anything...';
-                
-                addMessage("New chat started. How can I assist you today?", 'bot', null, new Date()); 
-                updateChatHistory(); 
+                const response = await fetch(`${window.location.origin}/start_new_chat`, { method: 'POST' });
+                const data = await response.json();
+                if (data.chat_id) {
+                    currentChatId = data.chat_id;
+                    chatbox.innerHTML = ''; // Clear current messages
+                    textInput.value = '';
+                    textInput.style.height = 'auto'; // Reset textarea height
+                    textInput.focus();
+                    actionType.value = 'ask';
+                    fileInputLabel.style.display = 'none';
+                    fileInput.value = '';
+                    textInput.setAttribute('required', '');
+                    textInput.placeholder = 'Ask Vexara anything...';
+                    
+                    // Only display the welcome message if it's a new chat, not just reloading an empty one
+                    if (!isInitialLoad || (isInitialLoad && !data.has_previous_chats)) {
+                         addMessage("New chat started. How can I assist you today?", 'bot', null, new Date()); 
+                    }
+                   
+                    await updateChatHistory(); // Refresh history list
+                } else {
+                    console.error("Failed to get a new chat ID from backend.");
+                    addMessage("Failed to start new chat. Please try refreshing the page.", 'bot', null, new Date());
+                }
             } catch (error) {
                 console.error("Error starting new chat:", error);
-                // Inform user about error without blocking with alert
-                addMessage("Failed to start new chat. Please try refreshing the page.", 'bot', null, new Date());
+                addMessage("Failed to start new chat due to network error. Please try again.", 'bot', null, new Date());
             }
         };
 
@@ -1338,14 +1301,32 @@
             }
         };
 
+        // Function to toggle sidebar visibility
+        window.toggleSidebar = function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('.main');
+            const showSidebarBtn = document.getElementById('showSidebarBtn');
+
+            if (window.innerWidth <= 768) { // Mobile behavior (slide out)
+                sidebar.classList.toggle('visible');
+                // Adjust visibility of floating button based on sidebar state
+                showSidebarBtn.style.display = sidebar.classList.contains('visible') ? 'none' : 'block';
+            } else { // Desktop behavior (collapse/expand)
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('full-width');
+                sidebarHidden = sidebar.classList.contains('collapsed'); // Update internal state
+            }
+        };
+
+
         // --- DOMContentLoaded for initial setup ---
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', async function () {
             // Initialize dark mode based on local storage
             if (localStorage.getItem('darkMode') === 'enabled') {
                 document.body.classList.add('dark-mode');
             }
 
-            // Initialize Highlight.js
+            // Initialize Highlight.js (already done in marked.setOptions, but safe to call)
             hljs.highlightAll();
 
             // --- Event Listeners for DOM elements (defined within DOMContentLoaded) ---
@@ -1382,19 +1363,45 @@
             cameraOptions.appendChild(cancelCameraBtn);
             document.body.appendChild(cameraOptions);
 
-
-            // Sidebar toggle functionality for mobile
-            if (showSidebarBtn) { // Defensive check
-                showSidebarBtn.addEventListener('click', () => {
-                    sidebar.classList.add('visible');
-                });
+            // Event listener for the floating show sidebar button (always present on mobile)
+            if (showSidebarBtn) {
+                showSidebarBtn.addEventListener('click', toggleSidebar);
             }
 
-            if (hideSidebarBtn) { 
-                hideSidebarBtn.addEventListener('click', () => {
-                    sidebar.classList.remove('visible');
-                });
+            // Event listener for the hide sidebar button (inside sidebar header)
+            if (hideSidebarBtn) {
+                hideSidebarBtn.addEventListener('click', toggleSidebar);
             }
+
+            // Adjust layout on resize
+            window.addEventListener('resize', () => {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.querySelector('.main');
+                const showSidebarBtn = document.getElementById('showSidebarBtn');
+
+                if (window.innerWidth <= 768) { // Switching to mobile layout
+                    // If desktop was collapsed, remove collapsed state for mobile slide-out
+                    if (sidebar.classList.contains('collapsed')) {
+                        sidebar.classList.remove('collapsed');
+                        mainContent.classList.remove('full-width');
+                    }
+                    // Show floating button if sidebar is not currently visible
+                    if (!sidebar.classList.contains('visible')) {
+                        showSidebarBtn.style.display = 'block';
+                    }
+                } else { // Switching to desktop layout
+                    showSidebarBtn.style.display = 'none'; // Always hide floating button on desktop
+                    // Restore desktop collapsed state if it was hidden on desktop
+                    if (sidebarHidden) {
+                        sidebar.classList.add('collapsed');
+                        mainContent.classList.add('full-width');
+                    } else {
+                        sidebar.classList.remove('collapsed');
+                        mainContent.classList.remove('full-width');
+                    }
+                }
+            });
+
 
             // Auto-resize textarea
             if (textInput) {
@@ -1409,24 +1416,26 @@
                 actionType.addEventListener('change', function() {
                     const selectedAction = this.value;
                     if (selectedAction === 'upload_image') {
-                        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                        if (/Android|webOS|iPhone|iPad|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
                             if (cameraOptions) cameraOptions.style.display = 'block';
+                            if (fileInputLabel) fileInputLabel.style.display = 'none'; // Hide default input label
                         } else {
                             if (fileInputLabel) fileInputLabel.style.display = 'flex';
                             if (fileInput) fileInput.removeAttribute('capture');
+                            if (cameraOptions) cameraOptions.style.display = 'none'; // Hide camera options for desktop
                         }
                         if (textInput) {
                             textInput.placeholder = 'Add optional caption for the image...';
                             textInput.removeAttribute('required');
                         }
-                    } else if (selectedAction === 'generate_image') { // Handle generate_image selection
+                    } else if (selectedAction === 'generate_image') { 
                         if (cameraOptions) cameraOptions.style.display = 'none';
                         if (fileInputLabel) fileInputLabel.style.display = 'none';
                         if (textInput) {
                             textInput.placeholder = 'Enter a prompt for image generation...';
                             textInput.setAttribute('required', '');
                         }
-                    } else { // Default 'ask' action
+                    } else { 
                         if (cameraOptions) cameraOptions.style.display = 'none';
                         if (fileInputLabel) fileInputLabel.style.display = 'none';
                         if (textInput) {
@@ -1463,7 +1472,7 @@
                         textInput.placeholder = 'Ask Vexara anything...';
                         textInput.setAttribute('required', '');
                     }
-                    if (fileInput) fileInput.value = ''; // Clear selected file
+                    if (fileInput) fileInput.value = ''; 
                 });
             }
 
@@ -1523,11 +1532,9 @@
                             addMessage(messageContent, 'user', imgPreview, new Date()); 
 
                             try {
-                                const response = await uploadImage(file, caption); 
-                                // uploadImage already calls typeBotMessage internally
+                                await uploadImage(file, caption); 
                             } catch (error) {
                                 console.error("Upload handler error:", error);
-                                // Error handling is done in uploadImage now.
                             } finally {
                                 // Final clean-up is done in uploadImage now.
                             }
@@ -1543,38 +1550,11 @@
                 });
             }
 
-            // Initial load of chat history
-            updateChatHistory();
-            // Assign a new currentChatId if none exists (first load)
-            if (!currentChatId) {
-                const latestChatId = Object.keys(localStorage).filter(key => key.startsWith('chat_')).sort((a, b) => {
-                    try {
-                        const chatA = JSON.parse(localStorage.getItem(a));
-                        const chatB = JSON.parse(localStorage.getItem(b));
-                        const tsA = chatA.length > 0 && chatA[0].timestamp ? new Date(chatA[0].timestamp).getTime() : 0;
-                        const tsB = chatB.length > 0 && chatB[0].timestamp ? new Date(chatB[0].timestamp).getTime() : 0;
-                        return tsB - tsA; 
-                    } catch (e) {
-                        console.error("Error sorting chat history:", e);
-                        return 0;
-                    }
-                })[0];
-                if (latestChatId) {
-                    loadChat(latestChatId);
-                } else {
-                    currentChatId = 'chat_' + Date.now(); // Generate new ID if no previous chats
-                    addMessage("Welcome to Vexara AI Assistant! How can I help you today?", 'bot', null, new Date());
-                    try {
-                        localStorage.setItem(currentChatId, JSON.stringify([])); // Initialize new chat in local storage
-                    } catch (e) {
-                        console.error("Error initializing new chat in local storage:", e);
-                    }
-                }
-            } else {
-                // If currentChatId already set (e.g. from a previous load or new chat action)
-                loadChat(currentChatId);
-            }
-
+            // Initial setup logic
+            // When index.html loads, it means the user is already authenticated or a guest.
+            // So we directly update chat history.
+            await updateChatHistory(); // Use await here
+            
             // Fetch and display user info
             fetch('/user_info')
                 .then(response => response.json())
@@ -1590,6 +1570,15 @@
                 })
                 .catch(error => console.error('Error fetching user info:', error));
             
+            // Set initial sidebar state based on window size
+            if (window.innerWidth > 768) {
+                // On desktop, ensure sidebar is shown by default unless explicitly hidden
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.querySelector('.main');
+                sidebar.classList.remove('collapsed');
+                mainContent.classList.remove('full-width');
+                sidebarHidden = false;
+            }
         });
     </script>
 </body>
