@@ -258,6 +258,33 @@ def check_tesseract_installed():
         print(f"An error occurred while checking Tesseract: {e}")
         return False
 
+# --- New AI Features using Gemini ---
+def check_grammar_and_style_gemini(text_to_check):
+    """Uses Gemini to check grammar and style."""
+    try:
+        prompt = f"Please correct the grammar and improve the writing style of the following text. Provide the corrected text and briefly explain any significant changes:\n\n{text_to_check}"
+        response = chat_model.generate_content(prompt)
+        return response.text.strip()
+    except genai.types.StopCandidateException as e:
+        print(f"Grammar/Style Check Error: Content generation stopped due to safety policies. {e}")
+        return "I cannot check this content due to safety policies."
+    except Exception as e:
+        print(f"Grammar/Style Check Error: {e}")
+        return "Sorry, I'm having trouble checking grammar and style right now."
+
+def explain_code_gemini(code_to_explain):
+    """Uses Gemini to explain code."""
+    try:
+        prompt = f"Please explain the following code. Break down its functionality, explain key parts, and provide insights into its purpose and usage. Use Markdown for formatting, especially for code snippets:\n\n```\n{code_to_explain}\n```"
+        response = chat_model.generate_content(prompt)
+        return response.text.strip()
+    except genai.types.StopCandidateException as e:
+        print(f"Code Explanation Error: Content generation stopped due to safety policies. {e}")
+        return "I cannot explain this code due to safety policies."
+    except Exception as e:
+        print(f"Code Explanation Error: {e}")
+        return "Sorry, I'm having trouble explaining the code right now."
+
 # --- Flask Routes ---
 
 @app.route('/')
@@ -438,6 +465,60 @@ def summarize_text_endpoint():
     else:
         return jsonify({"error": "Failed to generate summary."}), 500
 
+# New Routes for LLM features
+@app.route('/check_grammar_style', methods=['POST'])
+def check_grammar_style_endpoint():
+    """Endpoint for grammar and style checking."""
+    user_id = get_user_id()
+    chat_id = request.form.get('chat_id')
+    text_to_check = request.form.get('text', '').strip()
+
+    if not chat_id:
+        return jsonify({"error": "Chat ID not provided."}), 400
+    if not text_to_check:
+        return jsonify({"error": "No text provided for grammar and style check."}), 400
+
+    # Add user message to history
+    current_chat_history = load_chat_history_from_file(user_id, chat_id)
+    current_chat_history.append({"type": "user", "text": f"Please check my grammar and style: {text_to_check}", "timestamp": time.time()})
+    save_chat_history_to_file(user_id, chat_id, current_chat_history)
+
+    corrected_text = check_grammar_and_style_gemini(text_to_check)
+    
+    # Add bot response to history
+    current_chat_history = load_chat_history_from_file(user_id, chat_id) # Reload
+    current_chat_history.append({"type": "bot", "text": corrected_text, "timestamp": time.time()})
+    save_chat_history_to_file(user_id, chat_id, current_chat_history)
+
+    return jsonify({"corrected_text": corrected_text})
+
+@app.route('/explain_code', methods=['POST'])
+def explain_code_endpoint():
+    """Endpoint for code explanation."""
+    user_id = get_user_id()
+    chat_id = request.form.get('chat_id')
+    code_to_explain = request.form.get('code', '').strip()
+
+    if not chat_id:
+        return jsonify({"error": "Chat ID not provided."}), 400
+    if not code_to_explain:
+        return jsonify({"error": "No code provided for explanation."}), 400
+
+    # Add user message to history
+    current_chat_history = load_chat_history_from_file(user_id, chat_id)
+    current_chat_history.append({"type": "user", "text": f"Explain this code:\n```\n{code_to_explain}\n```", "timestamp": time.time()})
+    save_chat_history_to_file(user_id, chat_id, current_chat_history)
+
+    explanation = explain_code_gemini(code_to_explain)
+    
+    # Add bot response to history
+    current_chat_history = load_chat_history_from_file(user_id, chat_id) # Reload
+    current_chat_history.append({"type": "bot", "text": explanation, "timestamp": time.time()})
+    save_chat_history_to_file(user_id, chat_id, current_chat_history)
+
+    return jsonify({"explanation": explanation})
+
+
 @app.route('/start_new_chat', methods=['POST'])
 def start_new_chat_endpoint():
     """Handles starting a new chat session."""
@@ -447,6 +528,7 @@ def start_new_chat_endpoint():
 
     # Check if there are any other chats for this user to tell the frontend
     has_previous_chats = False
+    # Filter out the newly created chat file from the list
     for filename in os.listdir(CHAT_HISTORY_DIR):
         if filename.startswith(f"{user_id}_") and filename.endswith(".json") and filename != f"{user_id}_{new_chat_id}.json":
             has_previous_chats = True
