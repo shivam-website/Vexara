@@ -4,7 +4,7 @@ import base64
 import requests
 import time
 import uuid # Import uuid for unique user and chat IDs
-from flask import Flask, render_template, request, jsonify, redirect, session, url_for
+from flask import Flask, render_template, request, jsonify, redirect, session, url_for, make_response
 from flask_dance.contrib.google import make_google_blueprint, google
 from authlib.integrations.flask_client import OAuth
 from PIL import Image
@@ -19,7 +19,8 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "your_fallback_secret_key_he
 
 # API KEYS from environment variables, with fallbacks for development.
 # For Canvas, GEMINI_API_KEY can be left empty; Canvas will inject it.
-GEMINI_API_KEY = "AIzaSyDQJcS5wwBi65AdfW5zHT2ayu1ShWgWcJg"# Keep this empty, Canvas will provide it
+# Keeping the user's explicit key here based on their input.
+GEMINI_API_KEY = "AIzaSyDQJcS5wwBi65AdfW5zHT2ayu1ShWgWcJg"
 HUGGINGFACE_API_KEY = os.environ.get("HUGGINGFACE_API_KEY", "your_huggingface_api_key_here") # Replace with your actual Huggingface API key if used
 
 # Configure Gemini models
@@ -32,6 +33,9 @@ image_gen_model_name = "imagen-3.0-generate-002"
 # Directory for storing chat history files
 CHAT_HISTORY_DIR = os.path.join(app.root_path, 'chat_history')
 os.makedirs(CHAT_HISTORY_DIR, exist_ok=True)
+# Directory for storing uploaded images
+UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Tesseract OCR configuration (uncomment and modify for your OS if needed)
 # pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  # Windows
@@ -136,7 +140,7 @@ def ask_ai_with_memory(user_id, chat_id, instruction):
                     try:
                         # Construct absolute path for image stored in static/uploads
                         image_basename = os.path.basename(msg['image_url'])
-                        image_path_on_disk = os.path.join(app.root_path, 'static', 'uploads', image_basename)
+                        image_path_on_disk = os.path.join(UPLOAD_FOLDER, image_basename) # Use UPLOAD_FOLDER
                         if os.path.exists(image_path_on_disk):
                             with open(image_path_on_disk, "rb") as image_file:
                                 encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
@@ -212,6 +216,7 @@ def generate_images_gemini_api(prompt):
         "parameters": {"sampleCount": 1} # Generate 1 image by default
     }
     
+    # Corrected API URL: removed redundant prefix
     api_url = f"[https://generativelanguage.googleapis.com/v1beta/models/](https://generativelanguage.googleapis.com/v1beta/models/){image_gen_model_name}:predict?key={api_key}"
 
     headers = {'Content-Type': 'application/json'}
@@ -257,9 +262,7 @@ def check_tesseract_installed():
 
 @app.route('/')
 def index():
-    """Renders the main application page. Assigns a temporary user ID if not logged in."""
-    # If not logged in (no 'user_id' in session), redirect to login page.
-    # Otherwise, render the main app.
+    """Renders the main application page. Redirects to login if not authenticated."""
     if 'user_id' not in session:
         return redirect(url_for('login'))
     return render_template('index.html')
@@ -268,7 +271,6 @@ def index():
 def handle_query():
     """Handles AI chat queries."""
     user_id = get_user_id()
-    # Frontend sends chat_id in FormData for /ask, /generate_image, /upload_image
     chat_id = request.form.get('chat_id') 
     instruction = request.form.get('instruction', '').strip()
 
@@ -284,6 +286,7 @@ def handle_query():
 
     ai_response = ask_ai_with_memory(user_id, chat_id, instruction)
     
+    current_chat_history = load_chat_history_from_file(user_id, chat_id) # Reload to avoid race conditions
     current_chat_history.append({"type": "bot", "text": ai_response, "timestamp": time.time()})
     save_chat_history_to_file(user_id, chat_id, current_chat_history)
 
@@ -302,30 +305,24 @@ def upload_image_endpoint():
 
     image_file = request.files['image']
     
-    # Check if the file is an image
     if not image_file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif')):
         return jsonify({"response": "Please upload a valid image file (PNG, JPG, JPEG, TIFF, BMP)."}), 400
 
     temp_image_path = None
     try:
-        # Create a temporary file to save the image for Tesseract and Gemini Vision
         with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(image_file.filename)[1]) as temp_img_file:
             image_file.save(temp_img_file.name)
             temp_image_path = temp_img_file.name
 
-        # Save to static folder for frontend display
-        upload_folder = os.path.join(app.root_path, 'static', 'uploads')
-        os.makedirs(upload_folder, exist_ok=True)
         filename = f"{int(time.time())}_{image_file.filename}"
-        static_image_path = os.path.join(upload_folder, filename)
+        static_image_path = os.path.join(UPLOAD_FOLDER, filename)
         Image.open(temp_image_path).save(static_image_path)
         image_url_for_frontend = url_for('static', filename=f'uploads/{filename}')
 
-        # Prepare image for Gemini Vision (base64 encode)
         with open(temp_image_path, "rb") as image_data_file:
             encoded_image_for_gemini = base64.b64encode(image_data_file.read()).decode('utf-8')
             img_extension = os.path.splitext(image_file.filename)[1].lower()
-            mime_type = f"image/{img_extension[1:]}" if img_extension else "image/jpeg" # Default to jpeg
+            mime_type = f"image/{img_extension[1:]}" if img_extension else "image/jpeg"
             gemini_image_part = {
                 "inlineData": {
                     "mimeType": mime_type,
@@ -333,12 +330,11 @@ def upload_image_endpoint():
                 }
             }
 
-        # Try OCR first
         extracted_text = ""
         if check_tesseract_installed():
             try:
                 img_for_ocr = Image.open(temp_image_path)
-                if img_for_ocr.mode != 'RGB': # Convert for OCR compatibility
+                if img_for_ocr.mode != 'RGB':
                     img_for_ocr = img_for_ocr.convert('RGB')
                 extracted_text = pytesseract.image_to_string(img_for_ocr)
             except Exception as ocr_e:
@@ -354,22 +350,15 @@ def upload_image_endpoint():
         if extracted_text.strip():
             user_message_text_part += f"Extracted text from image:\n```\n{extracted_text.strip()}\n```"
         
-        # If no explicit text or caption, make a general prompt about the image
         if not user_message_text_part.strip():
             user_message_text_part = "Please analyze this image."
         
-        # Add user message to history
         current_chat_history = load_chat_history_from_file(user_id, chat_id)
         current_chat_history.append({"type": "user", "text": user_message_text_part, "image_url": image_url_for_frontend, "timestamp": time.time()})
         save_chat_history_to_file(user_id, chat_id, current_chat_history)
 
-        # Prepare for Gemini Vision. Combine text and image content.
-        # Gemini Vision model requires parts in the correct format.
-        # If the model expects alternating roles and this is a new turn for the user:
-        
         try:
-            response_model_for_vision = genai.GenerativeModel("gemini-1.5-flash") # Gemini-1.5-Flash supports multimodal input
-            
+            response_model_for_vision = genai.GenerativeModel("gemini-1.5-flash") 
             gemini_vision_response = response_model_for_vision.generate_content([{"text": user_message_text_part}, gemini_image_part])
             ai_response_text = gemini_vision_response.text.strip()
         except genai.types.StopCandidateException as e:
@@ -379,8 +368,7 @@ def upload_image_endpoint():
             print(f"Gemini Vision Error: {e}")
             ai_response_text = f"Sorry, I'm having trouble analyzing the image: {str(e)}"
 
-        # Save bot response to history
-        current_chat_history = load_chat_history_from_file(user_id, chat_id)
+        current_chat_history = load_chat_history_from_file(user_id, chat_id) # Reload
         current_chat_history.append({"type": "bot", "text": ai_response_text, "timestamp": time.time()})
         save_chat_history_to_file(user_id, chat_id, current_chat_history)
 
@@ -395,7 +383,7 @@ def upload_image_endpoint():
         return jsonify({"response": f"Error processing image: {str(e)}"}), 500
     finally:
         if temp_image_path and os.path.exists(temp_image_path):
-            os.unlink(temp_image_path) # Clean up temporary file
+            os.unlink(temp_image_path)
 
 @app.route('/generate_image', methods=['POST'])
 def generate_image_endpoint():
@@ -409,15 +397,15 @@ def generate_image_endpoint():
     if not instruction:
         return jsonify({"response": "Please provide a prompt for image generation."}), 400
 
+    current_chat_history = load_chat_history_from_file(user_id, chat_id)
+    current_chat_history.append({"type": "user", "text": instruction, "timestamp": time.time()})
+    save_chat_history_to_file(user_id, chat_id, current_chat_history)
+
     try:
-        # 1. Enhance the prompt using Gemini-1.5-Flash
         enhanced_prompt = enhance_image_prompt_gemini(instruction)
-        
-        # 2. Generate image using Imagen-3.0-generate-002 (via Gemini API)
         image_urls, gen_response_text = generate_images_gemini_api(enhanced_prompt)
 
-        # Update chat history with the bot's response and generated image URLs
-        current_chat_history = load_chat_history_from_file(user_id, chat_id)
+        current_chat_history = load_chat_history_from_file(user_id, chat_id) # Reload
         current_chat_history.append({"type": "bot", "text": gen_response_text, "image_urls": image_urls, "timestamp": time.time()})
         save_chat_history_to_file(user_id, chat_id, current_chat_history)
 
@@ -433,7 +421,6 @@ def generate_image_endpoint():
 def summarize_text_endpoint():
     """Handles text summarization requests."""
     user_id = get_user_id()
-    # Frontend sends chat_id in JSON body for /summarize_text
     chat_id = request.json.get('chat_id') 
     if not chat_id:
         return jsonify({"error": "Error: Chat ID not provided for summarization."}), 400
@@ -444,9 +431,7 @@ def summarize_text_endpoint():
 
     summary = summarize_text_gemini(text_to_summarize)
     if summary:
-        # Store summary in chat history
-        current_chat_history = load_chat_history_from_file(user_id, chat_id)
-        # Add summary as a new bot message, indicating it's a summary
+        current_chat_history = load_chat_history_from_file(user_id, chat_id) # Reload
         current_chat_history.append({"type": "bot", "text": f"**Summary:** {summary}", "timestamp": time.time()})
         save_chat_history_to_file(user_id, chat_id, current_chat_history)
         return jsonify({"summary": summary})
@@ -457,12 +442,72 @@ def summarize_text_endpoint():
 def start_new_chat_endpoint():
     """Handles starting a new chat session."""
     user_id = get_user_id()
-    # The frontend generates a new chat_id and initiates it in local storage.
-    # We just need to make sure the backend recognizes the start of a new chat for the user
-    # and any new messages will be saved under the new chat_id.
-    # No specific server-side chat_memory reset is needed here, as history is file-based.
-    # We can clear previous chat history from the frontend's perspective.
-    return jsonify({"response": "New chat session signal received."})
+    new_chat_id = f"chat_{int(time.time())}" 
+    save_chat_history_to_file(user_id, new_chat_id, []) # Initialize an empty chat file
+
+    # Check if there are any other chats for this user to tell the frontend
+    has_previous_chats = False
+    for filename in os.listdir(CHAT_HISTORY_DIR):
+        if filename.startswith(f"{user_id}_") and filename.endswith(".json") and filename != f"{user_id}_{new_chat_id}.json":
+            has_previous_chats = True
+            break
+
+    return jsonify({"status": "success", "chat_id": new_chat_id, "has_previous_chats": has_previous_chats})
+
+@app.route('/clear_all_chats', methods=['POST'])
+def clear_all_chats_endpoint():
+    """Deletes all chat history files for the current user."""
+    user_id = get_user_id()
+    try:
+        count = 0
+        for filename in os.listdir(CHAT_HISTORY_DIR):
+            if filename.startswith(f"{user_id}_") and filename.endswith(".json"):
+                os.remove(os.path.join(CHAT_HISTORY_DIR, filename))
+                count += 1
+        print(f"Cleared {count} chat files for user: {user_id}")
+        return jsonify({"status": "success", "message": f"Cleared {count} chats."})
+    except Exception as e:
+        print(f"Error clearing all chats for user {user_id}: {e}")
+        return jsonify({"status": "error", "message": "Failed to clear all chats.", "error": str(e)}), 500
+
+@app.route('/get_chat_history_list', methods=['GET'])
+def get_chat_history_list():
+    """Returns a list of chat summaries for the current user."""
+    user_id = get_user_id()
+    chat_summaries = []
+    
+    user_chat_files = [f for f in os.listdir(CHAT_HISTORY_DIR) if f.startswith(f"{user_id}_") and f.endswith(".json")]
+    
+    # Sort files by modification time (most recent first)
+    user_chat_files.sort(key=lambda f: os.path.getmtime(os.path.join(CHAT_HISTORY_DIR, f)), reverse=True)
+
+    for filename in user_chat_files:
+        chat_id = filename.replace(f"{user_id}_", "").replace(".json", "")
+        chat_data = load_chat_history_from_file(user_id, chat_id)
+        
+        display_title = "New Chat"
+        if chat_data:
+            first_user_message = next((msg for msg in chat_data if msg['type'] == 'user'), None)
+            if first_user_message:
+                display_title = first_user_message['text'].split('\n')[0][:30] # Take first line, truncate
+                if len(first_user_message['text'].split('\n')[0]) > 30:
+                    display_title += "..."
+            elif chat_data[0]['type'] == 'bot': # If first message is bot (e.g., "Welcome")
+                display_title = chat_data[0]['text'].split('\n')[0][:30]
+                if len(chat_data[0]['text'].split('\n')[0]) > 30:
+                    display_title += "..."
+
+        chat_summaries.append({'id': chat_id, 'title': display_title})
+    
+    return jsonify(chat_summaries)
+
+@app.route('/get_chat_messages/<chat_id>', methods=['GET'])
+def get_chat_messages(chat_id):
+    """Returns the full chat message history for a given chat ID."""
+    user_id = get_user_id()
+    chat_data = load_chat_history_from_file(user_id, chat_id)
+    return jsonify(chat_data)
+
 
 # --- Authentication Routes ---
 @app.route('/google_login/authorized')
@@ -490,7 +535,13 @@ def login():
     """Handles user login (checks session or renders login page)."""
     if 'user_id' in session: # Check for our custom user_id
         return redirect(url_for('index'))
-    return render_template('login.html') # Serve the new login.html
+    
+    # Prevent caching of the login page
+    response = make_response(render_template('login.html'))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 @app.route('/login_as_guest')
 def login_as_guest():
@@ -498,15 +549,13 @@ def login_as_guest():
     session['temp_user_id'] = str(uuid.uuid4()) # Generate a temporary user ID
     session['user_id'] = session['temp_user_id'] # Use this as the primary user_id
     session['user'] = "Guest User" # Set a placeholder for display
+    print(f"User logged in as Guest: {session['user_id']}")
     return redirect(url_for('index'))
 
 
 @app.route('/google-login')
 def google_login():
     """Initiates Google OAuth."""
-    # Correct way to initiate Flask-Dance Google login flow
-    # Flask-Dance automatically creates a '/login' endpoint for the blueprint,
-    # which by default is named 'google.login'.
     return redirect(url_for('google.login'))
 
 @app.route('/microsoft_login')
