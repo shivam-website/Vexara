@@ -764,7 +764,7 @@
                         imgElement.style.borderRadius = '8px';
                         imgElement.style.marginTop = '10px';
                         imgElement.style.border = '1px solid rgba(0,0,0,0.1)';
-                        imgElement.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                        imgElement.style.box-shadow = '0 2px 4px rgba(0,0,0,0.1)';
                         imageContainer.appendChild(imgElement);
                     });
                     msg.appendChild(imageContainer);
@@ -834,7 +834,7 @@
                     imgElement.style.borderRadius = '8px';
                     imgElement.style.marginTop = '10px';
                     imgElement.style.border = '1px solid rgba(0,0,0,0.1)';
-                    imgElement.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                    imgElement.style.box-shadow = '0 2px 4px rgba(0,0,0,0.1)';
                     imageContainer.appendChild(imgElement);
                 });
                 msg.appendChild(imageContainer);
@@ -894,6 +894,7 @@
             try {
                 const formData = new FormData();
                 formData.append('instruction', instruction);
+                formData.append('chat_id', currentChatId); // Add chat_id
 
                 const response = await fetch(`${window.location.origin}/ask`, {
                     method: 'POST',
@@ -929,8 +930,9 @@
             try {
                 const formData = new FormData();
                 formData.append('instruction', prompt); // Use 'instruction' for consistency with /ask endpoint
+                formData.append('chat_id', currentChatId); // Add chat_id
 
-                const response = await fetch(`${window.location.origin}/generate_image`, {
+                const response = await fetch(`${window.location.origin}/generate_image`, { // New endpoint for image generation
                     method: 'POST',
                     body: formData,
                 });
@@ -966,6 +968,7 @@
                 if (caption) {
                     formData.append('caption', caption);
                 }
+                formData.append('chat_id', currentChatId); // Add chat_id
 
                 const response = await fetch(`${window.location.origin}/upload_image`, {
                     method: 'POST',
@@ -1010,7 +1013,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ text: textToSummarize }),
+                    body: JSON.stringify({ text: textToSummarize, chat_id: currentChatId }), // Add chat_id
                 });
                 const data = await response.json();
                 if (data && data.summary) {
@@ -1197,27 +1200,31 @@
             const textInput = document.getElementById('text-input');
             const fileInput = document.getElementById('file-input');
             const multiActionForm = document.getElementById('multi-action-form');
-            // Dynamically create camera options div and append to body
+            
+            // Dynamically create camera options div and append to body more robustly
             const cameraOptions = document.createElement('div');
             cameraOptions.className = 'camera-options';
-            cameraOptions.innerHTML = `
-                <div class="camera-option" id="take-photo">
-                    <i class="fas fa-camera"></i> Take Photo
-                </div>
-                <div class="camera-option" id="upload-photo">
-                    <i class="fas fa-images"></i> Choose from Gallery
-                </div>
-                <div class="camera-option" id="cancel-camera" style="background: #ff6b6b;">
-                    <i class="fas fa-times"></i> Cancel
-                </div>
-            `;
+
+            const createCameraOption = (id, iconClass, text, bgColor = '') => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'camera-option';
+                optionDiv.id = id;
+                if (bgColor) {
+                    optionDiv.style.background = bgColor;
+                }
+                optionDiv.innerHTML = `<i class="fas ${iconClass}"></i> ${text}`;
+                return optionDiv;
+            };
+
+            const takePhotoBtn = createCameraOption('take-photo', 'fa-camera', 'Take Photo');
+            const uploadPhotoBtn = createCameraOption('upload-photo', 'fa-images', 'Choose from Gallery');
+            const cancelCameraBtn = createCameraOption('cancel-camera', 'fa-times', 'Cancel', '#ff6b6b');
+
+            cameraOptions.appendChild(takePhotoBtn);
+            cameraOptions.appendChild(uploadPhotoBtn);
+            cameraOptions.appendChild(cancelCameraBtn);
             document.body.appendChild(cameraOptions);
 
-
-            // Get the specific camera option buttons here after they are created and appended
-            const takePhotoBtn = document.getElementById('take-photo');
-            const uploadPhotoBtn = document.getElementById('upload-photo');
-            const cancelCameraBtn = document.getElementById('cancel-camera');
 
             // Sidebar toggle functionality for mobile
             if (showSidebarBtn) { // Defensive check
