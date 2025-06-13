@@ -19,7 +19,8 @@
             --chat-bg: #ffffff;
             --user-message-bg: #e3f2fd;
             --bot-message-bg: #f5f5f5;
-            --code-bg: #282c34;
+            --code-bg: #282c34; /* Dark background for code blocks, default */
+            --code-text-color: #f8f8f2; /* Light text for code blocks, default */
             --border-radius: 8px;
             --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
@@ -33,6 +34,9 @@
             --user-message-bg: #2d3a4b;
             --bot-message-bg: #333333;
             --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            /* Code block colors remain dark and readable in dark mode */
+            --code-bg: #282c34; 
+            --code-text-color: #f8f8f2;
         }
 
         * {
@@ -53,7 +57,7 @@
         /* Sidebar Styles */
         .sidebar {
             width: 280px; /* Default width */
-            background-color: var(--sidebar-bg);
+            background: linear-gradient(180deg, var(--sidebar-bg) 0%, #1a2a3a 100%); /* Gradient background */
             color: var(--sidebar-text);
             padding: 20px;
             display: flex;
@@ -61,33 +65,35 @@
             height: 100vh;
             flex-shrink: 0; /* Prevent sidebar from shrinking below its width */
             transition: width 0.3s ease, padding 0.3s ease, transform 0.3s ease; /* Combined transition */
-            overflow: hidden; /* Hide content when collapsed */
+            overflow-x: hidden; /* Hide content when collapsed */
             position: relative; /* Default for desktop, allowing flexible layout */
+            box-shadow: var(--shadow);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .sidebar.collapsed {
-            width: 0;
-            padding: 0;
-            min-width: 0; /* Ensures it collapses fully */
+            width: 60px; /* Collapsed width */
+            padding: 20px 0; /* Adjust padding for collapsed state */
+            min-width: 60px; /* Ensures it collapses to this width */
         }
 
         /* Main Content Styles */
         .main {
             flex: 1; /* Takes remaining space */
-            margin-left: 0; /* Start with 0 margin, adjust dynamically */
+            margin-left: 280px; /* Default margin for desktop, equals sidebar width */
             display: flex;
             flex-direction: column;
             height: 100vh;
             transition: margin-left 0.3s ease;
         }
 
-        .main.full-width {
-            margin-left: 0;
+        .main.full-width { /* Applied when sidebar is collapsed on desktop */
+            margin-left: 60px; /* Adjusted margin when sidebar is collapsed */
         }
 
         /* Floating button for mobile and desktop */
         #showSidebarBtn {
-            display: none; /* Hidden by default */
+            display: none; /* Hidden by default for desktop, shown by JS on mobile */
             position: fixed;
             top: 15px;
             left: 15px;
@@ -103,6 +109,9 @@
             cursor: pointer;
             box-shadow: var(--shadow);
             transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Sidebar Toggle button inside the sidebar header */
@@ -113,6 +122,11 @@
             font-size: 1.5rem;
             cursor: pointer;
             display: block; /* Always visible for now */
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .sidebar.collapsed .sidebar-toggle {
+            transform: rotateY(180deg); /* Flip icon when collapsed */
         }
 
 
@@ -123,7 +137,7 @@
                 margin-left: 280px; /* Adjusted by JS based on sidebar.collapsed */
             }
             .sidebar.collapsed + .main { /* When sidebar is collapsed, main takes full width */
-                margin-left: 0;
+                margin-left: 60px; /* Adjusted margin when sidebar is collapsed */
             }
             #showSidebarBtn {
                 display: none !important; /* Hide floating button on desktop */
@@ -152,13 +166,242 @@
                 margin-left: 0; /* Main content always full width on mobile */
             }
             #showSidebarBtn {
-                display: block !important; /* Show floating button on mobile */
+                display: flex !important; /* Show floating button on mobile */
             }
             /* Hide the internal close button on mobile, it's redundant with floating button */
             #hideSidebarBtn {
                 display: block; /* We need it to hide the sidebar once open */
             }
+            .sidebar.collapsed .sidebar-toggle { /* On mobile, use X icon when sidebar is visible */
+                transform: rotateY(0deg); /* Reset rotation */
+            }
+            /* Hide most sidebar content when collapsed on desktop, or when mobile */
+            .sidebar.collapsed .sidebar-header span,
+            .sidebar.collapsed .new-chat-btn span,
+            .sidebar.collapsed #chat-history-list,
+            .sidebar.collapsed .sidebar-footer div,
+            .sidebar.collapsed .sidebar-footer a,
+            .sidebar.collapsed .sidebar-footer button:not(.sidebar-toggle) {
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.1s ease;
+            }
+            .sidebar:not(.collapsed) .sidebar-header span,
+            .sidebar:not(.collapsed) .new-chat-btn span,
+            .sidebar:not(.collapsed) #chat-history-list,
+            .sidebar:not(.collapsed) .sidebar-footer div,
+            .sidebar:not(.collapsed) .sidebar-footer a,
+            .sidebar:not(.collapsed) .sidebar-footer button {
+                opacity: 1;
+                pointer-events: all;
+            }
         }
+        
+        .sidebar-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap; /* Prevent wrapping */
+        }
+        .sidebar.collapsed .sidebar-logo {
+             overflow: hidden;
+             width: 20px; /* Shrink logo area */
+        }
+        .sidebar.collapsed .sidebar-logo i {
+            margin-right: 0; /* Remove margin for icon when collapsed */
+        }
+
+        .sidebar-logo i {
+            color: var(--primary-color);
+            filter: drop-shadow(0 0 5px var(--secondary-color)); /* Glow effect for sparkle */
+        }
+
+        .new-chat-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .new-chat-btn:hover {
+            background: var(--secondary-color);
+        }
+        .sidebar.collapsed .new-chat-btn {
+            padding: 12px; /* Keep padding */
+            justify-content: center; /* Center icon */
+        }
+        .sidebar.collapsed .new-chat-btn span {
+            display: none; /* Hide text */
+        }
+        .sidebar.collapsed .new-chat-btn i {
+            margin-right: 0; /* Remove icon margin */
+        }
+
+        #chat-history-list {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            scrollbar-width: thin; /* Firefox */
+            scrollbar-color: var(--primary-color) rgba(255, 255, 255, 0.1); /* Firefox */
+        }
+        #chat-history-list::-webkit-scrollbar {
+            width: 8px; /* Webkit browsers */
+        }
+        #chat-history-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1); /* Webkit browsers */
+            border-radius: 10px;
+        }
+        #chat-history-list::-webkit-scrollbar-thumb {
+            background-color: var(--primary-color); /* Webkit browsers */
+            border-radius: 10px;
+            border: 2px solid var(--sidebar-bg);
+        }
+
+
+        .chat-link {
+            padding: 10px 12px;
+            border-radius: var(--border-radius);
+            margin-bottom: 5px;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: background 0.2s;
+            color: var(--sidebar-text); /* Ensure history links are visible */
+            text-decoration: none; /* Remove underline */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-link.active {
+            background: var(--primary-color);
+        }
+
+        .sidebar.collapsed .chat-link {
+            width: 40px; /* Fixed width for icon-only */
+            height: 40px; /* Fixed height for icon-only */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            font-size: 1.2rem; /* Make icon larger */
+            overflow: hidden;
+            text-overflow: clip; /* Hide text overflow */
+        }
+        .sidebar.collapsed .chat-link::before {
+            content: "\f075"; /* Chat icon from FontAwesome */
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            margin-right: 0;
+        }
+        .sidebar.collapsed .chat-link span {
+            display: none; /* Hide text */
+        }
+
+        .sidebar-footer {
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-btn {
+            display: flex; /* Use flex for alignment */
+            align-items: center;
+            width: 100%;
+            padding: 10px;
+            text-align: left;
+            background: none;
+            border: none;
+            color: var(--sidebar-text);
+            border-radius: var(--border-radius);
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none; /* For the logout link */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-btn i {
+            margin-right: 8px;
+            width: 20px; /* Fixed width for icons */
+            text-align: center;
+        }
+        .sidebar.collapsed .sidebar-btn {
+            justify-content: center;
+            padding: 10px 0;
+        }
+        .sidebar.collapsed .sidebar-btn span {
+            display: none; /* Hide text */
+        }
+        .sidebar.collapsed .sidebar-btn i {
+            margin-right: 0; /* Remove icon margin */
+        }
+
+        /* User Info Section */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: var(--sidebar-text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .user-info i {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+        .user-email {
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .sidebar.collapsed .user-info {
+            justify-content: center;
+            padding: 10px 0;
+            width: 40px; /* Align with other collapsed items */
+            height: 40px;
+            margin: 0 auto 15px auto; /* Center when collapsed */
+            border-radius: 50%; /* Make it round */
+        }
+        .sidebar.collapsed .user-info i {
+            font-size: 1.5rem; /* Larger icon */
+            margin-right: 0;
+        }
+        .sidebar.collapsed .user-info .user-email {
+            display: none; /* Hide email */
+        }
+
 
         /* General styles, largely unchanged from previous version */
         .top-bar {
@@ -211,6 +454,19 @@
             padding: 20px;
             overflow-y: auto;
             background-color: var(--chat-bg);
+            scrollbar-width: thin; /* Firefox */
+            scrollbar-color: var(--primary-color) var(--chat-bg); /* Firefox */
+        }
+        .chat-container::-webkit-scrollbar {
+            width: 8px; /* Webkit browsers */
+        }
+        .chat-container::-webkit-scrollbar-track {
+            background: var(--chat-bg); /* Webkit browsers */
+        }
+        .chat-container::-webkit-scrollbar-thumb {
+            background-color: var(--primary-color); /* Webkit browsers */
+            border-radius: 10px;
+            border: 2px solid var(--chat-bg);
         }
 
         .chat-message {
@@ -221,7 +477,7 @@
             line-height: 1.6;
             position: relative;
             box-shadow: var(--shadow);
-            word-wrap: break-word; /* Ensure long words wrap */
+            word-wrap: break-word; /* Ensure long words wraps */
         }
 
         .user-message {
@@ -258,6 +514,7 @@
 
         .message-content {
             margin-top: 10px;
+            color: var(--text-color); /* Ensure message content color is appropriate */
         }
 
         /* Code Block Styles */
@@ -273,6 +530,7 @@
         code {
             font-family: 'Fira Code', monospace !important;
             font-size: 0.9rem !important;
+            color: var(--code-text-color) !important; /* Explicitly set text color for code blocks */
         }
 
         .code-header {
@@ -284,7 +542,7 @@
             border-top-left-radius: var(--border-radius);
             border-top-right-radius: var(--border-radius);
             margin-bottom: -10px;
-            color: white; /* Ensure header text is visible */
+            color: rgba(255, 255, 255, 0.8); /* Ensure header text is visible */
         }
 
         .code-language {
@@ -428,7 +686,7 @@
                 margin-left: 0; /* Main content always full width on mobile */
             }
             #showSidebarBtn {
-                display: block !important; /* Show floating button on mobile */
+                display: flex !important; /* Show floating button on mobile */
             }
             /* Hide the internal close button on mobile, it's redundant with floating button */
             #hideSidebarBtn {
@@ -670,7 +928,7 @@
         </div>
 
         <button class="new-chat-btn" onclick="startNewChat()">
-            <i class="fas fa-plus"></i> New Chat
+            <i class="fas fa-plus"></i> <span>New Chat</span>
         </button>
 
         <div id="chat-history-list"></div>
@@ -681,18 +939,18 @@
                 <span id="user-email" class="user-email"></span>
             </div>
             <button class="sidebar-btn" onclick="toggleDarkMode()">
-                <i class="fas fa-moon"></i> Dark Mode
+                <i class="fas fa-moon"></i> <span>Dark Mode</span>
             </button>
             <button class="sidebar-btn" id="clearAllChatsBtn">
-                <i class="fas fa-trash"></i> Clear All Chats
+                <i class="fas fa-trash"></i> <span>Clear All Chats</span>
             </button>
             <a href="/logout" class="sidebar-btn" style="color: #ff6b6b;">
-                <i class="fas fa-sign-out-alt"></i> Logout
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
             </a>
         </div>
     </div>
 
-    <button id="showSidebarBtn" class="sidebar-show-btn" style="display: none;">
+    <button id="showSidebarBtn" class="sidebar-show-btn">
         <i class="fas fa-bars"></i>
     </button>
     
@@ -715,6 +973,8 @@
                     <option value="ask">Ask AI</option>
                     <option value="generate_image">✨ Generate Image</option>
                     <option value="upload_image">Upload Image</option>
+                    <option value="check_grammar">📝 Grammar/Style Check</option>
+                    <option value="explain_code">💻 Explain Code</option>
                 </select>
             
                 <textarea id="text-input" name="instruction" placeholder="Ask Vexara anything..." rows="1" required title="Enter your message"></textarea>
@@ -756,7 +1016,7 @@
     <script>
         // Global variables for chat management
         let currentChatId = null;
-        let sidebarHidden = false; // Track sidebar state
+        let sidebarHidden = false; // Track sidebar state for desktop behavior
 
         // --- Helper Functions (Globally accessible for inline onclicks) ---
 
@@ -872,7 +1132,13 @@
 
             // Highlight all code blocks after adding message
             document.querySelectorAll('.chat-message code').forEach((block) => {
-                hljs.highlightElement(block);
+                try {
+                    hljs.highlightElement(block);
+                } catch (e) {
+                    console.warn("Highlight.js failed on block:", block, e);
+                    // Fallback if highlight.js fails (e.g., unknown language)
+                    block.style.color = 'var(--code-text-color)'; 
+                }
             });
         }
 
@@ -919,19 +1185,17 @@
                         await new Promise(resolve => setTimeout(resolve, 5)); // Typing speed
                         i++;
                     }
-                } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'P' && node.innerHTML.includes('<pre>')) {
-                    // This handles cases where marked wraps a code block in a <p> tag
-                    // (though with custom renderer, <pre> should be direct child)
-                    // If marked puts <pre> directly, the 'PRE' case below handles it.
-                    // For robustness, if <p> contains <pre>, append <p> fully.
-                    content.appendChild(node.cloneNode(true));
-                    scrollToBottom();
                 } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'PRE') {
                     // Directly append the preformatted code block
                     content.appendChild(node.cloneNode(true));
                     scrollToBottom();
                     // Highlight the code block immediately after it's added
-                    hljs.highlightElement(content.lastChild.querySelector('code'));
+                    try {
+                        hljs.highlightElement(content.lastChild.querySelector('code'));
+                    } catch (e) {
+                        console.warn("Highlight.js failed on block during typing:", content.lastChild.querySelector('code'), e);
+                        content.lastChild.querySelector('code').style.color = 'var(--code-text-color)';
+                    }
                 } else {
                     // For other HTML elements (like lists, paragraphs without code, etc.), append them fully
                     content.appendChild(node.cloneNode(true));
@@ -951,7 +1215,7 @@
                     imgElement.style.borderRadius = '8px';
                     imgElement.style.marginTop = '10px';
                     imgElement.style.border = '1px solid rgba(0,0,0,0.1)';
-                    imgElement.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                    imgElement.style.box_shadow = '0 2px 4px rgba(0,0,0,0.1)';
                     imageContainer.appendChild(imgElement);
                 });
                 msg.appendChild(imageContainer);
@@ -972,7 +1236,6 @@
                     summarizeButton.innerHTML = '<i class="fas fa-hourglass-half"></i> Summarizing...';
                     const summary = await summarizeText(text);
                     if (summary) {
-                        // The summary is a new bot message, so we call addMessage directly.
                         addMessage(`**Summary:** ${summary}`, 'bot', null, new Date()); 
                     } else {
                         console.error('Failed to summarize text.');
@@ -1123,6 +1386,71 @@
             } catch (error) {
                 console.error("Error summarizing text:", error);
                 return null;
+            }
+        }
+
+        // --- New Gemini LLM Features ---
+        async function checkGrammarAndStyle(text) {
+            const textInput = document.getElementById('text-input');
+            const loader = document.getElementById('loader');
+            loader.style.display = 'block';
+            try {
+                const formData = new FormData();
+                formData.append('text', text);
+                formData.append('chat_id', currentChatId);
+
+                const response = await fetch(`${window.location.origin}/check_grammar_style`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                const data = await response.json();
+                loader.style.display = 'none';
+                if (data && data.corrected_text) {
+                    await typeBotMessage(data.corrected_text, 'bot', null, new Date());
+                } else {
+                    console.error("Grammar/Style check failed:", data.error || "No response returned.");
+                    await typeBotMessage(data.error || "Failed to check grammar and style.", 'bot', null, new Date());
+                }
+            } catch (error) {
+                console.error("Error checking grammar/style:", error);
+                loader.style.display = 'none';
+                await typeBotMessage("Sorry, an error occurred while checking grammar and style. Please try again.", 'bot', null, new Date());
+            } finally {
+                textInput.value = '';
+                textInput.style.height = 'auto';
+                textInput.focus();
+            }
+        }
+
+        async function explainCode(code) {
+            const textInput = document.getElementById('text-input');
+            const loader = document.getElementById('loader');
+            loader.style.display = 'block';
+            try {
+                const formData = new FormData();
+                formData.append('code', code);
+                formData.append('chat_id', currentChatId);
+
+                const response = await fetch(`${window.location.origin}/explain_code`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                const data = await response.json();
+                loader.style.display = 'none';
+                if (data && data.explanation) {
+                    await typeBotMessage(data.explanation, 'bot', null, new Date());
+                } else {
+                    console.error("Code explanation failed:", data.error || "No response returned.");
+                    await typeBotMessage(data.error || "Failed to explain code.", 'bot', null, new Date());
+                }
+            } catch (error) {
+                console.error("Error explaining code:", error);
+                loader.style.display = 'none';
+                await typeBotMessage("Sorry, an error occurred while explaining the code. Please try again.", 'bot', null, new Date());
+            } finally {
+                textInput.value = '';
+                textInput.style.height = 'auto';
+                textInput.focus();
             }
         }
 
@@ -1306,15 +1634,30 @@
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.querySelector('.main');
             const showSidebarBtn = document.getElementById('showSidebarBtn');
+            const hideSidebarBtn = document.getElementById('hideSidebarBtn');
 
             if (window.innerWidth <= 768) { // Mobile behavior (slide out)
                 sidebar.classList.toggle('visible');
                 // Adjust visibility of floating button based on sidebar state
-                showSidebarBtn.style.display = sidebar.classList.contains('visible') ? 'none' : 'block';
+                showSidebarBtn.style.display = sidebar.classList.contains('visible') ? 'none' : 'flex'; // Use flex for center alignment
+                hideSidebarBtn.style.display = sidebar.classList.contains('visible') ? 'block' : 'none';
             } else { // Desktop behavior (collapse/expand)
                 sidebar.classList.toggle('collapsed');
                 mainContent.classList.toggle('full-width');
                 sidebarHidden = sidebar.classList.contains('collapsed'); // Update internal state
+                showSidebarBtn.style.display = 'none'; // Always hide floating button on desktop
+            }
+            // Ensure icons are correctly set for desktop toggle
+            if (window.innerWidth > 768) {
+                 if (sidebar.classList.contains('collapsed')) {
+                     // For desktop, when collapsed, show the hamburger icon on the main content area
+                     showSidebarBtn.style.display = 'flex';
+                     showSidebarBtn.querySelector('i').className = 'fas fa-bars';
+                     hideSidebarBtn.style.display = 'none'; // Hide the 'X' button inside the collapsed sidebar
+                 } else {
+                     showSidebarBtn.style.display = 'none'; // Hide hamburger when expanded
+                     hideSidebarBtn.style.display = 'block'; // Show the 'X' button inside the expanded sidebar
+                 }
             }
         };
 
@@ -1378,6 +1721,7 @@
                 const sidebar = document.getElementById('sidebar');
                 const mainContent = document.querySelector('.main');
                 const showSidebarBtn = document.getElementById('showSidebarBtn');
+                const hideSidebarBtn = document.getElementById('hideSidebarBtn');
 
                 if (window.innerWidth <= 768) { // Switching to mobile layout
                     // If desktop was collapsed, remove collapsed state for mobile slide-out
@@ -1387,17 +1731,26 @@
                     }
                     // Show floating button if sidebar is not currently visible
                     if (!sidebar.classList.contains('visible')) {
-                        showSidebarBtn.style.display = 'block';
+                        showSidebarBtn.style.display = 'flex';
+                        hideSidebarBtn.style.display = 'none';
+                    } else {
+                        showSidebarBtn.style.display = 'none';
+                        hideSidebarBtn.style.display = 'block';
                     }
                 } else { // Switching to desktop layout
-                    showSidebarBtn.style.display = 'none'; // Always hide floating button on desktop
+                    showSidebarBtn.style.display = 'none'; // Always hide floating button on desktop unless sidebar is collapsed
                     // Restore desktop collapsed state if it was hidden on desktop
-                    if (sidebarHidden) {
+                    if (sidebarHidden) { // Use the remembered state
                         sidebar.classList.add('collapsed');
                         mainContent.classList.add('full-width');
+                        showSidebarBtn.style.display = 'flex'; // Show it collapsed
+                        showSidebarBtn.querySelector('i').className = 'fas fa-bars';
+                        hideSidebarBtn.style.display = 'none';
                     } else {
                         sidebar.classList.remove('collapsed');
                         mainContent.classList.remove('full-width');
+                        hideSidebarBtn.style.display = 'block'; // Show internal close button
+                        showSidebarBtn.style.display = 'none'; // Hide external button
                     }
                 }
             });
@@ -1415,33 +1768,28 @@
             if (actionType) {
                 actionType.addEventListener('change', function() {
                     const selectedAction = this.value;
+                    // Reset visibility of file input label and camera options
+                    fileInputLabel.style.display = 'none';
+                    cameraOptions.style.display = 'none';
+                    textInput.setAttribute('required', ''); // Most options require text
+                    fileInput.value = ''; // Clear selected file
+
                     if (selectedAction === 'upload_image') {
                         if (/Android|webOS|iPhone|iPad|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                            if (cameraOptions) cameraOptions.style.display = 'block';
-                            if (fileInputLabel) fileInputLabel.style.display = 'none'; // Hide default input label
+                            cameraOptions.style.display = 'block'; // Show mobile camera options
                         } else {
-                            if (fileInputLabel) fileInputLabel.style.display = 'flex';
-                            if (fileInput) fileInput.removeAttribute('capture');
-                            if (cameraOptions) cameraOptions.style.display = 'none'; // Hide camera options for desktop
+                            fileInputLabel.style.display = 'flex'; // Show desktop file input label
                         }
-                        if (textInput) {
-                            textInput.placeholder = 'Add optional caption for the image...';
-                            textInput.removeAttribute('required');
-                        }
+                        textInput.placeholder = 'Add optional caption for the image...';
+                        textInput.removeAttribute('required'); // Caption is optional
                     } else if (selectedAction === 'generate_image') { 
-                        if (cameraOptions) cameraOptions.style.display = 'none';
-                        if (fileInputLabel) fileInputLabel.style.display = 'none';
-                        if (textInput) {
-                            textInput.placeholder = 'Enter a prompt for image generation...';
-                            textInput.setAttribute('required', '');
-                        }
-                    } else { 
-                        if (cameraOptions) cameraOptions.style.display = 'none';
-                        if (fileInputLabel) fileInputLabel.style.display = 'none';
-                        if (textInput) {
-                            textInput.placeholder = 'Ask Vexara anything...';
-                            textInput.setAttribute('required', '');
-                        }
+                        textInput.placeholder = 'Enter a prompt for image generation...';
+                    } else if (selectedAction === 'check_grammar') {
+                        textInput.placeholder = 'Enter text to check grammar and style...';
+                    } else if (selectedAction === 'explain_code') {
+                        textInput.placeholder = 'Paste code to explain...';
+                    } else { // Default 'ask'
+                        textInput.placeholder = 'Ask Vexara anything...';
                     }
                 });
             }
@@ -1493,54 +1841,45 @@
                     const loaderElement = document.getElementById('loader');
                     if (loaderElement) loaderElement.style.display = 'block';
 
-                    if (type === 'ask') {
-                        const userText = textInput.value.trim();
-                        if (!userText) {
-                            console.error("Please enter your question"); 
+                    const userText = textInput.value.trim(); // Get text input for all cases
+
+                    // User message display before sending to backend
+                    if (type !== 'upload_image') { // For upload, message is added in reader.onload
+                        if (!userText && type !== 'upload_image') { // Only require text if not image upload
+                            console.error("Please enter your input.");
                             if (loaderElement) loaderElement.style.display = 'none';
                             return;
                         }
                         addMessage(userText, 'user', null, new Date()); 
+                    }
+                    
+                    if (type === 'ask') {
                         await askAI(userText);
                     } else if (type === 'generate_image') {
-                        const userPrompt = textInput.value.trim();
-                        if (!userPrompt) {
-                            console.error("Please enter a prompt for image generation."); 
-                            if (loaderElement) loaderElement.style.display = 'none';
-                            return;
-                        }
-                        addMessage(userPrompt, 'user', null, new Date()); 
-                        await generateImage(userPrompt);
+                        await generateImage(userText);
                     } else if (type === 'upload_image') {
                         if (fileInput.files.length === 0) {
                             console.error("Please select an image to upload"); 
                             if (loaderElement) loaderElement.style.display = 'none';
                             return;
                         }
-
                         const file = fileInput.files[0];
                         const reader = new FileReader();
-                        
                         reader.onload = async function(e) {
                             const imgPreview = document.createElement('img');
                             imgPreview.src = e.target.result;
                             imgPreview.classList.add('uploaded-image-preview');
-                            
                             const caption = textInput.value.trim();
                             let messageContent = caption ? `Image with caption: "${caption}"` : 'Uploaded image';
-                            
                             addMessage(messageContent, 'user', imgPreview, new Date()); 
-
-                            try {
-                                await uploadImage(file, caption); 
-                            } catch (error) {
-                                console.error("Upload handler error:", error);
-                            } finally {
-                                // Final clean-up is done in uploadImage now.
-                            }
+                            await uploadImage(file, caption); 
                         };
                         reader.readAsDataURL(file);
-                        return; 
+                        return; // Exit here as uploadImage will handle loader and textInput cleanup
+                    } else if (type === 'check_grammar') {
+                        await checkGrammarAndStyle(userText);
+                    } else if (type === 'explain_code') {
+                        await explainCode(userText);
                     }
 
                     if (loaderElement) loaderElement.style.display = 'none';
@@ -1551,9 +1890,7 @@
             }
 
             // Initial setup logic
-            // When index.html loads, it means the user is already authenticated or a guest.
-            // So we directly update chat history.
-            await updateChatHistory(); // Use await here
+            await updateChatHistory(); 
             
             // Fetch and display user info
             fetch('/user_info')
@@ -1572,12 +1909,19 @@
             
             // Set initial sidebar state based on window size
             if (window.innerWidth > 768) {
-                // On desktop, ensure sidebar is shown by default unless explicitly hidden
                 const sidebar = document.getElementById('sidebar');
                 const mainContent = document.querySelector('.main');
+                const showSidebarBtn = document.getElementById('showSidebarBtn');
+                const hideSidebarBtn = document.getElementById('hideSidebarBtn');
+
+                // Check if the sidebar was previously hidden on desktop, otherwise show expanded.
+                // This 'sidebarHidden' state should ideally be stored in localStorage for persistence.
+                // For now, we default to expanded on desktop, and let the button control it.
                 sidebar.classList.remove('collapsed');
                 mainContent.classList.remove('full-width');
-                sidebarHidden = false;
+                sidebarHidden = false; // Reset to ensure it starts expanded
+                showSidebarBtn.style.display = 'none'; // Hide hamburger when expanded
+                hideSidebarBtn.style.display = 'block'; // Show 'X' button inside sidebar
             }
         });
     </script>
