@@ -18,7 +18,7 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "your_fallback_secret_key_he
 
 # API KEYS from environment variables, with fallbacks for development.
 # For Canvas, GEMINI_API_KEY can be left empty; Canvas will inject it.
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+GEMINI_API_KEY = "AIzaSyDQJcS5wwBi65AdfW5zHT2ayu1ShWgWcJg"
 HUGGINGFACE_API_KEY = os.environ.get("HUGGINGFACE_API_KEY", "your_huggingface_api_key_here") # Replace with your actual Huggingface API key if used
 
 # Configure Gemini models
