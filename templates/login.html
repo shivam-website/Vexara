@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login to Vexara AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Lighter background for login page */
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%); /* Vexara's primary colors */
+        }
+        .input-focus:focus {
+            box-shadow: 0 0 0 3px rgba(110, 72, 170, 0.25); /* Focus ring with Vexara's primary color */
+            border-color: #6e48aa;
+        }
+        .btn-hover:hover {
+            transform: translateY(-2px); /* Slightly more pronounced lift */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow on hover */
+        }
+        .transition-all {
+            transition: all 0.2s ease-in-out; /* Smoother transitions */
+        }
+        .card-animation {
+            animation: fadeInScale 0.5s ease-out forwards;
+        }
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        .sparkle-icon {
+            filter: drop-shadow(0 0 5px #9d50bb); /* Glow effect for sparkle */
+            color: #6e48aa; /* Primary color */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full">
+        <!-- Logo and Welcome Message -->
+        <div class="text-center mb-8">
+            <div class="flex items-center justify-center mb-4">
+                <i class="fas fa-robot text-indigo-600 w-12 h-12 mr-2 sparkle-icon"></i>
+                <i class="fas fa-sparkle text-indigo-600 w-8 h-8 sparkle-icon"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold text-gray-900 mt-4">Welcome to Vexara AI</h1>
+            <p class="text-gray-600 mt-2">Sign in to unlock powerful AI capabilities.</p>
+        </div>
+
+        <!-- Social Login Options -->
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-6 border border-gray-100 card-animation">
+            <h2 class="text-xl font-semibold text-gray-800 mb-6 text-center">Continue with:</h2>
+            <div class="space-y-4">
+                <a href="/google-login" class="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all btn-hover">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google logo" class="h-5 w-5 mr-3">
+                    Google
+                </a>
+                
+                <a href="/microsoft_login" class="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all btn-hover">
+                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 48 48" class="mr-3">
+                        <path fill="#ff5722" d="M6 6H22V22H6z" transform="rotate(-180 14 14)"></path><path fill="#4caf50" d="M26 6H42V22H26z" transform="rotate(-180 34 14)"></path><path fill="#ffc107" d="M26 26H42V42H26z" transform="rotate(-180 34 34)"></path><path fill="#03a9f4" d="M6 26H22V42H6z" transform="rotate(-180 14 34)"></path>
+                    </svg>
+                    Microsoft
+                </a>
+                
+                <!-- Apple Login (Placeholder, requires specific setup) -->
+                <button class="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all btn-hover opacity-70 cursor-not-allowed" disabled title="Apple login requires specific backend setup">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" class="w-5 h-5 mr-3">
+                        <path d="M318.7 268.7c-.2-36.7 16.4-64.4 54-64.4h1.3c66.3 0 91.9 124.5 92.3 200 .4 71-42.4 106.3-78.3 106.3-26.3 0-54.2-15.4-58.3-42.7l-84.9-61.5c-6.9-51.8 10.5-94.2 62.9-138.7zM155.3 256c0 18.7 2.8 19.5 20.3 19.5 44.4 0 77-26.7 77-80 0-15.3-2.8-19.5-20.3-19.5-44.4 0-77 26.6-77 80zM2.3 157.3s41.9-3 70.1 13.5c13.3 7.9 20.4 20.3 44.6 20.3 30.9 0 42.2-20.3 44.7-20.3 28.2-16.5 70.1-13.5 70.1-13.5 15 1.1 32.5 14.5 32.5 44.3 0 9.3-6.6 36.5-6.6 36.5-24.2 70.5-63 98-63 155.5 0 23.8 4.3 48.4 4.3 48.4H2.8s-4.8-25.8-4.8-48.4c0-54.9 30.4-90.3 51.2-126.1 13.6-23.9 20.1-49.5 20.1-72.1C69.3 172.3 2.3 157.3 2.3 157.3z"/>
+                    </svg>
+                    Continue with Apple
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer Links -->
+        <div class="flex justify-center space-x-4 mt-8 text-sm text-gray-600">
+            <a href="#" class="hover:text-gray-800 transition-colors">Terms of Service</a>
+            <span>•</span>
+            <a href="#" class="hover:text-gray-800 transition-colors">Privacy Policy</a>
+        </div>
+    </div>
+</body>
+</html>
