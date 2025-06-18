@@ -1,9 +1,9 @@
 # Base image with Python
 FROM python:3.11-slim
 
-# Install system dependencies including Tesseract
+# Install system dependencies including Tesseract OCR and required libs
 RUN apt-get update && \
-    apt-get install -y tesseract-ocr libglib2.0-0 libsm6 libxrender1 libxext6 && \
+    apt-get install -y --no-install-recommends tesseract-ocr libglib2.0-0 libsm6 libxrender1 libxext6 && \
     rm -rf /var/lib/apt/lists/*
 
 # Set working directory
