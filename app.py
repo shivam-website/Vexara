@@ -216,7 +216,7 @@ def generate_images_gemini_api(prompt):
         "parameters": {"sampleCount": 1} # Generate 1 image by default
     }
     
-    # Corrected API URL: removed redundant prefix
+    # FIX: Corrected API URL. Removed the incorrect Markdown link syntax.
     api_url = f"https://generativelanguage.googleapis.com/v1beta/models/{image_gen_model_name}:predict?key={api_key}"
 
     headers = {'Content-Type': 'application/json'}
@@ -675,17 +675,3 @@ def logout():
     session.pop('user_id', None)
     session.pop('temp_user_id', None) # Clear temporary ID too
     return redirect(url_for('login'))
-
-
-
-if __name__ == "__main__":
-    # Check Tesseract installation at startup
-    if not check_tesseract_installed():
-        print("\n⚠️ WARNING: Tesseract OCR is not properly installed.")
-        print("Image upload and text extraction features will not work.")
-        print("Please install Tesseract OCR for your platform:\n")
-        print("Windows: Download from UB Mannheim's Tesseract page")
-        print("macOS: Run 'brew install tesseract'")
-        print("Linux: Run 'sudo apt install tesseract-ocr'\n")
-    
-    app.run(debug=True, host='0.0.0.0', port=5000)
