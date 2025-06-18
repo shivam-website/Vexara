@@ -2,13 +2,13 @@ import json
 import base64
 import requests
 import time
-import uuid  # Import uuid for unique user and chat IDs
+import uuid # Import uuid for unique user and chat IDs
 import os # Import os for environment variables and path operations
 from flask import Flask, render_template, request, jsonify, redirect, session, url_for, make_response
 from flask_dance.contrib.google import make_google_blueprint, google
 from authlib.integrations.flask_client import OAuth
 from PIL import Image
-import pytesseract  # Assuming tesseract is installed and configured
+import pytesseract # Assuming tesseract is installed and configured
 import google.generativeai as genai
 import tempfile
 
@@ -42,10 +42,10 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 # pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'  # macOS
 # pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'  # Linux
 
-# OAuth configuration (unchanged as no changes requested here)
+# OAuth configuration
 google_bp = make_google_blueprint(
     client_id="978102306464-qdjll3uos10m1nd5gcnr9iql9688db58.apps.googleusercontent.com",
-    client_secret="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",
+    client_secret="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",
     redirect_url="/google_login/authorized",
     # It's good practice to define scope for Google OAuth
     scope=["openid", "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"]
@@ -148,8 +148,8 @@ def ask_ai_with_memory(user_id, chat_id, instruction):
                                 img_extension = os.path.splitext(image_basename)[1].lower()
                                 mime_type = f"image/{img_extension[1:]}" if img_extension else "image/jpeg"
                                 parts.append({
-                                    "inlineData": {
-                                        "mimeType": mime_type,
+                                    "inline_data": { # Corrected: changed to inline_data (snake_case)
+                                        "mime_type": mime_type, # Corrected: changed to mime_type (snake_case)
                                         "data": encoded_image
                                     }
                                 })
@@ -351,8 +351,8 @@ def upload_image_endpoint():
             img_extension = os.path.splitext(image_file.filename)[1].lower()
             mime_type = f"image/{img_extension[1:]}" if img_extension else "image/jpeg"
             gemini_image_part = {
-                "inlineData": {
-                    "mimeType": mime_type,
+                "inline_data": { # Corrected: changed to inline_data (snake_case)
+                    "mime_type": mime_type, # Corrected: changed to mime_type (snake_case)
                     "data": encoded_image_for_gemini
                 }
             }
@@ -677,12 +677,6 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/user_info')
-def user_info():
-    """Returns user information if logged in."""
-    user_email = session.get('user', 'Not logged in')
-    return jsonify({"user_email": user_email})
-
 
 if __name__ == "__main__":
     # Check Tesseract installation at startup
@@ -695,9 +689,3 @@ if __name__ == "__main__":
         print("Linux: Run 'sudo apt install tesseract-ocr'\n")
     
     app.run(debug=True, host='0.0.0.0', port=5000)
-
-# The provided code seems to be cut off. Assuming it ends here for now.
-# If there are more routes or main execution blocks, they would go after this.
-# Example:
-# if __name__ == '__main__':
-#     app.run(debug=True)
