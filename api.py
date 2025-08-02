@@ -22,7 +22,9 @@ from flask_cors import CORS   # ✅ NEW IMPORT
 app_name = '__main__'
 if '__app_id__' in globals():
     app_name = globals()['__app_id__']
-app = Flask(app_name, template_folder="templates")  # Using the determined app_name
+app_root = os.path.dirname(os.path.abspath(__file__))
+template_folder = os.path.join(app_root, "templates")
+app = Flask(app_name, template_folder=template_folder) # Using the determined app_name
 
 # ✅ Enable CORS (Allowing frontend calls from any domain for now)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -1115,6 +1117,7 @@ def user_info():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+
 
 
 
