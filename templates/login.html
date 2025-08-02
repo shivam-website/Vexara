@@ -3,164 +3,1532 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vexara AI - Login</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Vexara AI - Your Revolutionary AI Assistant</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js for 3D animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Lottie for advanced animations -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+    <!-- Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- GSAP for advanced animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
     <style>
         :root {
-            --primary-color: #6e48aa;
-            --secondary-color: #9d50bb;
-            --bg-color: #f8f9fa;
-            --text-color: #333;
-            --card-bg: #ffffff;
-            --border-radius: 8px;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --gradient-accent: linear-gradient(135deg, var(--primary), var(--accent));
         }
-
+        
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
         }
+                
 
-        .login-container {
-            background-color: var(--card-bg);
-            padding: 40px 30px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            text-align: center;
-            width: 100%;
-            max-width: 400px;
+           
+
+
+        
+        .hero-heading {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(90deg, #4f46e5, #10b981, #f59e0b);
+            background-size: 200% auto;
+            color: #000;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
         }
-
-        .login-header {
-            margin-bottom: 30px;
+        
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
         }
-
-        .login-logo {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+        
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            position: relative;
+            overflow: hidden;
         }
-
-        .login-logo i {
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+        }
+        
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255,255,255,0) 0%,
+                rgba(255,255,255,0.1) 50%,
+                rgba(255,255,255,0) 100%
+            );
+            transform: rotate(30deg);
+            animation: shine 3s infinite;
+        }
+        
+        .btn-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .feature-card {
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        }
+        
+        .feature-icon {
+            transition: all 0.5s ease;
             font-size: 2.5rem;
-            color: var(--primary-color);
-            filter: drop-shadow(0 0 8px var(--secondary-color));
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transform-style: preserve-3d;
         }
-
-        .login-header p {
-            margin-top: 10px;
-            font-size: 1rem;
-            color: #666;
+        
+        .feature-card:hover .feature-icon {
+            transform: scale(1.2) rotateY(20deg);
+            animation: pulse 2s infinite;
         }
-
-        .login-methods {
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noiseFilter)' opacity='0.1'/%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
+        
+        .particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .testimonial-card {
+            background: white;
+            border-radius: 16px;
+            position: relative;
+            transition: all 0.5s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-10px) rotateY(5deg);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 5rem;
+            color: rgba(99, 102, 241, 0.1);
+            font-family: serif;
+            line-height: 1;
+        }
+        
+        /* 3D Card Effect */
+        .card-3d {
+            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+        }
+        
+        .card-3d:hover {
+            transform: rotateY(10deg) rotateX(5deg);
+        }
+        
+        /* Floating animation */
+        .floating {
+            animation: floating 6s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        
+        /* Glow effect */
+        .glow {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+            }
+            to {
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.8), 0 0 30px rgba(99, 102, 241, 0.6);
+            }
+        }
+        
+        /* Gradient text */
+        .gradient-text {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Login Modal Styles */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.8);
             display: flex;
-            flex-direction: column;
-            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
         }
-
+        
+        .modal-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 420px;
+            position: relative;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.4s ease 0.1s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-backdrop.active .login-container {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
         .login-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 100%;
-            padding: 12px 20px;
-            border: 1px solid #ddd;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255,255,255,0) 0%,
+                rgba(255,255,255,0.2) 50%,
+                rgba(255,255,255,0) 100%
+            );
+            transform: rotate(30deg);
+            animation: shine 3s infinite;
+        }
+        
+        .login-btn.google {
+            background: #4285F4;
+            color: white;
+        }
+        
+        .login-btn.google:hover {
+            background: #3367D6;
+            transform: translateY(-2px);
+        }
+        
+        .login-btn.microsoft {
+            background: #2F2F2F;
+            color: white;
+        }
+        
+        .login-btn.microsoft:hover {
+            background: #1F1F1F;
+            transform: translateY(-2px);
+        }
+        
+        .login-btn.guest {
+            border: 1px solid #e2e8f0;
+            color: var(--dark);
+        }
+        
+        .login-btn.guest:hover {
+            background: #f8fafc;
+            transform: translateY(-2px);
+        }
+        
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: #64748b;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-decoration: none; /* For anchor tags */
-            color: var(--text-color);
         }
-
-        .login-btn i {
-            margin-right: 10px;
-            font-size: 1.2rem;
+        
+        .close-button:hover {
+            color: var(--primary);
+            transform: rotate(90deg);
         }
-
-        .login-btn.google {
-            background-color: #DB4437; /* Google red */
+        
+        /* 3D Floating Elements */
+        .floating-3d {
+            animation: floating3d 8s ease-in-out infinite;
+            transform-style: preserve-3d;
+        }
+        
+        @keyframes floating3d {
+            0% { transform: translateY(0px) rotateY(0deg) rotateX(0deg); }
+            50% { transform: translateY(-30px) rotateY(10deg) rotateX(5deg); }
+            100% { transform: translateY(0px) rotateY(0deg) rotateX(0deg); }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hero-section {
+                text-align: center;
+            }
+            
+            .hero-image {
+                margin-top: 2rem;
+            }
+        }
+        
+        /* Stats counter */
+        .stat-item {
+            transition: all 0.5s ease;
+        }
+        
+        .stat-item:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Pricing card hover effect */
+        .pricing-card {
+            transition: all 0.5s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-10px) rotateY(5deg);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Particle container */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        
+        /* 3D Cube Animation */
+        .cube-container {
+            perspective: 1000px;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+        }
+        
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotate 20s infinite linear;
+        }
+        
+        .face {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
             color: white;
-            border-color: #DB4437;
+            backdrop-filter: blur(5px);
         }
-
-        .login-btn.google:hover {
-            background-color: #C53B2B;
+        
+        .front { transform: rotateY(0deg) translateZ(100px); }
+        .back { transform: rotateY(180deg) translateZ(100px); }
+        .right { transform: rotateY(90deg) translateZ(100px); }
+        .left { transform: rotateY(-90deg) translateZ(100px); }
+        .top { transform: rotateX(90deg) translateZ(100px); }
+        .bottom { transform: rotateX(-90deg) translateZ(100px); }
+        
+        @keyframes rotate {
+            from { transform: rotateX(0deg) rotateY(0deg); }
+            to { transform: rotateX(360deg) rotateY(360deg); }
         }
-
-        .login-btn.microsoft {
-            background-color: #2F2F2F; /* Microsoft dark grey */
-            color: white;
-            border-color: #2F2F2F;
+        
+        /* AI Brain Animation */
+        .ai-brain {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
         }
-
-        .login-btn.microsoft:hover {
-            background-color: #1A1A1A;
+        
+        .neuron {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: pulse 2s infinite ease-in-out;
         }
-
-        .login-btn.guest {
-            background-color: #f0f0f0;
-            color: var(--text-color);
+        
+        .connection {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            transform-origin: left center;
+            animation: connect 3s infinite ease-in-out;
         }
-
-        .login-btn.guest:hover {
-            background-color: #e0e0e0;
-        }
-
-        .login-footer {
-            margin-top: 25px;
-            font-size: 0.85rem;
-            color: #888;
-        }
-
-        .login-footer a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .login-footer a:hover {
-            text-decoration: underline;
+        
+        @keyframes connect {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
         }
     </style>
 </head>
-<body>
-    <div class="login-container">
-        <div class="login-header">
-            <div class="login-logo">
-                <i class="fas fa-robot"></i><i class="fas fa-sparkle"></i> Vexara AI
+<body class="antialiased">
+
+    <!-- Header Section -->
+    <header class="bg-white/90 backdrop-blur-md shadow-sm py-4 sticky top-0 z-50">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold text-primary flex items-center">
+                <i class="fas fa-robot mr-2 gradient-text"></i>
+                <span class="gradient-text">Vexara AI</span>
+            </a>
+            <nav class="hidden md:block">
+                <ul class="flex space-x-8">
+                    <li><a href="#features" class="nav-link text-gray-600 hover:text-primary transition duration-300">Features</a></li>
+                    <li><a href="#how-it-works" class="nav-link text-gray-600 hover:text-primary transition duration-300">How It Works</a></li>
+                    <li><a href="#testimonials" class="nav-link text-gray-600 hover:text-primary transition duration-300">Testimonials</a></li>
+                    <li><a href="#pricing" class="nav-link text-gray-600 hover:text-primary transition duration-300">Pricing</a></li>
+                    <li><a href="#" id="login-link" class="btn-primary px-6 py-2 rounded-full text-sm">Get Started</a></li>
+                </ul>
+            </nav>
+            <button class="md:hidden text-gray-600 hover:text-primary">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-white py-20 px-4 relative">
+        <div id="particles-js"></div>
+        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between relative z-10">
+            <div class="hero-content md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-5xl md:text-6xl font-extrabold leading-tight mb-6 hero-heading">Revolutionize Your Workflow With AI</h1>
+                <p class="text-xl mb-8 opacity-90">Vexara AI harnesses the power of Google Gemini to provide intelligent assistance that adapts to your unique needs.</p>
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="#" id="get-started-link" class="btn-primary py-3 px-8 rounded-full text-center glow">Start Free Trial</a>
+                    <a href="#how-it-works" class="btn-outline py-3 px-8 rounded-full text-center">See Demo</a>
+                </div>
+                <div class="mt-8 flex items-center space-x-4">
+                    <div class="flex -space-x-2">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-10 h-10 rounded-full border-2 border-white hover:transform hover:scale-110 transition duration-300" alt="User">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-10 h-10 rounded-full border-2 border-white hover:transform hover:scale-110 transition duration-300" alt="User">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-10 h-10 rounded-full border-2 border-white hover:transform hover:scale-110 transition duration-300" alt="User">
+                    </div>
+                    <div>
+                        <p class="text-sm opacity-80">Trusted by <span class="font-bold">25,000+</span> users worldwide</p>
+                    </div>
+                </div>
             </div>
-            <p>Your personal AI assistant, powered by Google Gemini</p>
+            <div class="md:w-1/2 flex justify-center floating-3d">
+                <div class="cube-container">
+                    <div class="cube">
+                        <div class="face front"><i class="fas fa-brain text-6xl gradient-text"></i></div>
+                        <div class="face back"><i class="fas fa-robot text-6xl gradient-text"></i></div>
+                        <div class="face right"><i class="fas fa-lightbulb text-6xl gradient-text"></i></div>
+                        <div class="face left"><i class="fas fa-chart-line text-6xl gradient-text"></i></div>
+                        <div class="face top"><i class="fas fa-code text-6xl gradient-text"></i></div>
+                        <div class="face bottom"><i class="fas fa-comments text-6xl gradient-text"></i></div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="login-methods">
-            <a href="/google-login" class="login-btn google">
-                <i class="fab fa-google"></i> Sign in with Google
-            </a>
-            <a href="/microsoft_login" class="login-btn microsoft">
-                <i class="fab fa-microsoft"></i> Sign in with Microsoft
-            </a>
-            <a href="/login_as_guest" class="login-btn guest">
-                <i class="fas fa-user-secret"></i> Continue as Guest
-            </a>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-12 bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div class="stat-item p-6 rounded-xl bg-white/10 backdrop-blur-sm">
+                    <div class="text-4xl font-bold mb-2" id="stat1">0</div>
+                    <p class="text-sm opacity-80">Active Users</p>
+                </div>
+                <div class="stat-item p-6 rounded-xl bg-white/10 backdrop-blur-sm">
+                    <div class="text-4xl font-bold mb-2" id="stat2">0</div>
+                    <p class="text-sm opacity-80">Tasks Automated</p>
+                </div>
+                <div class="stat-item p-6 rounded-xl bg-white/10 backdrop-blur-sm">
+                    <div class="text-4xl font-bold mb-2" id="stat3">0</div>
+                    <p class="text-sm opacity-80">Hours Saved</p>
+                </div>
+                <div class="stat-item p-6 rounded-xl bg-white/10 backdrop-blur-sm">
+                    <div class="text-4xl font-bold mb-2" id="stat4">0</div>
+                    <p class="text-sm opacity-80">5-Star Reviews</p>
+                </div>
+            </div>
         </div>
-        <div class="login-footer">
-            By logging in, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+    </section>
+
+    <!-- Clients Section -->
+    <section class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <p class="text-center text-gray-500 mb-8">TRUSTED BY INNOVATIVE COMPANIES</p>
+            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 hover:opacity-100 transition duration-500">
+                <img src="https://logo.clearbit.com/google.com" alt="Google" class="h-8 hover:transform hover:scale-110 transition duration-300">
+                <img src="https://logo.clearbit.com/microsoft.com" alt="Microsoft" class="h-8 hover:transform hover:scale-110 transition duration-300">
+                <img src="https://logo.clearbit.com/spotify.com" alt="Spotify" class="h-8 hover:transform hover:scale-110 transition duration-300">
+                <img src="https://logo.clearbit.com/airbnb.com" alt="Airbnb" class="h-8 hover:transform hover:scale-110 transition duration-300">
+                <img src="https://logo.clearbit.com/slack.com" alt="Slack" class="h-8 hover:transform hover:scale-110 transition duration-300">
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 px-4 bg-white">
+        <div class="container mx-auto">
+            <div class="text-center mb-16">
+                <span class="inline-block px-3 py-1 text-sm font-semibold text-primary bg-indigo-100 rounded-full mb-4">FEATURES</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">AI-Powered Solutions That Transform Work</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Vexara AI adapts to your workflow with powerful features designed to enhance productivity and creativity.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="feature-card p-8">
+                    <div class="feature-icon">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Natural Conversations</h3>
+                    <p class="text-gray-600">Engage in human-like dialogue with context-aware responses that understand your needs.</p>
+                    <div class="mt-4">
+                        <lottie-player src="https://assets10.lottiefiles.com/packages/lf20_5tkzkblw.json" background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay></lottie-player>
+                    </div>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="feature-card p-8">
+                    <div class="feature-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Creative Ideation</h3>
+                    <p class="text-gray-600">Generate innovative ideas, content, and solutions tailored to your specific requirements.</p>
+                    <div class="mt-4">
+                        <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_5itoumpj.json" background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay></lottie-player>
+                    </div>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="feature-card p-8">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Data Analysis</h3>
+                    <p class="text-gray-600">Process and visualize complex data sets to uncover valuable insights and trends.</p>
+                    <div class="mt-4">
+                        <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_obhph3sh.json" background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay></lottie-player>
+                    </div>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="feature-card p-8">
+                    <div class="feature-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Code Generation</h3>
+                    <p class="text-gray-600">Write, debug, and explain code in multiple programming languages with AI assistance.</p>
+                    <div class="mt-4">
+                        <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_2znxgjyt.json" background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay></lottie-player>
+                    </div>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="feature-card p-8">
+                    <div class="feature-icon">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Multilingual Support</h3>
+                    <p class="text-gray-600">Communicate and create content in dozens of languages with native-level fluency.</p>
+                    <div class="mt-4">
+                        <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_5tkzkblw.json" background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay></lottie-player>
+                    </div>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="feature-card p-8">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Enterprise Security</h3>
+                    <p class="text-gray-600">Military-grade encryption and privacy controls to protect your sensitive data.</p>
+                    <div class="mt-4">
+                        <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_5tkzkblw.json" background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay></lottie-player>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-16 px-4 bg-gray-50">
+        <div class="container mx-auto">
+            <div class="text-center mb-16">
+                <span class="inline-block px-3 py-1 text-sm font-semibold text-primary bg-indigo-100 rounded-full mb-4">HOW IT WORKS</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Simple Integration, Powerful Results</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Get started with Vexara AI in minutes and experience the difference immediately.</p>
+            </div>
+            
+            <div class="flex flex-col md:flex-row items-center justify-between gap-12">
+                <div class="md:w-1/2">
+                    <div class="space-y-8">
+                        <!-- Step 1 -->
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mr-4">
+                                <span class="text-xl font-bold">1</span>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">Sign Up in Seconds</h3>
+                                <p class="text-gray-600">Create your account using your preferred method - Google, Microsoft, or email.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 2 -->
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mr-4">
+                                <span class="text-xl font-bold">2</span>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">Customize Your Experience</h3>
+                                <p class="text-gray-600">Tell us about your needs and preferences to personalize your AI assistant.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 3 -->
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mr-4">
+                                <span class="text-xl font-bold">3</span>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">Start Interacting</h3>
+                                <p class="text-gray-600">Begin chatting with Vexara AI and discover how it can transform your workflow.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="md:w-1/2">
+                    <div class="ai-brain">
+                        <!-- This will be populated with neurons and connections via JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Video Section -->
+    <section class="py-16 px-4 bg-white">
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">See Vexara AI in Action</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-8">Watch how Vexara AI can transform your daily workflow in just minutes.</p>
+            <div class="relative max-w-4xl mx-auto rounded-xl overflow-hidden shadow-2xl">
+                <div class="aspect-w-16 aspect-h-9">
+                    <div class="w-full h-0 pb-[56.25%] relative">
+                        <div class="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center">
+                            <button id="play-button" class="w-20 h-20 bg-white rounded-full flex items-center justify-center text-primary text-3xl hover:transform hover:scale-110 transition duration-300">
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </div>
+                        <iframe id="demo-video" class="absolute inset-0 w-full h-full hidden" src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-16 px-4 bg-white">
+        <div class="container mx-auto">
+            <div class="text-center mb-16">
+                <span class="inline-block px-3 py-1 text-sm font-semibold text-primary bg-indigo-100 rounded-full mb-4">TESTIMONIALS</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">What Our Users Say</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Don't just take our word for it - hear from people who use Vexara AI every day.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card p-8">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-12 h-12 rounded-full mr-4" alt="Sarah Johnson">
+                        <div>
+                            <h4 class="font-semibold">Sarah Johnson</h4>
+                            <p class="text-gray-500 text-sm">Marketing Director</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700">"Vexara AI has transformed how we create content. It's like having an entire creative team at my fingertips. Our engagement rates have doubled since we started using it."</p>
+                    <div class="mt-4 text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card p-8">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-12 h-12 rounded-full mr-4" alt="Michael Chen">
+                        <div>
+                            <h4 class="font-semibold">Michael Chen</h4>
+                            <p class="text-gray-500 text-sm">Software Engineer</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700">"As a developer, I use Vexara daily for code reviews and debugging. It catches errors I miss and explains complex concepts in simple terms. An indispensable tool."</p>
+                    <div class="mt-4 text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 3 -->
+                <div class="testimonial-card p-8">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-12 h-12 rounded-full mr-4" alt="Emma Rodriguez">
+                        <div>
+                            <h4 class="font-semibold">Emma Rodriguez</h4>
+                            <p class="text-gray-500 text-sm">Small Business Owner</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700">"Running a business alone was overwhelming until I found Vexara. It handles customer inquiries, writes emails, and even helps with accounting questions. Game changer!"</p>
+                    <div class="mt-4 text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-16 px-4 bg-gray-50">
+        <div class="container mx-auto">
+            <div class="text-center mb-16">
+                <span class="inline-block px-3 py-1 text-sm font-semibold text-primary bg-indigo-100 rounded-full mb-4">PRICING</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Flexible Plans for Every Need</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Choose the perfect plan for your requirements, with options to scale as you grow.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Free Plan -->
+                <div class="pricing-card bg-white p-8 rounded-xl shadow-md border border-gray-200 hover:border-primary transition duration-300">
+                    <h3 class="text-2xl font-bold mb-2">Starter</h3>
+                    <p class="text-gray-600 mb-6">Perfect for individuals getting started with AI</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold">$0</span>
+                        <span class="text-gray-500">/month</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>20 requests per day</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Basic AI capabilities</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Email support</span>
+                        </li>
+                    </ul>
+                    <a href="#" class="btn-outline block text-center py-3 rounded-lg font-medium">Get Started</a>
+                </div>
+                
+                <!-- Pro Plan (Featured) -->
+                <div class="pricing-card bg-white p-8 rounded-xl shadow-lg border-2 border-primary relative transform scale-105">
+                    <div class="absolute top-0 right-0 bg-primary text-white px-4 py-1 rounded-bl-lg rounded-tr-lg text-sm font-semibold">
+                        MOST POPULAR
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">Professional</h3>
+                    <p class="text-gray-600 mb-6">For professionals and small teams</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold">$29</span>
+                        <span class="text-gray-500">/month</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>500 requests per month</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Advanced AI capabilities</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Priority support</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>API access</span>
+                        </li>
+                    </ul>
+                    <a href="#" class="btn-primary block text-center py-3 rounded-lg font-medium">Start Free Trial</a>
+                </div>
+                
+                <!-- Enterprise Plan -->
+                <div class="pricing-card bg-white p-8 rounded-xl shadow-md border border-gray-200 hover:border-primary transition duration-300">
+                    <h3 class="text-2xl font-bold mb-2">Enterprise</h3>
+                    <p class="text-gray-600 mb-6">For organizations with advanced needs</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold">$99</span>
+                        <span class="text-gray-500">/month</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Unlimited requests</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Premium AI capabilities</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>24/7 dedicated support</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Custom integrations</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Team management</span>
+                        </li>
+                    </ul>
+                    <a href="#" class="btn-outline block text-center py-3 rounded-lg font-medium">Contact Sales</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-16 px-4 bg-white">
+        <div class="container mx-auto max-w-4xl">
+            <div class="text-center mb-16">
+                <span class="inline-block px-3 py-1 text-sm font-semibold text-primary bg-indigo-100 rounded-full mb-4">FAQ</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Find answers to common questions about Vexara AI.</p>
+            </div>
+            
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                    <button class="faq-question w-full text-left p-6 bg-gray-50 hover:bg-gray-100 transition duration-200 flex justify-between items-center">
+                        <span class="font-medium text-lg">What makes Vexara AI different from other AI assistants?</span>
+                        <i class="fas fa-chevron-down transition-transform duration-200"></i>
+                    </button>
+                    <div class="faq-answer p-6 hidden">
+                        <p class="text-gray-600">Vexara AI leverages Google Gemini's cutting-edge technology combined with our proprietary customization layer to provide more accurate, context-aware responses. Unlike generic AI assistants, Vexara learns your preferences and adapts to your specific needs over time.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 2 -->
+                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                    <button class="faq-question w-full text-left p-6 bg-gray-50 hover:bg-gray-100 transition duration-200 flex justify-between items-center">
+                        <span class="font-medium text-lg">Is my data secure with Vexara AI?</span>
+                        <i class="fas fa-chevron-down transition-transform duration-200"></i>
+                    </button>
+                    <div class="faq-answer p-6 hidden">
+                        <p class="text-gray-600">Absolutely. We implement enterprise-grade security measures including end-to-end encryption, regular security audits, and strict data access controls. Your conversations are never used to train public models without your explicit consent.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 3 -->
+                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                    <button class="faq-question w-full text-left p-6 bg-gray-50 hover:bg-gray-100 transition duration-200 flex justify-between items-center">
+                        <span class="font-medium text-lg">Can I integrate Vexara AI with other tools I use?</span>
+                        <i class="fas fa-chevron-down transition-transform duration-200"></i>
+                    </button>
+                    <div class="faq-answer p-6 hidden">
+                        <p class="text-gray-600">Yes! Vexara offers API access for Professional and Enterprise plans, allowing integration with popular productivity tools like Slack, Microsoft Teams, and Google Workspace. We also provide documentation for custom integrations.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 4 -->
+                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                    <button class="faq-question w-full text-left p-6 bg-gray-50 hover:bg-gray-100 transition duration-200 flex justify-between items-center">
+                        <span class="font-medium text-lg">What happens if I exceed my monthly request limit?</span>
+                        <i class="fas fa-chevron-down transition-transform duration-200"></i>
+                    </button>
+                    <div class="faq-answer p-6 hidden">
+                        <p class="text-gray-600">If you exceed your plan's request limit, you'll have the option to purchase additional requests or upgrade your plan. We'll notify you before you reach your limit so you can make adjustments as needed.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="py-20 px-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div id="particles-js-2"></div>
+        </div>
+        <div class="container mx-auto text-center relative z-10">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to Experience the Future of AI?</h2>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">Join thousands of professionals already boosting their productivity with Vexara AI.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#" id="call-to-action-link" class="btn-primary py-4 px-10 rounded-full text-lg glow">Start Your Free Trial</a>
+                <a href="#" class="bg-white bg-opacity-10 hover:bg-opacity-20 py-4 px-10 rounded-full text-lg border border-white border-opacity-30 transition duration-300">Schedule a Demo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-900 text-white py-12 px-4">
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <!-- Column 1 -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-robot mr-2 gradient-text"></i> Vexara AI
+                    </h3>
+                    <p class="text-gray-400 mb-4">Your personal AI assistant, powered by Google Gemini.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Column 2 -->
+                <div>
+                    <h4 class="font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Features</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Pricing</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">API</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Integrations</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Column 3 -->
+                <div>
+                    <h4 class="font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Documentation</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Guides</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Blog</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Support</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Column 4 -->
+                <div>
+                    <h4 class="font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Careers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="pt-8 border-t border-gray-800 text-center text-gray-400">
+                <p>&copy; 2025 Vexara AI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal-backdrop">
+        <div class="login-container">
+            <button class="close-button" id="close-modal">&times;</button>
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Welcome to Vexara AI</h2>
+                <p class="text-gray-600">Sign in to access your personal AI assistant</p>
+            </div>
+            
+            <div class="space-y-4">
+                <a href="#" class="login-btn google" id="google-login-btn">
+                    <i class="fab fa-google mr-3"></i> Continue with Google
+                </a>
+                <a href="#" class="login-btn microsoft" id="microsoft-login-btn">
+                    <i class="fab fa-microsoft mr-3"></i> Continue with Microsoft
+                </a>
+                <a href="#" class="login-btn guest" id="guest-login-btn">
+                    <i class="fas fa-user-secret mr-3"></i> Continue as Guest
+                </a>
+            </div>
+            
+            <div class="text-center mt-6 text-sm text-gray-500">
+                By continuing, you agree to our <a href="#" class="text-primary hover:underline">Terms of Service</a> and <a href="#" class="text-primary hover:underline">Privacy Policy</a>.
+            </div>
         </div>
     </div>
+
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize particles.js
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 80,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": "#ffffff"
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                        "polygon": {
+                            "nb_sides": 5
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.5,
+                        "random": false,
+                        "anim": {
+                            "enable": false,
+                            "speed": 1,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true,
+                        "anim": {
+                            "enable": false,
+                            "speed": 40,
+                            "size_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#ffffff",
+                        "opacity": 0.4,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 2,
+                        "direction": "none",
+                        "random": false,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": false,
+                            "rotateX": 600,
+                            "rotateY": 1200
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 140,
+                            "line_linked": {
+                                "opacity": 1
+                            }
+                        },
+                        "bubble": {
+                            "distance": 400,
+                            "size": 40,
+                            "duration": 2,
+                            "opacity": 8,
+                            "speed": 3
+                        },
+                        "repulse": {
+                            "distance": 200,
+                            "duration": 0.4
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                        "remove": {
+                            "particles_nb": 2
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+
+            // Initialize particles.js for CTA section
+            particlesJS('particles-js-2', {
+                "particles": {
+                    "number": {
+                        "value": 40,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": "#ffffff"
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                        "polygon": {
+                            "nb_sides": 5
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.3,
+                        "random": false,
+                        "anim": {
+                            "enable": false,
+                            "speed": 1,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true,
+                        "anim": {
+                            "enable": false,
+                            "speed": 40,
+                            "size_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#ffffff",
+                        "opacity": 0.2,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 1,
+                        "direction": "none",
+                        "random": false,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": false,
+                            "rotateX": 600,
+                            "rotateY": 1200
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": false,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": false,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    }
+                },
+                "retina_detect": true
+            });
+
+            // Modal functionality
+            const loginLink = document.getElementById('login-link');
+            const getStartedLink = document.getElementById('get-started-link');
+            const callToActionLink = document.getElementById('call-to-action-link');
+            const loginModal = document.getElementById('login-modal');
+            const closeModalButton = document.getElementById('close-modal');
+            
+            // Login buttons
+            const googleLoginBtn = document.getElementById('google-login-btn');
+            const microsoftLoginBtn = document.getElementById('microsoft-login-btn');
+            const guestLoginBtn = document.getElementById('guest-login-btn');
+            
+            // FAQ functionality
+            const faqQuestions = document.querySelectorAll('.faq-question');
+            
+            // Demo video
+            const playButton = document.getElementById('play-button');
+            const demoVideo = document.getElementById('demo-video');
+            
+            // Open modal function
+            const openModal = () => {
+                loginModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            };
+            
+            // Close modal function
+            const closeModal = () => {
+                loginModal.classList.remove('active');
+                document.body.style.overflow = '';
+            };
+            
+            // Event listeners for modal
+            if (loginLink) loginLink.addEventListener('click', (e) => { e.preventDefault(); openModal(); });
+            if (getStartedLink) getStartedLink.addEventListener('click', (e) => { e.preventDefault(); openModal(); });
+            if (callToActionLink) callToActionLink.addEventListener('click', (e) => { e.preventDefault(); openModal(); });
+            if (closeModalButton) closeModalButton.addEventListener('click', closeModal);
+            
+            // Close modal when clicking outside
+            loginModal.addEventListener('click', (e) => {
+                if (e.target === loginModal) {
+                    closeModal();
+                }
+            });
+            
+            // Login button handlers
+            if (googleLoginBtn) googleLoginBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('Google login clicked');
+                closeModal();
+            });
+            
+            if (microsoftLoginBtn) microsoftLoginBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('Microsoft login clicked');
+                closeModal();
+            });
+            
+            if (guestLoginBtn) guestLoginBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('Guest login clicked - redirecting to guest_login');
+                window.location.href = 'guest_login';
+            });
+            
+            // FAQ functionality
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', () => {
+                    const answer = question.nextElementSibling;
+                    const icon = question.querySelector('i');
+                    
+                    // Toggle answer visibility
+                    answer.classList.toggle('hidden');
+                    
+                    // Rotate icon
+                    icon.classList.toggle('rotate-180');
+                    
+                    // Close other open answers
+                    faqQuestions.forEach(q => {
+                        if (q !== question) {
+                            q.nextElementSibling.classList.add('hidden');
+                            q.querySelector('i').classList.remove('rotate-180');
+                        }
+                    });
+                });
+            });
+            
+            // Demo video play button
+            if (playButton) {
+                playButton.addEventListener('click', () => {
+                    playButton.style.display = 'none';
+                    demoVideo.classList.remove('hidden');
+                    demoVideo.src += "&autoplay=1";
+                });
+            }
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Animate stats counter
+            const animateCounter = (element, target, duration = 2000) => {
+                const start = 0;
+                const increment = target / (duration / 16);
+                let current = start;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        clearInterval(timer);
+                        current = target;
+                    }
+                    element.textContent = Math.floor(current).toLocaleString();
+                }, 16);
+            };
+            
+            // Initialize GSAP animations
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // Animate elements on scroll
+            gsap.utils.toArray('.feature-card, .testimonial-card, .pricing-card').forEach(element => {
+                gsap.from(element, {
+                    scrollTrigger: {
+                        trigger: element,
+                        start: "top 80%",
+                        toggleActions: "play none none none"
+                    },
+                    y: 50,
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: "power2.out"
+                });
+            });
+            
+            // Animate hero elements
+            gsap.from('.hero-content', {
+                duration: 1,
+                y: 50,
+                opacity: 0,
+                ease: "power2.out"
+            });
+            
+            // Animate stats when in view
+            ScrollTrigger.create({
+                trigger: ".stat-item",
+                start: "top 80%",
+                onEnter: () => {
+                    animateCounter(document.getElementById('stat1'), 25000);
+                    animateCounter(document.getElementById('stat2'), 1200000);
+                    animateCounter(document.getElementById('stat3'), 350000);
+                    animateCounter(document.getElementById('stat4'), 4800);
+                }
+            });
+            
+            // Create AI brain animation
+            const createAIBrain = () => {
+                const brainContainer = document.querySelector('.ai-brain');
+                const width = brainContainer.offsetWidth;
+                const height = brainContainer.offsetHeight;
+                
+                // Create neurons
+                for (let i = 0; i < 30; i++) {
+                    const neuron = document.createElement('div');
+                    neuron.className = 'neuron';
+                    neuron.style.left = `${Math.random() * width}px`;
+                    neuron.style.top = `${Math.random() * height}px`;
+                    neuron.style.animationDelay = `${Math.random() * 2}s`;
+                    brainContainer.appendChild(neuron);
+                }
+                
+                // Create connections
+                const neurons = document.querySelectorAll('.neuron');
+                neurons.forEach((neuron, i) => {
+                    if (i < neurons.length - 1) {
+                        const nextNeuron = neurons[i + 1];
+                        const neuronRect = neuron.getBoundingClientRect();
+                        const nextNeuronRect = nextNeuron.getBoundingClientRect();
+                        
+                        const length = Math.sqrt(
+                            Math.pow(nextNeuronRect.left - neuronRect.left, 2) + 
+                            Math.pow(nextNeuronRect.top - neuronRect.top, 2)
+                        );
+                        
+                        const angle = Math.atan2(
+                            nextNeuronRect.top - neuronRect.top,
+                            nextNeuronRect.left - neuronRect.left
+                        ) * 180 / Math.PI;
+                        
+                        const connection = document.createElement('div');
+                        connection.className = 'connection';
+                        connection.style.width = `${length}px`;
+                        connection.style.left = `${neuronRect.left - brainContainer.getBoundingClientRect().left + neuronRect.width / 2}px`;
+                        connection.style.top = `${neuronRect.top - brainContainer.getBoundingClientRect().top + neuronRect.height / 2}px`;
+                        connection.style.transform = `rotate(${angle}deg)`;
+                        connection.style.animationDelay = `${Math.random() * 2}s`;
+                        brainContainer.appendChild(connection);
+                    }
+                });
+            };
+            
+            // Initialize AI brain animation
+            createAIBrain();
+        });
+    </script>
 </body>
 </html>
