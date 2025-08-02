@@ -62,6 +62,14 @@ os.makedirs(CHAT_HISTORY_DIR, exist_ok=True)
 UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+@app.before_first_request
+def debug_templates():
+    print(">>> Current dir:", os.getcwd())
+    print(">>> Templates folder exists:", os.path.exists("templates"))
+    if os.path.exists("templates"):
+        print(">>> Templates files:", os.listdir("templates"))
+
+
 # --- REMOVED LOCAL IMAGE GENERATION SETUP ---
 # pipe = None # Initialize pipe to None
 # if torch.cuda.is_available():
@@ -1106,5 +1114,6 @@ def user_info():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+
 
 
