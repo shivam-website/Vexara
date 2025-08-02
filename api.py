@@ -61,13 +61,14 @@ os.makedirs(CHAT_HISTORY_DIR, exist_ok=True)
 # Directory for storing uploaded images
 UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-@app.before_first_request
+@app.before_request
 def debug_templates():
-    print(">>> Current dir:", os.getcwd())
-    print(">>> Templates folder exists:", os.path.exists("templates"))
-    if os.path.exists("templates"):
-        print(">>> Templates files:", os.listdir("templates"))
+    if not hasattr(app, 'template_debug_done'):
+        print(">>> Current dir:", os.getcwd())
+        print(">>> Templates folder exists:", os.path.exists("templates"))
+        if os.path.exists("templates"):
+            print(">>> Templates files:", os.listdir("templates"))
+        app.template_debug_done = True
 
 
 # --- REMOVED LOCAL IMAGE GENERATION SETUP ---
@@ -1114,6 +1115,7 @@ def user_info():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+
 
 
 
