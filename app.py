@@ -2,33 +2,59 @@ import json
 import base64
 import requests
 import time
-import uuid # Import uuid for unique user and chat IDs
-import os # Import os for environment variables and path operations
+import uuid
+import os
 from flask import Flask, render_template, request, jsonify, redirect, session, url_for, make_response
 from flask_dance.contrib.google import make_google_blueprint, google
 from authlib.integrations.flask_client import OAuth
 from PIL import Image
 import pytesseract # Assuming tesseract is installed and configured
-import google.generativeai as genai
 import tempfile
+from datetime import datetime, date, timedelta
 
-app = Flask(__name__)
+# --- REMOVED IMPORTS FOR LOCAL IMAGE GENERATION ---
+# import torch
+# from diffusers import StableDiffusionPipeline
+# --- END REMOVED IMPORTS ---
+
+# Fixed: Handle __app_id__ not being defined when running outside Canvas
+app_name = '__main__'
+# --- FIX START ---
+# Check if __app_id__ is defined in the global scope before trying to use it.
+# This prevents a NameError if running outside environments where it's pre-defined.
+if '__app_id__' in globals():
+    app_name = globals()['__app_id__']
+# --- FIX END ---
+app = Flask(app_name) # Using the determined app_name
+
 # Use an environment variable for the secret key for better security
-# Replace "your_fallback_secret_key_here" with a strong, random key in production
-app.secret_key = os.environ.get("FLASK_SECRET_KEY", "your_fallback_secret_key_here")
+# Generate a strong, random key if not set (improved from app.py fallback)
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", str(uuid.uuid4()))
 
-# API KEYS from environment variables, with fallbacks for development.
-# For Canvas, GEMINI_API_KEY can be left empty; Canvas will inject it.
-# Keeping the user's explicit key here based on their input.
-GEMINI_API_KEY = "AIzaSyDQJcS5wwBi65AdfW5zHT2ayu1ShWgWcJg"
-HUGGINGFACE_API_KEY = os.environ.get("HUGGINGFACE_API_KEY", "your_huggingface_api_key_here") # Replace with your actual Huggingface API key if used
+# --- API KEYS ---
+# IMPORTANT: For production, load these from secure environment variables!
+# Example: os.environ.get("GOOGLE_GEMINI_API_KEY")
+GOOGLE_GEMINI_API_KEY = os.environ.get("GOOGLE_GEMINI_API_KEY", "") # Your Google Gemini API Key
+AWAN_API_KEY = os.environ.get("AWAN_API_KEY", "21f7fbb7-1209-4039-a7cc-dd0a6de383c3") # Your Awan API Key
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "") # Your Groq API Key
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "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") # Your OpenRouter API Key
+SERPER_API_KEY = os.environ.get("SERPER_API_KEY", "bb48b607349e5e050312a72459a8886e24a0edbc") # Your Serper API Key
 
-# Configure Gemini models
-genai.configure(api_key=GEMINI_API_KEY)
-# Using gemini-1.5-flash for general chat and summarization
-chat_model = genai.GenerativeModel("gemini-1.5-flash")
-# Using imagen-3.0-generate-002 for image generation as per overall instructions
-image_gen_model_name = "imagen-3.0-generate-002"
+# --- API Endpoints and Models ---
+# Changed Gemini API URL to use gemini-2.0-flash
+GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+# Removed GEMINI_VISION_API_URL as only pytesseract will be used for image vision
+AWAN_API_URL = "https://api.awanllm.com/v1/chat/completions"
+GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+
+# Preferred models for each API (can be adjusted)
+# Changed Gemini model to gemini-2.0-flash
+GEMINI_MODEL = "gemini-2.0-flash"
+AWAN_MODEL = "Meta-Llama-3-8B-Instruct"
+GROQ_MODEL = "llama3-8b-8192" # Or "mixtral-8x7b-32768"
+OPENROUTER_GENERAL_MODEL = "mistralai/mistral-8x7b-instruct-v0.1" # Changed from ministral-8b
+OPENROUTER_DEEPTHINK_MODEL = "deepseek/deepseek-r1-0528:free"
 
 # Directory for storing chat history files
 CHAT_HISTORY_DIR = os.path.join(app.root_path, 'chat_history')
@@ -37,17 +63,99 @@ os.makedirs(CHAT_HISTORY_DIR, exist_ok=True)
 UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+# --- REMOVED LOCAL IMAGE GENERATION SETUP ---
+# pipe = None # Initialize pipe to None
+# if torch.cuda.is_available():
+#     try:
+#         pipe = StableDiffusionPipeline.from_pretrained(
+#             "SG161222/Realistic_Vision_V4.0",
+#             torch_dtype=torch.float16
+#         ).to(device)
+#         pipe.enable_attention_slicing()
+#         pipe.enable_vae_slicing()
+#         print("Stable Diffusion model loaded successfully on GPU.")
+#     except Exception as e:
+#         error_message = (
+#             f"Error loading Stable Diffusion model on GPU: {e}. "
+#             "This might indicate insufficient GPU VRAM, corrupted model files, "
+#             "or a deeper PyTorch/CUDA configuration issue."
+#         )
+#         print(error_message)
+# else:
+#     print("Warning: CUDA GPU not found. Local image generation will be disabled.")
+# --- END REMOVED LOCAL IMAGE GENERATION SETUP ---
+
+
 # Tesseract OCR configuration (uncomment and modify for your OS if needed)
-# pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  # Windows
-# pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'  # macOS
-# pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'  # Linux
+# You need to install Tesseract OCR separately on your system for this to work.
+# Windows: pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+# macOS (with Homebrew): pytesseract.pytesseract.tesseract_cmd = '/opt/homebrew/bin/tesseract' or '/usr/local/bin/tesseract'
+# Linux: pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+# pytesseract.pytesseract.tesseract_cmd = r'/path/to/your/tesseract_executable'
+
+# --- QUOTA TRACKING ---
+# In-memory dictionary to store daily message counts per user.
+# Format: {user_id: {date_str: count}}
+user_message_counts = {}
+DAILY_MESSAGE_LIMIT = 20 # Daily message quota per user
+
+def get_daily_message_count(user_id):
+    """Retrieves the message count for the current user and day."""
+    today_str = date.today().isoformat()
+    # Initialize user's entry if it doesn't exist
+    if user_id not in user_message_counts:
+        user_message_counts[user_id] = {}
+    # Initialize today's count if it doesn't exist
+    if today_str not in user_message_counts[user_id]:
+        user_message_counts[user_id][today_str] = 0
+    return user_message_counts[user_id][today_str]
+
+def increment_daily_message_count(user_id):
+    """Increments the message count for the current user and day."""
+    today_str = date.today().isoformat()
+    if user_id not in user_message_counts:
+        user_message_counts[user_id] = {}
+    if today_str not in user_message_counts[user_id]:
+        user_message_counts[user_id][today_str] = 0
+    user_message_counts[user_id][today_str] += 1
+    # Clean up old dates to prevent memory growth (e.g., keep only last 7 days)
+    # This is a simple cleanup; for production, a more robust solution (like Redis expiration) is better.
+    one_week_ago = (date.today() - timedelta(days=7)).isoformat()
+    for d_str in list(user_message_counts[user_id].keys()):
+        if d_str < one_week_ago:
+            del user_message_counts[user_id][d_str]
+
+# --- CACHE LAYER ---
+# In-memory cache for recent Q&A pairs.
+# Format: {(user_id, instruction_hash): response_text}
+# Using a simple dictionary. For production, consider LRU cache or Redis.
+cache = {}
+CACHE_MAX_SIZE = 1000 # Max number of items in cache
+
+def get_from_cache(user_id, instruction):
+    """Retrieves a response from the cache if available."""
+    # Create a simple hash for the instruction to use as part of the key
+    instruction_hash = hash(instruction)
+    key = (user_id, instruction_hash)
+    return cache.get(key)
+
+def add_to_cache(user_id, instruction, response):
+    """Adds a Q&A pair to the cache."""
+    instruction_hash = hash(instruction)
+    key = (user_id, instruction_hash)
+    # Simple cache eviction: if cache exceeds max size, remove the oldest item
+    if len(cache) >= CACHE_MAX_SIZE:
+        # This is a very basic eviction (arbitrary item removal);
+        # a real LRU cache would track access times.
+        first_key = next(iter(cache))
+        del cache[first_key]
+    cache[key] = response
 
 # OAuth configuration
 google_bp = make_google_blueprint(
     client_id="978102306464-qdjll3uos10m1nd5gcnr9iql9688db58.apps.googleusercontent.com",
-    client_secret="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",
+    client_secret="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", # Ensure this is your actual client secret
     redirect_url="/google_login/authorized",
-    # It's good practice to define scope for Google OAuth
     scope=["openid", "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"]
 )
 app.register_blueprint(google_bp, url_prefix="/google_login")
@@ -55,8 +163,8 @@ app.register_blueprint(google_bp, url_prefix="/google_login")
 oauth = OAuth(app)
 microsoft = oauth.register(
     name='microsoft',
-    client_id="your_microsoft_client_id",  # Replace with your Microsoft client ID
-    client_secret="your_microsoft_client_secret",  # Replace with your Microsoft client secret
+    client_id="your_microsoft_client_id",   # IMPORTANT: Replace with your Microsoft client ID
+    client_secret="your_microsoft_client_secret",   # IMPORTANT: Replace with your Microsoft client secret
     access_token_url='https://login.microsoftonline.com/common/oauth2/v2.0/token',
     authorize_url='https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
     api_base_url='https://graph.microsoft.com/v1.0/',
@@ -69,29 +177,34 @@ def get_user_id():
     Gets a unique user ID. Prefers authenticated user ID.
     If not authenticated, generates a temporary session-based ID.
     """
-    if 'user_id' in session: # 'user_id' is set by Google/Microsoft OAuth or as temp_user_id
+    if 'user_id' in session:
         return session['user_id']
-    # For unauthenticated users, create and store a unique session ID
+    
     if 'temp_user_id' not in session:
         session['temp_user_id'] = str(uuid.uuid4())
+        session['user_id'] = session['temp_user_id']
     return session['temp_user_id']
 
 def get_chat_file_path(user_id, chat_id):
     """Constructs the file path for a specific chat history."""
-    # Ensure user_id is sanitized to be safe for a filename
     safe_user_id = "".join(c for c in user_id if c.isalnum() or c in ('-', '_')).strip()
     return os.path.join(CHAT_HISTORY_DIR, f"{safe_user_id}_{chat_id}.json")
 
 def load_chat_history_from_file(user_id, chat_id):
-    """Loads chat history for a given user and chat ID from a JSON file."""
+    """Loads chat history for a given user and chat ID from a JSON file.
+    Improved error handling from app.py.
+    """
     file_path = get_chat_file_path(user_id, chat_id)
     if os.path.exists(file_path):
-        with open(file_path, 'r', encoding='utf-8') as f:
-            try:
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
                 return json.load(f)
-            except json.JSONDecodeError:
-                print(f"Warning: Could not decode JSON from {file_path}. Starting with empty chat.")
-                return []
+        except json.JSONDecodeError:
+            print(f"Warning: Could not decode JSON from {file_path}. Starting with empty chat.")
+            return []
+        except Exception as e:
+            print(f"Error loading chat history from {file_path}: {e}")
+            return []
     return []
 
 def save_chat_history_to_file(user_id, chat_id, chat_data):
@@ -103,149 +216,436 @@ def save_chat_history_to_file(user_id, chat_id, chat_data):
     except IOError as e:
         print(f"Error saving chat history to {file_path}: {e}")
 
-# --- AI Interaction Functions ---
+# --- Web Search Function ---
+def perform_web_search(query):
+    """Performs a web search using the Serper.dev API and returns the top results.
+    Includes robust error handling and structured output.
+    (Adopted from app.py with minor adjustments for logging)
+    """
+    if not SERPER_API_KEY:
+        return "❌ Web search API key (SERPER_API_KEY) is not configured."
 
-def ask_ai_with_memory(user_id, chat_id, instruction):
-    """Sends a query to Gemini with conversation memory."""
+    if not query.strip():
+        return "❓ Please provide a query to perform a web search."
+
     try:
-        current_chat_history = load_chat_history_from_file(user_id, chat_id)
-
-        # Prepare chat history for Gemini model
-        gemini_chat_history = []
-        
-        # System instruction is best for model tuning
-        system_instruction = (
-            "You are Vexara, a smart and friendly AI assistant. "
-            "You respond like a helpful expert — clear, friendly, and with enough depth to be useful. "
-            "Give full answers, not just short replies. "
-            "Explain code when needed. If the user asks for 'only code', provide only the code. "
-            "Sound like a real human who cares about helping. "
-            "Always use Markdown for formatting your responses, especially for code blocks. "
-            "Ensure code blocks are clearly marked with language_name."
+        response = requests.post(
+            "https://google.serper.dev/search",
+            headers={
+                "X-API-KEY": SERPER_API_KEY,
+                "Content-Type": "application/json"
+            },
+            json={"q": query}
         )
-        
-        # Add system instruction only if the chat is new.
-        # For existing chats, the instruction is implicit in past interactions.
-        if not current_chat_history:
-             # The first message in the history sets the tone and context
-             gemini_chat_history.append({"role": "user", "parts": [{"text": system_instruction}]})
-             gemini_chat_history.append({"role": "model", "parts": [{"text": "Hello! How can I assist you today?"}]})
-        
-        # Add existing chat history to the Gemini prompt
-        for msg in current_chat_history:
-            if msg['type'] == 'user':
-                parts = [{"text": msg['text']}]
-                # If there's an image URL for a historical user message, encode and add it
-                if 'image_url' in msg and msg['image_url']:
-                    try:
-                        # Construct absolute path for image stored in static/uploads
-                        image_basename = os.path.basename(msg['image_url'])
-                        image_path_on_disk = os.path.join(UPLOAD_FOLDER, image_basename) # Use UPLOAD_FOLDER
-                        if os.path.exists(image_path_on_disk):
-                            with open(image_path_on_disk, "rb") as image_file:
-                                encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
-                                # Guess MIME type or store it with the message
-                                img_extension = os.path.splitext(image_basename)[1].lower()
-                                mime_type = f"image/{img_extension[1:]}" if img_extension else "image/jpeg"
-                                parts.append({
-                                    "inline_data": { # Corrected: changed to inline_data (snake_case)
-                                        "mime_type": mime_type, # Corrected: changed to mime_type (snake_case)
-                                        "data": encoded_image
-                                    }
-                                })
-                    except Exception as img_e:
-                        print(f"Warning: Could not re-encode historical image {msg['image_url']}: {img_e}")
-                gemini_chat_history.append({"role": "user", "parts": parts})
-            elif msg['type'] == 'bot':
-                gemini_chat_history.append({"role": "model", "parts": [{"text": msg['text']}]})
-        
-        # Add the current instruction from the user
-        final_user_parts = [{"text": instruction}]
-        gemini_chat_history.append({"role": "user", "parts": final_user_parts})
 
-        # Call Gemini API
-        response = chat_model.generate_content(gemini_chat_history)
-        return response.text.strip()
-    except genai.types.StopCandidateException as e:
-        # This occurs when content generation is stopped, usually because of safety filters
-        print(f"Gemini AI Error: Content generation stopped due to safety policies. {e}")
-        return "I apologize, but I cannot generate a response for that query due to safety policies."
-    except Exception as e:
-        print(f"Gemini AI Error: {e}")
-        return "Sorry, I'm having trouble processing your request right now. Please try again later."
+        print(f"DEBUG: Serper API Response Status Code: {response.status_code}")
 
-def summarize_text_gemini(text_to_summarize):
-    """Summarizes text using Gemini."""
-    try:
-        prompt = f"Summarize the following text concisely and in plain language:\n\n{text_to_summarize}"
-        response = chat_model.generate_content(prompt)
-        return response.text.strip()
-    except genai.types.StopCandidateException as e:
-        print(f"Summarization Error: Content generation stopped due to safety policies. {e}")
-        return "I cannot summarize this content due to safety policies."
-    except Exception as e:
-        print(f"Summarization Error: {e}")
-        return None
+        response.raise_for_status()  # Raises HTTPError for bad responses (4xx or 5xx)
 
-def enhance_image_prompt_gemini(raw_prompt):
-    """Enhances a raw image generation prompt using Gemini."""
-    try:
-        prompt = f"Expand the following image generation idea into a detailed, descriptive prompt suitable for an advanced image generation model, focusing on visual details, style, and mood. Be very descriptive and creative, adding specific elements that would make a compelling image. Only provide the enhanced prompt, no conversational filler:\n\n'{raw_prompt}'"
-        response = chat_model.generate_content(prompt)
-        return response.text.strip()
-    except genai.types.StopCandidateException as e:
-        print(f"Prompt Enhancement Error: Content generation stopped due to safety policies. {e}")
-        return raw_prompt # Return original if enhancement fails due to safety
-    except Exception as e:
-        print(f"Prompt Enhancement Error: {e}")
-        return raw_prompt # Return original if enhancement fails
+        try:
+            data = response.json()
+        except json.JSONDecodeError as e:
+            print("DEBUG: JSONDecodeError caught. Raw response content (first 500 chars):")
+            print(response.text[:500])
+            if "<!doctype html>" in response.text.lower() or "<html" in response.text.lower():
+                return f"❌ Web search failed: Received HTML instead of JSON. This often indicates an invalid API key, rate limit, or an issue with the Serper API itself. Raw response starts with: {response.text[:100]}..."
+            return f"❌ Web search API returned invalid data: {e}. Raw response starts with: {response.text[:100]}..."
 
-def generate_images_gemini_api(prompt):
-    """
-    Generates images using the Imagen-3.0-generate-002 model via Gemini API.
-    Returns a list of base64 encoded image URLs.
-    """
-    api_key = GEMINI_API_KEY # Canvas will inject this if empty
-    
-    if not prompt:
-        print("Error: Image generation prompt is empty.")
-        return [], "Image generation prompt cannot be empty."
+        if data.get("error"):
+            return f"❌ Serper API Error: {data['error']}"
 
-    payload = {
-        "instances": [{"prompt": prompt}], # 'instances' expects a list of objects
-        "parameters": {"sampleCount": 1} # Generate 1 image by default
-    }
-    
-    # FIX: Corrected API URL. Removed the incorrect Markdown link syntax.
-    api_url = f"https://generativelanguage.googleapis.com/v1beta/models/{image_gen_model_name}:predict?key={api_key}"
+        if "organic" not in data or not data["organic"]:
+            return "😕 No relevant search results found."
 
-    headers = {'Content-Type': 'application/json'}
+        results = []
+        for i, item in enumerate(data["organic"][:3]):
+            title = item.get("title", "No Title")
+            snippet = item.get("snippet", "No snippet available.")
+            link = item.get("link", "#")
 
-    try:
-        response = requests.post(api_url, headers=headers, json=payload)
-        response.raise_for_status() # Raise an HTTPError for bad responses (4xx or 5xx)
-        result = response.json()
+            results.append(f"{i+1}. **{title}**\n{snippet}\n🔗 {link}")
 
-        image_urls = []
-        if result and 'predictions' in result and len(result['predictions']) > 0:
-            for prediction in result['predictions']:
-                if 'bytesBase64Encoded' in prediction:
-                    img_data = prediction['bytesBase64Encoded']
-                    image_urls.append(f"data:image/png;base64,{img_data}")
-            return image_urls, "Here is your generated image!"
+        return "🔎 Here's what I found:\n\n" + "\n\n---\n\n".join(results)
+
+    except requests.exceptions.HTTPError as e:
+        error_message = f"❌ Web search network error: HTTP {response.status_code}"
+        if response.status_code == 401:
+            error_message += " - Unauthorized. Invalid API Key or authentication error. Please check your SERPER_API_KEY."
+        elif response.status_code == 429:
+            error_message += " - Too Many Requests (Rate Limit). Please wait a moment and try again."
         else:
-            print(f"Error: No predictions found in image generation response. Result: {result}")
-            return [], "Image generation failed: No valid images returned."
+            error_message += f" - {e}"
+        print(f"DEBUG: HTTPError caught. Raw response content (first 500 chars):")
+        print(response.text[:500])
+        return error_message
+
+    except requests.exceptions.ConnectionError as e:
+        return f"❌ Web search failed: Could not connect to the API server. Please check your internet connection."
+
+    except requests.exceptions.Timeout as e:
+        return f"⏳ Web search failed: The request timed out. The API server might be busy."
 
     except requests.exceptions.RequestException as e:
-        print(f"Network or API request error during image generation: {e}")
-        return [], f"Image generation failed: Network error. Please check your API key and network connection."
-    except json.JSONDecodeError as e:
-        print(f"JSON decode error during image generation: {e}")
-        return [], "Image generation failed: Invalid response from the API."
+        return f"❌ A general request error occurred during web search: {e}"
+
     except Exception as e:
-        print(f"An unexpected error occurred during image generation: {e}")
-        return [], f"Image generation failed: An unexpected error occurred: {str(e)}"
+        return f"🚨 An unexpected error occurred during web search: {e}"
+
+# --- AI Model Interaction Functions with Fallback ---
+
+def call_gemini_api(messages, model_name=GEMINI_MODEL):
+    """Calls the Google Gemini API."""
+    if not GOOGLE_GEMINI_API_KEY:
+        return {"error": "Google Gemini API Key not configured."}
+    
+    headers = {
+        "Content-Type": "application/json",
+    }
+    # Gemini API expects 'parts' in content, and 'role' as 'user' or 'model'
+    gemini_messages = []
+    for msg in messages:
+        role = "user" if msg["role"] == "user" else "model"
+        gemini_messages.append({"role": role, "parts": [{"text": msg["content"]}]})
+
+    payload = {
+        "contents": gemini_messages,
+        "generationConfig": {
+            "temperature": 0.7,
+            "maxOutputTokens": 1024,
+        }
+    }
+    try:
+        # Use the GEMINI_API_URL which now points to gemini-2.0-flash
+        response = requests.post(f"{GEMINI_API_URL}?key={GOOGLE_GEMINI_API_KEY}", headers=headers, json=payload, timeout=60)
+        response.raise_for_status()
+        json_response = response.json()
+        if json_response and json_response.get('candidates') and json_response['candidates'][0].get('content') and json_response['candidates'][0]['content'].get('parts'):
+            return {"text": json_response['candidates'][0]['content']['parts'][0]['text']}
+        else:
+            print(f"Gemini API returned unexpected structure: {json_response}")
+            return {"error": "Gemini API returned unexpected response structure."}
+    except requests.exceptions.HTTPError as http_err:
+        print(f"Gemini API HTTP error: {http_err} - {response.text}")
+        return {"error": f"Gemini API HTTP error: {response.status_code} - {response.text}"}
+    except requests.exceptions.RequestException as req_err:
+        print(f"Gemini API request error: {req_err}")
+        return {"error": f"Gemini API request error: {req_err}"}
+    except json.JSONDecodeError as json_err:
+        print(f"Gemini API JSON decode error: {json_err} - Response: {response.text}")
+        return {"error": "Gemini API returned invalid JSON."}
+    except Exception as e:
+        print(f"An unexpected error occurred during Gemini API call: {e}")
+        return {"error": f"An unexpected error occurred: {e}"}
+
+def call_awan_api(messages, model_name=AWAN_MODEL):
+    """Calls the Awan LLM API."""
+    if not AWAN_API_KEY:
+        return {"error": "Awan API Key not configured."}
+
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {AWAN_API_KEY}"
+    }
+    payload = {
+        "model": model_name,
+        "messages": messages,
+        "temperature": 0.7
+    }
+    try:
+        response = requests.post(AWAN_API_URL, headers=headers, json=payload, timeout=60)
+        response.raise_for_status()
+        json_response = response.json()
+        if json_response and json_response.get('choices') and json_response['choices'][0].get('message'):
+            return {"text": json_response['choices'][0]['message']['content']}
+        else:
+            print(f"Awan API returned unexpected structure: {json_response}")
+            return {"error": "Awan API returned unexpected response structure."}
+    except requests.exceptions.HTTPError as http_err:
+        print(f"Awan API HTTP error: {http_err} - {response.text}")
+        return {"error": f"Awan API HTTP error: {response.status_code} - {response.text}"}
+    except requests.exceptions.RequestException as req_err:
+        print(f"Awan API request error: {req_err}")
+        return {"error": f"Awan API request error: {req_err}"}
+    except json.JSONDecodeError as json_err:
+        print(f"Awan API JSON decode error: {json_err} - Response: {response.text}")
+        return {"error": "Awan API returned invalid JSON."}
+    except Exception as e:
+        print(f"An unexpected error occurred during Awan API call: {e}")
+        return {"error": f"An unexpected error occurred: {e}"}
+
+def call_groq_api(messages, model_name=GROQ_MODEL):
+    """Calls the Groq API."""
+    if not GROQ_API_KEY:
+        return {"error": "Groq API Key not configured."}
+
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {GROQ_API_KEY}"
+    }
+    payload = {
+        "model": model_name,
+        "messages": messages,
+        "temperature": 0.7,
+        "max_tokens": 1024,
+        "stream": False
+    }
+    try:
+        response = requests.post(GROQ_API_URL, headers=headers, json=payload, timeout=60)
+        response.raise_for_status()
+        json_response = response.json()
+        if json_response and json_response.get('choices') and json_response['choices'][0].get('message'):
+            return {"text": json_response['choices'][0]['message']['content']}
+        else:
+            print(f"Groq API returned unexpected structure: {json_response}")
+            return {"error": "Groq API returned unexpected response structure."}
+    except requests.exceptions.HTTPError as http_err:
+        print(f"Groq API HTTP error: {http_err} - {response.text}")
+        return {"error": f"Groq API HTTP error: {response.status_code} - {response.text}"}
+    except requests.exceptions.RequestException as req_err:
+        print(f"Groq API request error: {req_err}")
+        return {"error": f"Groq API request error: {req_err}"}
+    except json.JSONDecodeError as json_err:
+        print(f"Groq API JSON decode error: {json_err} - Response: {response.text}")
+        return {"error": "Groq API returned invalid JSON."}
+    except Exception as e:
+        print(f"An unexpected error occurred during Groq API call: {e}")
+        return {"error": f"An unexpected error occurred: {e}"}
+
+def call_openrouter_api(messages, model_name):
+    """Calls the OpenRouter API with a list of messages using the specified model."""
+    if not OPENROUTER_API_KEY:
+        return {"error": "OpenRouter API Key not configured."}
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}"
+    }
+    payload = {
+        "model": model_name,
+        "messages": messages,
+        "temperature": 0.7,
+        "top_p": 1,
+        "max_tokens": 1024,
+        "stream": False
+    }
+
+    try:
+        response = requests.post(OPENROUTER_API_URL, headers=headers, json=payload, timeout=60)
+        response.raise_for_status() # Raise an exception for HTTP errors (4xx or 5xx)
+        json_response = response.json()
+        if json_response and json_response.get('choices') and json_response['choices'][0].get('message'):
+            return {"text": json_response['choices'][0]['message']['content']}
+        else:
+            print(f"OpenRouter API returned unexpected structure: {json_response}")
+            return {"error": "OpenRouter API returned unexpected response structure."}
+    except requests.exceptions.HTTPError as http_err:
+        print(f"OpenRouter API HTTP error with model {model_name}: {http_err} - {response.text}")
+        if response.status_code == 401:
+            return {"error": "OpenRouter API Key unauthorized. Please check your OPENROUTER_API_KEY."}
+        elif response.status_code == 429:
+            return {"error": "OpenRouter API rate limit exceeded. Please wait and try again."}
+        else:
+            return {"error": f"OpenRouter API returned error: {response.status_code} - {response.text}"}
+    except requests.exceptions.ConnectionError as conn_err:
+        print(f"OpenRouter API connection error with model {model_name}: {conn_err}")
+        return {"error": "Could not connect to OpenRouter API. Please check your internet connection."}
+    except requests.exceptions.Timeout as timeout_err:
+        print(f"OpenRouter API timeout error with model {model_name}: {timeout_err}")
+        return {"error": "OpenRouter API request timed out."}
+    except requests.exceptions.RequestException as req_err:
+        print(f"OpenRouter API request error with model {model_name}: {req_err}")
+        return {"error": f"An unexpected request error occurred: {req_err}"}
+    except json.JSONDecodeError as json_err:
+        print(f"OpenRouter API JSON decode error with model {model_name}: {json_err} - Response: {response.text}")
+        return {"error": "OpenRouter API returned invalid JSON."}
+    except Exception as e:
+        print(f"An unexpected error occurred during OpenRouter API call with model {model_name}: {e}")
+        return {"error": f"An unexpected error occurred: {e}"}
+
+
+def ask_ai_with_memory(user_id, chat_id, instruction, perform_search=False, model_choice="general"):
+    """
+    Sends a query to multiple AI APIs with a fallback mechanism.
+    Order: Google Gemini -> Awan LLM -> Groq -> OpenRouter.
+    Includes conversation memory and optional web search.
+    """
+    current_chat_history = load_chat_history_from_file(user_id, chat_id)
+
+    # --- Conditional Web Search Logic ---
+    if perform_search:
+        search_query = instruction
+        search_result = perform_web_search(search_query)
+
+        search_bot_snippet = f"**Search results for:** _{search_query}_\n\n{search_result}"
+        current_chat_history.append({
+            "type": "bot",
+            "text": search_bot_snippet,
+            "timestamp": time.time()
+        })
+
+        instruction = (
+            f"I've performed a web search for '{search_query}' and found the following information:\n\n"
+            f"{search_result}\n\n"
+            f"Based on this information and our previous conversation, please answer my original query: '{search_query}'"
+        )
+        print(f"Instructing AI with web search results: {instruction[:200]}...")
+
+    # System instructions for different models
+    system_instruction_text = (
+        "You are Vexara, a smart and friendly AI assistant. You respond like a helpful expert — clear, friendly, and with enough depth to be useful. "
+        "Give full answers, not just short replies. Explain code when needed. "
+        "Crucially, when the user explicitly asks for code or code generation, your response MUST contain **ONLY** the code requested, formatted strictly within a markdown code block (e.g., ```python\\n...\\n```). "
+        "Do NOT include any conversational filler or extra characters outside the markdown code block when outputting code. "
+        "Sound like a real human who cares about helping. Always use Markdown for formatting your responses, especially for code blocks. "
+        "Ensure code blocks are clearly marked with language names (like ```html, ```js, ```python, ```css). "
+        "Structure your general answers like ChatGPT, using headings, bullet points, and a human tone. "
+        "You are an expert in web development, AI, and creative frontend projects."
+    )
+    if model_choice == "deep_think":
+        system_instruction_text = (
+            "You are a highly analytical and deep reasoning AI. Focus on providing comprehensive, logical, and thoroughly reasoned answers. "
+            "Break down complex problems, explore underlying principles, and offer detailed explanations. "
+            "When generating code, provide robust solutions with clear logic. "
+            "Maintain a formal yet helpful tone. Use Markdown extensively for structuring your detailed responses, including code blocks. "
+            "For code generation, output ONLY the code within a markdown block."
+        )
+
+    # Build messages history for the API calls
+    # Note: Different APIs might have slightly different expectations for system messages.
+    # For simplicity, we'll use a common format here.
+    ai_messages = []
+    ai_messages.append({"role": "system", "content": system_instruction_text})
+    # Add previous chat history
+    for msg in current_chat_history:
+        role = "user" if msg["type"] == "user" else "assistant"
+        content = msg["text"]
+        # If an image was involved, we've already processed it into text for the AI.
+        # So, no special handling for 'image_url' here for text-based models.
+        ai_messages.append({"role": role, "content": content})
+    # Add the current user instruction
+    ai_messages.append({"role": "user", "content": instruction})
+
+    # --- API Fallback Mechanism ---
+    # Try Google Gemini API first
+    print("Attempting to call Google Gemini API...")
+    gemini_response = call_gemini_api(ai_messages)
+    if "text" in gemini_response:
+        print("Successfully got response from Google Gemini API.")
+        return gemini_response["text"].strip()
+    else:
+        print(f"Google Gemini API failed: {gemini_response.get('error', 'Unknown error')}. Falling back...")
+
+    # Try Awan LLM API second
+    print("Attempting to call Awan LLM API...")
+    awan_response = call_awan_api(ai_messages)
+    if "text" in awan_response:
+        print("Successfully got response from Awan LLM API.")
+        return awan_response["text"].strip()
+    else:
+        print(f"Awan LLM API failed: {awan_response.get('error', 'Unknown error')}. Falling back...")
+
+    # Try Groq API third
+    print("Attempting to call Groq API...")
+    groq_response = call_groq_api(ai_messages)
+    if "text" in groq_response:
+        print("Successfully got response from Groq API.")
+        return groq_response["text"].strip()
+    else:
+        print(f"Groq API failed: {groq_response.get('error', 'Unknown error')}. Falling back...")
+
+    # Try OpenRouter API as the last fallback
+    print("Attempting to call OpenRouter API (last fallback)...")
+    target_openrouter_model = OPENROUTER_GENERAL_MODEL if model_choice == "general" else OPENROUTER_DEEPTHINK_MODEL
+    openrouter_response = call_openrouter_api(ai_messages, target_openrouter_model)
+    if "text" in openrouter_response:
+        print("Successfully got response from OpenRouter API.")
+        return openrouter_response["text"].strip()
+    else:
+        print(f"OpenRouter API failed: {openrouter_response.get('error', 'Unknown error')}.")
+        return f"Sorry, all AI services are currently unavailable or experiencing issues. Please try again later. Last error: {openrouter_response.get('error', 'No specific error reported.')}"
+
+
+def summarize_text_mistral(text_to_summarize):
+    """Summarizes text using the fallback mechanism, prioritizing general models."""
+    prompt = f"Summarize the following text concisely and in plain language:\n\n{text_to_summarize}"
+    messages = [
+        {"role": "user", "content": "You are a concise summarization expert."},
+        {"role": "assistant", "content": "Understood. Please provide the text to summarize."},
+        {"role": "user", "content": prompt}
+    ]
+    # Use the main ask_ai_with_memory function to leverage the fallback logic
+    summary = ask_ai_with_memory(user_id="system_summarizer", chat_id="temp_summarizer", instruction=prompt, model_choice="general")
+    
+    if summary.startswith("Sorry, all AI services are currently unavailable"):
+        print(f"Summarization failed: {summary}")
+        return f"I cannot summarize this content: {summary}"
+    return summary
+
+def check_grammar_and_style_mistral(text_to_check):
+    """Uses the fallback mechanism to check grammar and style."""
+    prompt = f"Please correct the grammar and improve the writing style of the following text. Provide the corrected text and briefly explain any significant changes:\n\n{text_to_check}"
+    messages = [
+        {"role": "user", "content": "You are a grammar and style expert. Provide corrections and brief explanations."},
+        {"role": "assistant", "content": "Ready to review your text."},
+        {"role": "user", "content": prompt}
+    ]
+    corrected_text = ask_ai_with_memory(user_id="system_grammar", chat_id="temp_grammar", instruction=prompt, model_choice="general")
+    
+    if corrected_text.startswith("Sorry, all AI services are currently unavailable"):
+        print(f"Grammar/Style check failed: {corrected_text}")
+        return f"I cannot check this content: {corrected_text}"
+    return corrected_text
+
+def explain_code_mistral(code_to_explain):
+    """Uses the fallback mechanism to explain code."""
+    prompt = f"Please explain the following code. Break down its functionality, explain key parts, and provide insights into its purpose and usage. Use Markdown for formatting, especially for code snippets:\n\n\n{code_to_explain}\n"
+    messages = [
+        {"role": "user", "content": "You are a code explanation expert. Provide detailed and well-formatted explanations."},
+        {"role": "assistant", "content": "I can help explain code. Please provide it."},
+        {"role": "user", "content": prompt}
+    ]
+    explanation = ask_ai_with_memory(user_id="system_code_explain", chat_id="temp_code_explain", instruction=prompt, model_choice="general")
+    
+    if explanation.startswith("Sorry, all AI services are currently unavailable"):
+        print(f"Code explanation failed: {explanation}")
+        return f"I cannot explain this code: {explanation}"
+    return explanation
+
+def generate_code_mistral(prompt_for_code, language=None):
+    """Uses the fallback mechanism to generate code based on a prompt."""
+    code_prompt = (
+        "Generate code based on the following request:\n\n"
+        f"'{prompt_for_code}'\n\n"
+    )
+    if language:
+        code_prompt += f"The code should be in {language}. "
+        code_prompt += f"Your entire response MUST be ONLY the code, strictly enclosed in a markdown code block (e.g., ```{language}\\n...\\n```). "
+    else:
+        code_prompt += "Choose the most appropriate language for the request. "
+        code_prompt += "Your entire response MUST be ONLY the code, strictly enclosed in a markdown code block (e.g., ```python\\n...\\n```). "
+    code_prompt += "Include complete, well-commented code, ready to be used. ABSOLUTELY DO NOT include any conversational text, explanations, or leading/trailing sentences outside the markdown code block. If you need to make assumptions or provide context, document them as comments *inside* the generated code."
+
+    messages = [
+        {"role": "user", "content": "You are a code generation expert. Provide only the requested code in a markdown block."},
+        {"role": "assistant", "content": "I am ready to generate code. Please provide your request."},
+        {"role": "user", "content": code_prompt}
+    ]
+    generated_code_response = ask_ai_with_memory(user_id="system_code_gen", chat_id="temp_code_gen", instruction=code_prompt, model_choice="general")
+    
+    if generated_code_response.startswith("Sorry, all AI services are currently unavailable"):
+        print(f"Code generation failed: {generated_code_response}")
+        return f"I cannot generate code for this request: {generated_code_response}"
+    return generated_code_response
+
+
+# --- REMOVED IMAGE GENERATION ENDPOINT ---
+# @app.route("/generate_image", methods=["POST"])
+# def generate_image_endpoint():
+#     # ... (removed Stable Diffusion code)
+#     pass
+# --- END REMOVED IMAGE GENERATION ENDPOINT ---
+
 
 def check_tesseract_installed():
     """Checks if Tesseract OCR is installed."""
@@ -253,53 +653,32 @@ def check_tesseract_installed():
         pytesseract.get_tesseract_version()
         return True
     except pytesseract.TesseractNotFoundError:
+        print("Tesseract is not installed or not found in PATH/configured. OCR features will be unavailable.")
         return False
     except Exception as e:
-        print(f"An error occurred while checking Tesseract: {e}")
+        print(f"An unexpected error occurred while checking Tesseract: {e}")
         return False
-
-# --- New AI Features using Gemini ---
-def check_grammar_and_style_gemini(text_to_check):
-    """Uses Gemini to check grammar and style."""
-    try:
-        prompt = f"Please correct the grammar and improve the writing style of the following text. Provide the corrected text and briefly explain any significant changes:\n\n{text_to_check}"
-        response = chat_model.generate_content(prompt)
-        return response.text.strip()
-    except genai.types.StopCandidateException as e:
-        print(f"Grammar/Style Check Error: Content generation stopped due to safety policies. {e}")
-        return "I cannot check this content due to safety policies."
-    except Exception as e:
-        print(f"Grammar/Style Check Error: {e}")
-        return "Sorry, I'm having trouble checking grammar and style right now."
-
-def explain_code_gemini(code_to_explain):
-    """Uses Gemini to explain code."""
-    try:
-        prompt = f"Please explain the following code. Break down its functionality, explain key parts, and provide insights into its purpose and usage. Use Markdown for formatting, especially for code snippets:\n\n\n{code_to_explain}\n"
-        response = chat_model.generate_content(prompt)
-        return response.text.strip()
-    except genai.types.StopCandidateException as e:
-        print(f"Code Explanation Error: Content generation stopped due to safety policies. {e}")
-        return "I cannot explain this code due to safety policies."
-    except Exception as e:
-        print(f"Code Explanation Error: {e}")
-        return "Sorry, I'm having trouble explaining the code right now."
 
 # --- Flask Routes ---
 
 @app.route('/')
 def index():
-    """Renders the main application page. Redirects to login if not authenticated."""
+    """Renders the main application page."""
     if 'user_id' not in session:
         return redirect(url_for('login'))
     return render_template('index.html')
 
 @app.route('/ask', methods=['POST'])
 def handle_query():
-    """Handles AI chat queries."""
+    """
+    Handles AI chat queries with model selection, quota tracking, and caching.
+    Automatically detects if the user wants to generate an image (now removed).
+    """
     user_id = get_user_id()
     chat_id = request.form.get('chat_id') 
     instruction = request.form.get('instruction', '').strip()
+    perform_search = request.form.get('web_search', 'false').lower() == 'true' 
+    model_choice = request.form.get('model_choice', 'general').lower() # Get model choice from frontend
 
     if not chat_id:
         return jsonify({"response": "Error: Chat ID not provided."}), 400
@@ -307,21 +686,85 @@ def handle_query():
     if not instruction:
         return jsonify({"response": "Please provide a valid input."}), 400
 
+    # --- QUOTA ENFORCEMENT ---
+    current_message_count = get_daily_message_count(user_id)
+    if current_message_count >= DAILY_MESSAGE_LIMIT:
+        return jsonify({"response": f"You have reached your daily message limit of {DAILY_MESSAGE_LIMIT}. Please try again tomorrow."}), 429
+    
+    # --- CACHE CHECK ---
+    cached_response = get_from_cache(user_id, instruction)
+    if cached_response:
+        print(f"Serving response from cache for user {user_id}: {instruction[:50]}...")
+        # Increment quota even if from cache, as it still counts as a "use" of the bot's service
+        increment_daily_message_count(user_id)
+        # Update chat history with cached response
+        current_chat_history = load_chat_history_from_file(user_id, chat_id)
+        current_chat_history.append({"type": "user", "text": instruction, "timestamp": time.time()})
+        current_chat_history.append({"type": "bot", "text": cached_response, "timestamp": time.time()})
+        save_chat_history_to_file(user_id, chat_id, current_chat_history)
+        return jsonify({"response": cached_response})
+
+    # If not in cache, proceed with API call
     current_chat_history = load_chat_history_from_file(user_id, chat_id)
     current_chat_history.append({"type": "user", "text": instruction, "timestamp": time.time()})
     save_chat_history_to_file(user_id, chat_id, current_chat_history)
 
-    ai_response = ask_ai_with_memory(user_id, chat_id, instruction)
+    # Pass the model_choice to the AI function
+    ai_response = ask_ai_with_memory(user_id, chat_id, instruction, perform_search, model_choice) 
     
-    current_chat_history = load_chat_history_from_file(user_id, chat_id) # Reload to avoid race conditions
+    # Increment message count after a successful (or attempted) API call
+    increment_daily_message_count(user_id)
+
+    # Add to cache if the response was successful (not an error message from fallback)
+    if not ai_response.startswith("Sorry, all AI services are currently unavailable"):
+        add_to_cache(user_id, instruction, ai_response)
+
+    current_chat_history = load_chat_history_from_file(user_id, chat_id) 
     current_chat_history.append({"type": "bot", "text": ai_response, "timestamp": time.time()})
     save_chat_history_to_file(user_id, chat_id, current_chat_history)
 
     return jsonify({"response": ai_response})
 
+
+@app.route("/web_search", methods=["POST"])
+def web_search_proxy():
+    """Frontend proxy for web search (Serper API).
+    This endpoint remains for compatibility but `perform_web_search` is now called directly from `/ask`.
+    """
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Missing JSON body."}), 400
+
+        query = data.get("q")
+        if not query:
+            return jsonify({"error": "Missing search query."}), 400
+
+        print(f"[Web Search] Query: {query}")
+
+        # Direct call to Serper API (as originally in bot.py)
+        serper_response = requests.post(
+            "https://google.serper.dev/search",
+            headers={
+                "X-API-KEY": SERPER_API_KEY,
+                "Content-Type": "application/json"
+            },
+            json={"q": query}
+        )
+
+        if serper_response.status_code != 200:
+            return jsonify({"error": f"Serper API error (HTTP {serper_response.status_code}): {serper_response.text}"}), 500
+
+        return jsonify(serper_response.json())
+
+    except Exception as e:
+        print(f"Web search route error: {e}")
+        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+
+
 @app.route('/upload_image', methods=['POST'])
 def upload_image_endpoint():
-    """Handles image uploads and OCR processing, then sends to Gemini Vision."""
+    """Handles image uploads and OCR processing, then sends text to AI."""
     user_id = get_user_id()
     chat_id = request.form.get('chat_id') 
     if not chat_id:
@@ -332,43 +775,34 @@ def upload_image_endpoint():
 
     image_file = request.files['image']
     
-    if not image_file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif')):
-        return jsonify({"response": "Please upload a valid image file (PNG, JPG, JPEG, TIFF, BMP)."}), 400
-
     temp_image_path = None
     try:
         with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(image_file.filename)[1]) as temp_img_file:
             image_file.save(temp_img_file.name)
             temp_image_path = temp_img_file.name
 
-        filename = f"{int(time.time())}_{image_file.filename}"
-        static_image_path = os.path.join(UPLOAD_FOLDER, filename)
-        Image.open(temp_image_path).save(static_image_path)
-        image_url_for_frontend = url_for('static', filename=f'uploads/{filename}')
-
-        with open(temp_image_path, "rb") as image_data_file:
-            encoded_image_for_gemini = base64.b64encode(image_data_file.read()).decode('utf-8')
-            img_extension = os.path.splitext(image_file.filename)[1].lower()
-            mime_type = f"image/{img_extension[1:]}" if img_extension else "image/jpeg"
-            gemini_image_part = {
-                "inline_data": { # Corrected: changed to inline_data (snake_case)
-                    "mime_type": mime_type, # Corrected: changed to mime_type (snake_case)
-                    "data": encoded_image_for_gemini
-                }
-            }
+        unique_filename = f"{int(time.time())}_{uuid.uuid4().hex}{os.path.splitext(image_file.filename)[1]}"
+        static_image_path = os.path.join(UPLOAD_FOLDER, unique_filename)
+        
+        img_for_save = Image.open(temp_image_path)
+        img_for_save.save(static_image_path)
+        image_url_for_frontend = url_for('static', filename=f'uploads/{unique_filename}')
 
         extracted_text = ""
+        # The check_tesseract_installed() ensures pytesseract is used if available.
+        # No calls to Gemini Vision API are made here.
         if check_tesseract_installed():
             try:
                 img_for_ocr = Image.open(temp_image_path)
                 if img_for_ocr.mode != 'RGB':
                     img_for_ocr = img_for_ocr.convert('RGB')
                 extracted_text = pytesseract.image_to_string(img_for_ocr)
+                print(f"OCR extracted text: {extracted_text[:100]}...")
             except Exception as ocr_e:
                 print(f"Error during OCR: {ocr_e}")
                 extracted_text = " (OCR failed to extract text)"
         else:
-            print("WARNING: Tesseract not installed. Skipping OCR.")
+            print("WARNING: Tesseract not installed or configured. Skipping OCR.")
 
         caption = request.form.get('caption', '').strip()
         user_message_text_part = ""
@@ -384,19 +818,13 @@ def upload_image_endpoint():
         current_chat_history.append({"type": "user", "text": user_message_text_part, "image_url": image_url_for_frontend, "timestamp": time.time()})
         save_chat_history_to_file(user_id, chat_id, current_chat_history)
 
-        try:
-            response_model_for_vision = genai.GenerativeModel("gemini-1.5-flash") 
-            gemini_vision_response = response_model_for_vision.generate_content([{"text": user_message_text_part}, gemini_image_part])
-            ai_response_text = gemini_vision_response.text.strip()
-        except genai.types.StopCandidateException as e:
-            print(f"Gemini Vision Error: Content generation stopped due to safety policies. {e}")
-            ai_response_text = "I apologize, but I cannot analyze this image due to safety policies."
-        except Exception as e:
-            print(f"Gemini Vision Error: {e}")
-            ai_response_text = f"Sorry, I'm having trouble analyzing the image: {str(e)}"
+        # For AI, we pass the text content (caption + OCR) as the user message.
+        # Default to 'general' model for image analysis unless specified otherwise.
+        # User did not specify using deep_think model for image analysis.
+        ai_response_text = ask_ai_with_memory(user_id, chat_id, user_message_text_part, model_choice="general")
 
-        current_chat_history = load_chat_history_from_file(user_id, chat_id) # Reload
-        current_chat_history.append({"type": "bot", "text": ai_response_text, "timestamp": time.time()})
+        current_chat_history = load_chat_history_from_file(user_id, chat_id)
+        current_chat_history.append({"type": "bot", "text": ai_response_text,})
         save_chat_history_to_file(user_id, chat_id, current_chat_history)
 
         return jsonify({
@@ -412,43 +840,12 @@ def upload_image_endpoint():
         if temp_image_path and os.path.exists(temp_image_path):
             os.unlink(temp_image_path)
 
-@app.route('/generate_image', methods=['POST'])
-def generate_image_endpoint():
-    """Handles image generation requests."""
-    user_id = get_user_id()
-    chat_id = request.form.get('chat_id')
-    if not chat_id:
-        return jsonify({"response": "Error: Chat ID not provided."}), 400
-
-    instruction = request.form.get('instruction', '').strip()
-    if not instruction:
-        return jsonify({"response": "Please provide a prompt for image generation."}), 400
-
-    current_chat_history = load_chat_history_from_file(user_id, chat_id)
-    current_chat_history.append({"type": "user", "text": instruction, "timestamp": time.time()})
-    save_chat_history_to_file(user_id, chat_id, current_chat_history)
-
-    try:
-        enhanced_prompt = enhance_image_prompt_gemini(instruction)
-        image_urls, gen_response_text = generate_images_gemini_api(enhanced_prompt)
-
-        current_chat_history = load_chat_history_from_file(user_id, chat_id) # Reload
-        current_chat_history.append({"type": "bot", "text": gen_response_text, "image_urls": image_urls, "timestamp": time.time()})
-        save_chat_history_to_file(user_id, chat_id, current_chat_history)
-
-        return jsonify({
-            "response": gen_response_text,
-            "image_urls": image_urls
-        })
-    except Exception as e:
-        print(f"Error in /generate_image_endpoint: {e}")
-        return jsonify({"response": f"Error generating image: {str(e)}"}), 500
 
 @app.route('/summarize_text', methods=['POST'])
 def summarize_text_endpoint():
     """Handles text summarization requests."""
     user_id = get_user_id()
-    chat_id = request.json.get('chat_id') 
+    chat_id = request.json.get('chat_id')
     if not chat_id:
         return jsonify({"error": "Error: Chat ID not provided for summarization."}), 400
 
@@ -456,16 +853,28 @@ def summarize_text_endpoint():
     if not text_to_summarize:
         return jsonify({"error": "No text provided for summarization."}), 400
 
-    summary = summarize_text_gemini(text_to_summarize)
-    if summary:
-        current_chat_history = load_chat_history_from_file(user_id, chat_id) # Reload
+    # Check quota before processing
+    current_message_count = get_daily_message_count(user_id)
+    if current_message_count >= DAILY_MESSAGE_LIMIT:
+        return jsonify({"response": f"You have reached your daily message limit of {DAILY_MESSAGE_LIMIT}. Please try again tomorrow."}), 429
+
+    current_chat_history = load_chat_history_from_file(user_id, chat_id)
+    current_chat_history.append({"type": "user", "text": f"Summarize: {text_to_summarize[:100]}...", "timestamp": time.time()})
+    save_chat_history_to_file(user_id, chat_id, current_chat_history)
+
+    summary = summarize_text_mistral(text_to_summarize)
+    
+    # Increment message count after a successful (or attempted) API call
+    increment_daily_message_count(user_id)
+
+    if summary and not summary.startswith("Sorry, all AI services are currently unavailable"):
+        current_chat_history = load_chat_history_from_file(user_id, chat_id)
         current_chat_history.append({"type": "bot", "text": f"**Summary:** {summary}", "timestamp": time.time()})
         save_chat_history_to_file(user_id, chat_id, current_chat_history)
-        return jsonify({"summary": summary})
+        return jsonify({"summary": summary, "response": f"**Summary:** {summary}"})
     else:
-        return jsonify({"error": "Failed to generate summary."}), 500
+        return jsonify({"error": "Failed to generate summary.", "response": summary}), 500
 
-# New Routes for LLM features
 @app.route('/check_grammar_style', methods=['POST'])
 def check_grammar_style_endpoint():
     """Endpoint for grammar and style checking."""
@@ -478,19 +887,25 @@ def check_grammar_style_endpoint():
     if not text_to_check:
         return jsonify({"error": "No text provided for grammar and style check."}), 400
 
-    # Add user message to history
+    # Check quota before processing
+    current_message_count = get_daily_message_count(user_id)
+    if current_message_count >= DAILY_MESSAGE_LIMIT:
+        return jsonify({"response": f"You have reached your daily message limit of {DAILY_MESSAGE_LIMIT}. Please try again tomorrow."}), 429
+
     current_chat_history = load_chat_history_from_file(user_id, chat_id)
     current_chat_history.append({"type": "user", "text": f"Please check my grammar and style: {text_to_check}", "timestamp": time.time()})
     save_chat_history_to_file(user_id, chat_id, current_chat_history)
 
-    corrected_text = check_grammar_and_style_gemini(text_to_check)
+    corrected_text = check_grammar_and_style_mistral(text_to_check)
     
-    # Add bot response to history
-    current_chat_history = load_chat_history_from_file(user_id, chat_id) # Reload
+    # Increment message count after a successful (or attempted) API call
+    increment_daily_message_count(user_id)
+
+    current_chat_history = load_chat_history_from_file(user_id, chat_id)
     current_chat_history.append({"type": "bot", "text": corrected_text, "timestamp": time.time()})
     save_chat_history_to_file(user_id, chat_id, current_chat_history)
 
-    return jsonify({"corrected_text": corrected_text})
+    return jsonify({"corrected_text": corrected_text, "response": corrected_text})
 
 @app.route('/explain_code', methods=['POST'])
 def explain_code_endpoint():
@@ -504,31 +919,71 @@ def explain_code_endpoint():
     if not code_to_explain:
         return jsonify({"error": "No code provided for explanation."}), 400
 
-    # Add user message to history
+    # Check quota before processing
+    current_message_count = get_daily_message_count(user_id)
+    if current_message_count >= DAILY_MESSAGE_LIMIT:
+        return jsonify({"response": f"You have reached your daily message limit of {DAILY_MESSAGE_LIMIT}. Please try again tomorrow."}), 429
+
     current_chat_history = load_chat_history_from_file(user_id, chat_id)
     current_chat_history.append({"type": "user", "text": f"Explain this code:\n```\n{code_to_explain}\n```", "timestamp": time.time()})
     save_chat_history_to_file(user_id, chat_id, current_chat_history)
 
-    explanation = explain_code_gemini(code_to_explain)
+    explanation = explain_code_mistral(code_to_explain)
     
-    # Add bot response to history
-    current_chat_history = load_chat_history_from_file(user_id, chat_id) # Reload
+    # Increment message count after a successful (or attempted) API call
+    increment_daily_message_count(user_id)
+
+    current_chat_history = load_chat_history_from_file(user_id, chat_id)
     current_chat_history.append({"type": "bot", "text": explanation, "timestamp": time.time()})
     save_chat_history_to_file(user_id, chat_id, current_chat_history)
 
-    return jsonify({"explanation": explanation})
+    return jsonify({"explanation": explanation, "response": explanation})
+
+@app.route('/generate_code', methods=['POST'])
+def generate_code_endpoint():
+    """Endpoint for code generation."""
+    user_id = get_user_id()
+    chat_id = request.form.get('chat_id')
+    prompt_for_code = request.form.get('instruction', '').strip()
+    language = request.form.get('language', None)
+
+    if not chat_id:
+        return jsonify({"error": "Chat ID not provided."}), 400
+    if not prompt_for_code:
+        return jsonify({"error": "No prompt provided for code generation."}), 400
+
+    # Check quota before processing
+    current_message_count = get_daily_message_count(user_id)
+    if current_message_count >= DAILY_MESSAGE_LIMIT:
+        return jsonify({"response": f"You have reached your daily message limit of {DAILY_MESSAGE_LIMIT}. Please try again tomorrow."}), 429
+
+    user_message_text = f"Generate code for: '{prompt_for_code}'"
+    if language:
+        user_message_text += f" (Language: {language})"
+    current_chat_history = load_chat_history_from_file(user_id, chat_id)
+    current_chat_history.append({"type": "user", "text": user_message_text, "timestamp": time.time()})
+    save_chat_history_to_file(user_id, chat_id, current_chat_history)
+
+    generated_code_response = generate_code_mistral(prompt_for_code, language)
+    
+    # Increment message count after a successful (or attempted) API call
+    increment_daily_message_count(user_id)
+
+    current_chat_history = load_chat_history_from_file(user_id, chat_id)
+    current_chat_history.append({"type": "bot", "text": generated_code_response, "timestamp": time.time()})
+    save_chat_history_to_file(user_id, chat_id, current_chat_history)
+
+    return jsonify({"code": generated_code_response, "response": generated_code_response})
 
 
 @app.route('/start_new_chat', methods=['POST'])
 def start_new_chat_endpoint():
     """Handles starting a new chat session."""
     user_id = get_user_id()
-    new_chat_id = f"chat_{int(time.time())}" 
-    save_chat_history_to_file(user_id, new_chat_id, []) # Initialize an empty chat file
+    new_chat_id = str(uuid.uuid4())
+    save_chat_history_to_file(user_id, new_chat_id, [])
 
-    # Check if there are any other chats for this user to tell the frontend
     has_previous_chats = False
-    # Filter out the newly created chat file from the list
     for filename in os.listdir(CHAT_HISTORY_DIR):
         if filename.startswith(f"{user_id}_") and filename.endswith(".json") and filename != f"{user_id}_{new_chat_id}.json":
             has_previous_chats = True
@@ -560,7 +1015,6 @@ def get_chat_history_list():
     
     user_chat_files = [f for f in os.listdir(CHAT_HISTORY_DIR) if f.startswith(f"{user_id}_") and f.endswith(".json")]
     
-    # Sort files by modification time (most recent first)
     user_chat_files.sort(key=lambda f: os.path.getmtime(os.path.join(CHAT_HISTORY_DIR, f)), reverse=True)
 
     for filename in user_chat_files:
@@ -569,15 +1023,24 @@ def get_chat_history_list():
         
         display_title = "New Chat"
         if chat_data:
-            first_user_message = next((msg for msg in chat_data if msg['type'] == 'user'), None)
-            if first_user_message:
-                display_title = first_user_message['text'].split('\n')[0][:30] # Take first line, truncate
-                if len(first_user_message['text'].split('\n')[0]) > 30:
+            first_meaningful_message = next((
+                msg for msg in chat_data 
+                if msg['type'] == 'user' and msg['text'].strip()
+            ), None)
+
+            if first_meaningful_message:
+                display_title = first_meaningful_message['text'].split('\n')[0][:30]
+                if len(first_meaningful_message['text'].split('\n')[0]) > 30:
                     display_title += "..."
-            elif chat_data[0]['type'] == 'bot': # If first message is bot (e.g., "Welcome")
+            elif chat_data and chat_data[0]['type'] == 'bot':
                 display_title = chat_data[0]['text'].split('\n')[0][:30]
                 if len(chat_data[0]['text'].split('\n')[0]) > 30:
                     display_title += "..."
+            if not display_title.strip() or display_title == "New Chat":
+                display_title = f"Chat {chat_id[:8]}"
+        else:
+             display_title = f"Chat {chat_id[:8]}"
+
 
         chat_summaries.append({'id': chat_id, 'title': display_title})
     
@@ -602,7 +1065,7 @@ def google_login_authorized():
         user_info = google.get("/oauth2/v2/userinfo")
         if user_info.ok:
             session['user'] = user_info.json().get("email")
-            session['user_id'] = f"google_{user_info.json().get('id')}" # More stable user ID
+            session['user_id'] = f"google_{user_info.json().get('id')}"
             print(f"User {session['user']} logged in with Google.")
             return redirect(url_for('index'))
         else:
@@ -615,63 +1078,33 @@ def google_login_authorized():
 @app.route('/login')
 def login():
     """Handles user login (checks session or renders login page)."""
-    if 'user_id' in session: # Check for our custom user_id
+    if 'user_id' in session:
         return redirect(url_for('index'))
-    
-    # Prevent caching of the login page
-    response = make_response(render_template('login.html'))
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '0'
-    return response
+    return render_template('login.html')
 
-@app.route('/login_as_guest')
-def login_as_guest():
-    """Allows a user to continue as a guest."""
-    session['temp_user_id'] = str(uuid.uuid4()) # Generate a temporary user ID
-    session['user_id'] = session['temp_user_id'] # Use this as the primary user_id
-    session['user'] = "Guest User" # Set a placeholder for display
-    print(f"User logged in as Guest: {session['user_id']}")
+@app.route('/guest_login')
+def guest_login():
+    """Logs in the user as a guest by assigning a temporary user ID."""
+    session.clear()
+    temp_id = str(uuid.uuid4())
+    session['temp_user_id'] = temp_id
+    session['user_id'] = temp_id
+    session['is_guest'] = True
+    print(f"User logged in as guest with temporary ID: {temp_id}")
     return redirect(url_for('index'))
-
-
-@app.route('/google-login')
-def google_login():
-    """Initiates Google OAuth."""
-    return redirect(url_for('google.login'))
-
-@app.route('/microsoft_login')
-def microsoft_login():
-    """Initiates Microsoft OAuth."""
-    redirect_uri = url_for('microsoft_authorize', _external=True)
-    return microsoft.authorize_redirect(redirect_uri)
-
-@app.route('/microsoft_authorize')
-def microsoft_authorize():
-    """Handles Microsoft OAuth callback."""
-    try:
-        token = microsoft.authorize_access_token()
-        if token:
-            user = microsoft.get('me').json()
-            if user:
-                session['user'] = user.get('userPrincipalName')
-                session['user_id'] = f"microsoft_{user.get('id')}" # More stable user ID
-                print(f"User {session['user']} logged in with Microsoft.")
-                return redirect(url_for('index'))
-            else:
-                print("Microsoft user info request failed.")
-                return redirect(url_for('login'))
-        else:
-            print("Microsoft authorization failed: No token received.")
-            return redirect(url_for('login'))
-    except Exception as e:
-        print(f"Error during Microsoft login: {e}")
-        return redirect(url_for('login'))
 
 @app.route('/logout')
 def logout():
-    """Logs out the user."""
-    session.pop('user', None)
-    session.pop('user_id', None)
-    session.pop('temp_user_id', None) # Clear temporary ID too
+    """Logs out the user by clearing the session."""
+    session.clear()
     return redirect(url_for('login'))
+
+@app.route('/user_info', methods=['GET'])
+def user_info():
+    """Returns basic user information if logged in."""
+    user_email = session.get('user', None)
+    return jsonify({"user_email": user_email})
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)
+
