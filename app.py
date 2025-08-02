@@ -8,9 +8,10 @@ from flask import Flask, render_template, request, jsonify, redirect, session, u
 from flask_dance.contrib.google import make_google_blueprint, google
 from authlib.integrations.flask_client import OAuth
 from PIL import Image
-import pytesseract # Assuming tesseract is installed and configured
+import pytesseract  # Assuming tesseract is installed and configured
 import tempfile
 from datetime import datetime, date, timedelta
+from flask_cors import CORS   # ✅ NEW IMPORT
 
 # --- REMOVED IMPORTS FOR LOCAL IMAGE GENERATION ---
 # import torch
@@ -19,16 +20,14 @@ from datetime import datetime, date, timedelta
 
 # Fixed: Handle __app_id__ not being defined when running outside Canvas
 app_name = '__main__'
-# --- FIX START ---
-# Check if __app_id__ is defined in the global scope before trying to use it.
-# This prevents a NameError if running outside environments where it's pre-defined.
 if '__app_id__' in globals():
     app_name = globals()['__app_id__']
-# --- FIX END ---
-app = Flask(app_name) # Using the determined app_name
+app = Flask(app_name)  # Using the determined app_name
+
+# ✅ Enable CORS (Allowing frontend calls from any domain for now)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Use an environment variable for the secret key for better security
-# Generate a strong, random key if not set (improved from app.py fallback)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", str(uuid.uuid4()))
 
 # --- API KEYS ---
