@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Vexara AI Assistant</title>
+    <title>Vexara</title>
+    <link rel="icon" href="/static/images/vexara-logo-removebg-preview.png" type="image/png" />
+
+
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
 
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
@@ -18,7 +21,7 @@
             --primary-color: #10a37f; /* ChatGPT green */
             --primary-light: #18cd9f;
             --accent-color: #6a0dad; /* A subtle purple/blue for some accents */
-            --bg-color: #f8f8f8; /* Light gray for body background */
+            --bg-color: #fefeff; /* Light gray for body background */
             --text-color: #303030; /* Darker text */
             --text-light: #606060;
             --sidebar-bg: #202123; /* Dark background for sidebar */
@@ -40,13 +43,13 @@
             --primary-color: #10a37f;
             --primary-light: #18cd9f;
             --accent-color: #6a0dad;
-            --bg-color:#292a2d; /* Dark background */
+            --bg-color:#202021; /* Dark background */
             --text-color: #d1d5db; /* Lighter text */
             --text-light: #a0a0a0;
-            --sidebar-bg:#202123; /* Same dark sidebar */
+            --sidebar-bg:#191918; /* Same dark sidebar */
             --sidebar-text: #ececf1;
-            --chat-bg: #292a2d; /* Dark chat background */
-            --user-message-bg: #303131t; /* Slightly darker user messages */
+            --chat-bg: #202021; /* Dark chat background */
+            --user-message-bg: #404159; /* Slightly darker user messages */
             --bot-message-bg: transparent; /* Consistent dark bot messages */
             --code-bg: #2d2d2d;
             --code-text-color: #f8f8f2;
@@ -92,6 +95,7 @@
             width: 70px; /* Collapsed width */
             padding: 16px 10px; /* Adjust padding for collapsed state */
             min-width: 70px; /* Ensures it collapses to this width */
+            background-color: #202021;
         }
 
         /* Main Content Styles */
@@ -100,13 +104,16 @@
             display: flex;
             flex-direction: column;
             height: 100vh; /* Ensure main also takes full viewport height */
-            margin-left: 260px; /* Default margin for desktop, equals sidebar width */
+            margin-left: 100px; /* Default margin for desktop, equals sidebar width */
             transition: margin-left 0.3s ease;
             position: relative; /* For z-index context */
+            
+            right: 6%;
         }
 
         .main.full-width { /* Applied when sidebar is collapsed on desktop */
-            margin-left: 70px; /* Adjusted margin when sidebar is collapsed */
+            margin-left: 350px;
+            /* Adjusted margin when sidebar is collapsed */
         }
 
         .main.full-screen { /* For true full screen chat (sidebar hidden) */
@@ -123,7 +130,7 @@
             z-index: 1000;
             
             background: transparent; /* ⬅️ Use transparent */
-            color: var(--sidebar-text); /* Match sidebar text color */
+            color:var(--sidebar-text); /* Match sidebar text color */
             
             border: none;
             width: 44px;
@@ -138,6 +145,9 @@
             align-items: center;
             justify-content: center;
             margin-top: 80px;
+        }
+        .dark-mode .sidebar-show-btn{
+            color: white;
         }
 
         /* Optional hover effect */
@@ -170,6 +180,7 @@
         .sidebar.collapsed .sidebar-toggle {
             transform: rotate(180deg); /* Rotate for collapsed state */
             
+            
            
         }
 
@@ -200,7 +211,8 @@
                 transform: translateX(0);
             }
             .main {
-                margin-left: 0; /* Main content always full width on mobile */
+                margin-left: -4px;
+                /* Main content always full width on mobile */
             }
             #showSidebarBtn {
                 display: flex !important; /* Show floating button on mobile */
@@ -228,61 +240,59 @@
         }
         
 
-/* Sidebar Content */
-.sidebar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
+        /* Sidebar Content */
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-/* Logo Styling */
-.sidebar-logo {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    white-space: nowrap;
-    transition: all 0.3s ease;
-}
-
-/* ✅ Hide image by default (sidebar open) */
-.sidebar-logo img {
-    display: none;
-}
-
-/* ✅ Show only when sidebar is collapsed */
-.sidebar.collapsed .sidebar-logo img {
-    display: inline-block;
-    width: 55px; /* Slightly larger for better visibility */
-    height: 55px;
-    object-fit: cover; /* Ensures a clean square fit */
-    /* background: rgba(16, 163, 127, 0.08);  */
-    padding: 8px; /* Adds spacing inside */
-    border-radius: 12px; /* Rounded edges for a polished look */
-    /* filter: drop-shadow(0 2px 6px rgba(192, 203, 200, 0.3));  */
-    transition: all 0.3s ease;
-}
-
-/* Hover effect for a modern feel */
-.sidebar.collapsed .sidebar-logo img:hover {
-   cursor: pointer;
-    transform: scale(1.05); /* Slight zoom on hover */
- 
-}
+        /* Logo Styling */
+        .sidebar-logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
 
 
-/* Hide text only in collapsed mode */
-.sidebar.collapsed .sidebar-logo span {
-    display: none;
-}
+        /* ✅ Hide image by default (sidebar open) */
+        .sidebar-logo img {
+            display: none;
+        }
+
+        /* ✅ Show only when sidebar is collapsed */
+        .sidebar.collapsed .sidebar-logo img {
+            display: inline-block;
+            width: 55px; /* Slightly larger for better visibility */
+            height: 55px;
+            object-fit: cover; /* Ensures a clean square fit */
+            /* background: rgba(16, 163, 127, 0.08);  */
+            padding: 8px; /* Adds spacing inside */
+            border-radius: 12px; /* Rounded edges for a polished look */
+            /* filter: drop-shadow(0 2px 6px rgba(192, 203, 200, 0.3));  */
+            transition: all 0.3s ease;
+        }
+
+        /* Hover effect for a modern feel */
+        .sidebar.collapsed .sidebar-logo img:hover {
+        cursor: pointer;
+            transform: scale(1.05); /* Slight zoom on hover */
+        
+        }
 
 
-
+        /* Hide text only in collapsed mode */
+        .sidebar.collapsed .sidebar-logo span {
+            display: none;
+        }
         .new-chat-btn {
             background: transparent; /* No background color */
             color: white;
@@ -308,12 +318,13 @@
 
         .sidebar.collapsed .new-chat-btn {
             padding: 25px;
-            margin-top: 90px;
+            margin-top: 40px;
             justify-content: center;
             width: 50px;
             height: 70px;
             border-radius: 50%;
             z-index: 10;
+           
             /* padding-bottom: 10px; */
         }
 
@@ -332,6 +343,7 @@
 
         #chat-history-list::-webkit-scrollbar {
             width: 6px;
+            
         }
 
         #chat-history-list::-webkit-scrollbar-track {
@@ -380,6 +392,7 @@
             padding: 0;
             font-size: 1.1rem;
             border-radius: 50%; /* Make them circular when collapsed */
+            display: none;
             
         }
 
@@ -538,7 +551,7 @@
             justify-content: space-between;
             align-items: center;
             z-index: 10;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* Subtle bottom border */
+            /* border-bottom: 1px solid rgba(0, 0, 0, 0.05);  */
         }
 
         .dark-mode .top-bar {
@@ -549,7 +562,7 @@
             font-weight: 600;
             font-size: 1.1rem;
             display: flex;
-            align-items: center;
+            justify-content: center;
             gap: 8px;
             color: var(--text-color);
         }
@@ -621,11 +634,12 @@
             padding: 20px;
             overflow-y: auto;
             background-color: var(--chat-bg);
+            color: #c0c1c1;
             scrollbar-width: thin;
             scrollbar-color: var(--primary-color) var(--chat-bg);
             display: flex;
             flex-direction: column;
-            gap: 16px; /* Spacing between messages */
+            gap: 26px; /* Spacing between messages */
             font-size: 1rem;
             line-height: 1.6;
             scroll-behavior: smooth;
@@ -633,11 +647,13 @@
 
         .chat-container::-webkit-scrollbar {
             width: 8px;
+            
         }
 
         .chat-container::-webkit-scrollbar-track {
             background: var(--chat-bg);
             border-radius: 10px;
+            
         }
 
         .chat-container::-webkit-scrollbar-thumb {
@@ -663,17 +679,22 @@
             padding-bottom: 100px; /* Space for the input area */
             gap: 20px;
         }
-
-        .new-chat-placeholder .logo-large {
-            font-size: 3rem;
-            color: var(--primary-color);
-            text-shadow: 0 0 10px rgba(16, 163, 127, 0.3);
+        .new-chat-placeholder .input-area{
+            position: relative;
+            bottom: 50%;
+            margin-bottom: 1000px;
         }
 
         .new-chat-placeholder .title {
             font-size: 2rem;
             font-weight: 600;
             color: var(--text-color);
+        }
+        .new-chat-placeholder img {
+            height: 60px;
+            width: 60px;
+            background-size: cover;
+            background-repeat: no-repeat;
         }
 
         /* Individual Chat Message Styles */
@@ -703,7 +724,7 @@
 .user-message {
     background-color: var(--user-message-bg);
     margin-left: auto;
-    margin-right: 0;
+    margin-right: 8rem;
     padding: 14px 18px;
     border-radius: 12px 12px 4px 12px; /* Rounded with unique flair */
     max-width: 70%;
@@ -719,7 +740,7 @@
 .bot-message {
     background-color: var(--bot-message-bg);
     margin-right: auto;
-    margin-left: 0;
+    margin-left: 7%;
     padding: 14px 18px;
     border-radius: 12px 12px 12px 4px; /* Rounded with unique flair */
     max-width: 70%;
@@ -770,6 +791,7 @@
             opacity: 0.7;
             margin-left: auto; /* Push timestamp to the right */
             color: var(--text-light);
+            display: none;
         }
 
         .message-header i {
@@ -856,24 +878,24 @@
 ================================== */
 
 .input-area {
-    padding: 16px 20px;
+    padding: 10px 10px;
     background-color: var(--chat-bg);
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    /* border-top: 1px solid rgba(0, 0, 0, 0.05); */
     position: sticky;
     bottom: 0;
     z-index: 10;
+   
 }
 
-.dark-mode .input-area {
-    border-top-color: rgba(255, 255, 255, 0.05);
-}
 
 .input-container {
     display: flex;
     gap: 8px;
     width: 100%;
-    max-width: 768px;
-    margin: 0 auto;
+    max-width: 800px;
+    margin: 0 auto
+    ;
+    margin-right: 7.8rem;
     align-items: flex-end;
     position: relative;
     background: rgba(0, 0, 0, 0.03);
@@ -881,29 +903,43 @@
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
     padding: 10px 14px;
     transition: box-shadow 0.2s ease;
+    
 }
 
 .dark-mode .input-container {
-    background: rgba(255, 255, 255, 0.05);
+    background: #313130;
     box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1);
 }
 
 .main.full-screen .input-container {
     max-width: 900px;
+    margin-right: 100px;
 }
+.main.full-width .input-container{
+    margin-right: 100px;
+    max-width: 835px;
+}
+        .main.full-width { /* Applied when sidebar is collapsed on desktop */
+            margin-left: 350px;
+            margin-right:90px;
+            /* Adjusted margin when sidebar is collapsed */
+        }
 
 /* ✅ Improved Text Input */
 #text-input {
     flex: 1;
     min-width: 0;
-    padding: 10px 0;
+    max-width: 900px;
+    padding: 10px 0px;
+    text-align: left;
+    z-index: 10;
     border: none;
     background: transparent;
     color: var(--text-color);
-    font-size: 1rem;
+    font-size: 1.25rem;
     resize: none;
     overflow-y: auto;
-    min-height: 28px;
+    min-height: 90px;
     line-height: 1.5;
     max-height: 200px;
     border-radius: var(--border-radius-sm);
@@ -911,12 +947,15 @@
     white-space: pre-wrap;
     word-wrap: break-word;
     scrollbar-width: thin;
-    scrollbar-color: #10a37f transparent; /* Firefox support */
+    scrollbar-color: #10a37f transparent;
+     /* Firefox support */
+    
 }
 
 /* ✅ Custom Scrollbar Styling for WebKit (Chrome, Edge, Safari) */
 #text-input::-webkit-scrollbar {
     width: 6px;
+    position: fixed;
 }
 
 #text-input::-webkit-scrollbar-track {
@@ -953,10 +992,12 @@
 .stop-btn {
     background: none;
     border: none;
-    color: var(--text-light);
+    color: #e4e4e5;
+    
     cursor: pointer;
     font-size: 1.3rem;
     padding: 8px;
+    margin-left: 10px;
     border-radius: 50%;
     transition: var(--transition);
     display: flex;
@@ -966,6 +1007,9 @@
     height: 42px;
     flex-shrink: 0;
 }
+/* .input-icon-btn{
+    background: rgba(0, 0, 0, 0.05);
+} */
 
 .input-icon-btn:hover,
 .submit-btn:hover {
@@ -974,8 +1018,9 @@
 }
 .dark-mode .input-icon-btn:hover,
 .dark-mode .submit-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--text-color);
+    background: #424343;
+    /* color: var(--text-color); */
+    color: white;
 }
 
 /* Active Send Button */
@@ -1056,7 +1101,10 @@
             
             #text-input {
                 flex: 1;
-                min-height: 48px;
+                min-height: 104px;
+                padding: 0px 0px;
+                bottom: -140px;
+                
             }
             
             .input-icon-btn, .submit-btn, .stop-btn {
@@ -1471,61 +1519,60 @@
         .model-select-group {
             display: flex;
             justify-content: center;
-            gap: 1.5rem; /* Increased gap for better spacing */
-            margin-bottom: 1rem; /* Space below the radio buttons */
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* Subtle separator */
-        }
-        .dark-mode .model-select-group {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            gap: 12px;
+            padding: 0.5rem 0;
+            /* border-bottom: 1px solid rgba(0, 0, 0, 0.05); */
         }
 
-        .model-select-group label {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            font-size: 0.95rem; /* Slightly larger font */
-            color: var(--text-color);
-            transition: color 0.2s ease;
-        }
 
-        .model-select-group label:hover {
-            color: var(--primary-color); /* Highlight on hover */
-        }
 
-        .model-select-group input[type="radio"] {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            width: 18px; /* Custom radio button size */
-            height: 18px;
-            border: 2px solid var(--text-light); /* Border color */
-            border-radius: 50%;
-            margin-right: 8px;
-            position: relative;
-            outline: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
+/* ✅ Toggle Button Style */
+.model-option {
+    position: relative;
+    padding: 8px 18px;
+    border: 2px solid var(--text-light);
+    border-radius: 30px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-color);
+    background: rgba(0, 0, 0, 0.03);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+}
 
-        .model-select-group input[type="radio"]:checked {
-            border-color: var(--primary-color); /* Primary color when checked */
-            background-color: var(--primary-color);
-        }
+.dark-mode .model-option {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
+}
 
-        .model-select-group input[type="radio"]:checked::before {
-            content: '';
-            display: block;
-            width: 8px; /* Inner circle */
-            height: 8px;
-            background-color: white;
-            border-radius: 50%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
+/* Hide Original Radio */
+.model-option input[type="radio"] {
+    display: none;
+}
+
+/* ✅ Hover effect */
+.model-option:hover {
+    border-color: var(--primary-color);
+    background: rgba(16, 163, 127, 0.06);
+}
+
+/* ✅ Selected Style */
+.model-option input[type="radio"]:checked + span {
+    color: white;
+}
+
+.model-option input[type="radio"]:checked ~ span {
+    color: white;
+}
+
+.model-option:has(input[type="radio"]:checked) {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 6px rgba(16, 163, 127, 0.3);
+}
+
 
         /* Voice Indicator Area Styling (for input bar when in voice mode) */
         .voice-indicator-area {
@@ -1789,6 +1836,7 @@
       0%, 100% { transform: scaleY(0.6); opacity: 0.5; }
       50% { transform: scaleY(1.4); opacity: 1; }
     }
+    
     </style>
 </head>
 <body>
@@ -1808,8 +1856,8 @@
     <div id="sidebar" class="sidebar">
         <div class="sidebar-header">
             <div class="sidebar-logo">
-                <i class="fas fa-robot"></i>
-                 <!-- <img src="vexara1.png" alt="V"> -->
+                <!-- <i class="fas fa-robot"></i> -->
+                 <img src="/static/images/vexara-logo-removebg-preview.png" alt="V">
                 <span>Vexara</span>
             </div>
             <!-- Renamed hideSidebarBtn to sidebarToggleButton for general use -->
@@ -1857,7 +1905,11 @@
         <div class="top-bar">
             <div class="top-bar-title">
                 <!-- <i class="fas fa-robot" aria-hidden="true"></i> -->
-                <span>Vexara</span>
+                <!-- <img src="/static/images/vexara-logo-removebg-preview.png" alt="V" style="display: inline-block;
+                width: 55px; /* Slightly larger for better visibility */
+                height: 55px;
+                object-fit: cover;"> -->
+                <!-- <span style="font-size: 22px; font-weight: 550;position: fixed ; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">Vexara</span> -->
             </div>
             <div class="top-bar-actions">
                 <button class="action-btn" onclick="toggleDarkMode()" title="Toggle Dark Mode" aria-label="Toggle Dark Mode">
@@ -1870,7 +1922,8 @@
         <div class="chat-container" id="chatbox" role="log" aria-live="polite">
             <!-- Initial New Chat Placeholder -->
             <div id="new-chat-placeholder" class="new-chat-placeholder">
-                <!-- <i class="fas fa-robot logo-large" aria-hidden="true"></i> -->
+                
+                <img src="/static/images/vexara-logo-removebg-preview.png" alt="V">
                 <span class="title">What are you working on?</span>
                 <p>Welcome to Vexara! How can I assist you today?</p>
             </div>
@@ -1878,28 +1931,32 @@
 
         <!-- Input Area at the bottom -->
         <div class="input-area">
+            
             <!-- Image Preview Container -->
             <div id="image-preview-container" class="image-preview-container" aria-live="polite" aria-atomic="true">
                 <img id="image-preview" src="#" alt="Image Preview" style="display: none;">
                 <button id="clear-image-btn" class="clear-image-btn" title="Clear Image" aria-label="Clear Image Preview">
                     <i class="fas fa-times" aria-hidden="true"></i>
                 </button>
+                
             </div>
 
             <form id="multi-action-form" enctype="multipart/form-data">
-                <!-- Model Selection Radio Buttons -->
+                <!-- Model Selection Buttons -->
                 <div class="model-select-group" role="radiogroup" aria-label="Select AI Model">
-                    <label for="modelGeneral">
+                    <label class="model-option" for="modelGeneral">
                         <input type="radio" id="modelGeneral" name="modelChoice" value="general" checked aria-checked="true">
-                        General Talk (Mistral)
+                        <span>General Talk </span>
                     </label>
-                    <label for="modelDeepThink">
+
+                    <label class="model-option" for="modelDeepThink">
                         <input type="radio" id="modelDeepThink" name="modelChoice" value="deep_think" aria-checked="false">
-                        Deep Think (DeepSeek)
+                        <span>Deep Think</span>
                     </label>
                 </div>
 
-                <div class="input-container">
+
+                <div class="input-container" >
                     <!-- Icons on the left -->
                     <button type="button" class="input-icon-btn" id="attach-file-btn" title="Attach File" aria-label="Attach File">
                         <i class="fas fa-paperclip" aria-hidden="true"></i>
@@ -1912,7 +1969,7 @@
                     </button>
 
                     <!-- Main Textarea -->
-                    <textarea id="text-input" name="instruction" placeholder="Ask anything" rows="1" required aria-label="Type your message here"></textarea>
+                    <textarea id="text-input" name="instruction" placeholder="Ask Vexara" rows="1" required aria-label="Type your message here"></textarea>
                     
                     <!-- Voice Indicator Area (for input bar when not in full voice mode) -->
                     <div id="voice-indicator-area" class="voice-indicator-area" aria-live="polite" aria-atomic="true">
@@ -1926,7 +1983,14 @@
 
                     <!-- Voice Talk Button (on the right, before send) -->
                     <button type="button" id="voice-talk-btn" class="input-icon-btn" title="Toggle Voice Talk" aria-label="Toggle Voice Talk">
-                        <i class="fas fa-microphone" aria-hidden="true"></i>
+                        <!-- <i class="fas fa-microphone" aria-hidden="true"></i> -->
+                        <svg width="35" height="35" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="icon"><path d="M7.33496 15.5V4.5C7.33496 4.13275 7.63275 3.83499 8 3.83496C8.36727 3.83496 8.66504 4.13273 8.66504 4.5V15.5C8.66504 15.8673 8.36727 16.165 8 16.165C7.63275 16.165 7.33496 15.8673 7.33496 15.5ZM11.335 13.1309V7.20801C11.335 6.84075 11.6327 6.54298 12 6.54297C12.3673 6.54297 12.665 6.84074 12.665 7.20801V13.1309C12.665 13.4981 12.3672 13.7959 12 13.7959C11.6328 13.7959 11.335 13.4981 11.335 13.1309ZM3.33496 11.3535V8.81543C3.33496 8.44816 3.63273 8.15039 4 8.15039C4.36727 8.15039 4.66504 8.44816 4.66504 8.81543V11.3535C4.66504 11.7208 4.36727 12.0186 4 12.0186C3.63273 12.0186 3.33496 11.7208 3.33496 11.3535ZM15.335 11.3535V8.81543C15.335 8.44816 15.6327 8.15039 16 8.15039C16.3673 8.15039 16.665 8.44816 16.665 8.81543V11.3535C16.665 11.7208 16.3673 12.0186 16 12.0186C15.6327 12.0186 15.335 11.7208 15.335 11.3535Z"></path></svg>
+                        <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="voice-icon">
+                            <path d="M12 1v22"></path>
+                            <path d="M5 5v14"></path>
+                            <path d="M19 8v8"></path>
+                          </svg> -->
+                          
                     </button>
                 
                     <!-- Send/Stop Buttons (on the far right) -->
@@ -1937,6 +2001,13 @@
                         <i class="fas fa-stop" aria-hidden="true"></i>
                     </button>
                 </div>
+<div style="display: flex; justify-content: center; width: 100%; position: relative; top: 5px;">
+    <p style="font-size: 13px; color: #999; text-align: center; margin: 0; opacity: 0.7;">
+        Top priority to privacy, feel free to chat
+    </p>
+</div>
+
+
             </form>
         </div>
 
@@ -1947,7 +2018,9 @@
                 <div class="typing-dot"></div>
                 <div class="typing-dot"></div>
             </div>
+            
         </div>
+        
     </div>
 
     <!-- NEW: Voice Mode Full-Screen Overlay -->
@@ -2020,6 +2093,7 @@
             <i class="fas fa-times" aria-hidden="true"></i>
             <span>Cancel</span>
         </div>
+        
     </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -2202,7 +2276,7 @@
             
             const header = document.createElement('div');
             header.className = 'message-header';
-            header.innerHTML = type === 'user' ? 'You' : 'Vexara';
+            header.innerHTML = type === 'user' ? 'You' : '';
             
             const timestampSpan = document.createElement('span');
             timestampSpan.className = 'message-timestamp';
@@ -2274,7 +2348,7 @@
             
             const header = document.createElement('div');
             header.className = 'message-header';
-            header.innerHTML = 'Vexara';
+            // header.innerHTML = 'Vexara';
             
             const timestampSpan = document.createElement('span');
             timestampSpan.className = 'message-timestamp';
@@ -2397,7 +2471,7 @@
                 const messageActionsDiv = document.createElement('div');
                 messageActionsDiv.className = 'message-actions';
 
-                const summarizeButton = document.createElement('button');
+                // const summarizeButton = document.createElement('button');
                 summarizeButton.className = 'message-action-btn';
                 summarizeButton.innerHTML = '<i class="fas fa-sparkle" aria-hidden="true"></i> Summarize';
                 summarizeButton.onclick = async () => {
@@ -3651,7 +3725,8 @@
                         placeholderDiv.id = 'new-chat-placeholder';
                         placeholderDiv.className = 'new-chat-placeholder';
                         placeholderDiv.innerHTML = `
-                            <i class="fas fa-robot logo-large" aria-hidden="true"></i>
+                        <img src="/static/images/vexara-logo-removebg-preview.png" alt="V">
+                            
                             <span class="title">What are you working on?</span>
                             <p>Welcome to Vexara! How can I assist you today?</p>
                         `;
