@@ -22,9 +22,7 @@ from flask_cors import CORS   # ✅ NEW IMPORT
 app_name = '__main__'
 if '__app_id__' in globals():
     app_name = globals()['__app_id__']
-app_root = os.path.dirname(os.path.abspath(__file__))
-template_folder = os.path.join(app_root, "templates")
-app = Flask(app_name, template_folder=template_folder) # Using the determined app_name
+app = Flask(app_name)  # Using the determined app_name
 
 # ✅ Enable CORS (Allowing frontend calls from any domain for now)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -63,15 +61,6 @@ os.makedirs(CHAT_HISTORY_DIR, exist_ok=True)
 # Directory for storing uploaded images
 UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-@app.before_request
-def debug_templates():
-    if not hasattr(app, 'template_debug_done'):
-        print(">>> Current dir:", os.getcwd())
-        print(">>> Templates folder exists:", os.path.exists("templates"))
-        if os.path.exists("templates"):
-            print(">>> Templates files:", os.listdir("templates"))
-        app.template_debug_done = True
-
 
 # --- REMOVED LOCAL IMAGE GENERATION SETUP ---
 # pipe = None # Initialize pipe to None
@@ -733,7 +722,8 @@ def handle_query():
     current_chat_history.append({"type": "bot", "text": ai_response, "timestamp": time.time()})
     save_chat_history_to_file(user_id, chat_id, current_chat_history)
 
-    return jsonify({"response": ai_response})
+    return ai_response
+
 
 
 @app.route("/web_search", methods=["POST"])
@@ -1117,8 +1107,4 @@ def user_info():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-
-
-
-
 
