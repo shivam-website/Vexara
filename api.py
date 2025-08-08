@@ -22,7 +22,7 @@ from flask_cors import CORS   # ✅ NEW IMPORT
 app_name = '__main__'
 if '__app_id__' in globals():
     app_name = globals()['__app_id__']
-app_root = os.path.dirname(os.path.abspath(__file_))
+app_root = os.path.dirname(os.path.abspath(__file__))
 template_folder = os.path.join(app_root, "templates")
 app = Flask(app_name, template_folder=template_folder) # Using the det
 
@@ -1111,5 +1111,6 @@ def user_info():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+
 
 
