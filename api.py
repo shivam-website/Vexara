@@ -24,7 +24,7 @@ if '__app_id__' in globals():
     app_name = globals()['__app_id__']
 app_root = os.path.dirname(os.path.abspath(__file_))
 template_folder = os.path.join(app_root, "templates")
-app = Flask(app_name, template_folder=template folder) # Using the det
+app = Flask(app_name, template_folder=template_folder) # Using the det
 
 # ✅ Enable CORS (Allowing frontend calls from any domain for now)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -1111,4 +1111,5 @@ def user_info():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+
 
