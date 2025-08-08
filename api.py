@@ -22,9 +22,9 @@ from flask_cors import CORS   # ✅ NEW IMPORT
 app_name = '__main__'
 if '__app_id__' in globals():
     app_name = globals()['__app_id__']
-app_root = os.path.dirname(os.path.abspath(__file__))
+app_root = os.path.dirname(os.path.abspath(__file_))
 template_folder = os.path.join(app_root, "templates")
-app = Flask(app_name, template_folder=template_folder) # Using the determined app_name
+app = Flask(app_name, template_folder=template folder) # Using the det
 
 # ✅ Enable CORS (Allowing frontend calls from any domain for now)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -54,7 +54,7 @@ OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 GEMINI_MODEL = "gemini-2.0-flash"
 AWAN_MODEL = "Meta-Llama-3-8B-Instruct"
 GROQ_MODEL = "llama3-8b-8192" # Or "mixtral-8x7b-32768"
-OPENROUTER_GENERAL_MODEL = "mistralai/mistral-8x7b-instruct-v0.1" # Changed from ministral-8b
+OPENROUTER_GENERAL_MODEL = "mistralai/mistral-small-3.2-24b-instruct:free" # Changed from ministral-8b
 OPENROUTER_DEEPTHINK_MODEL = "deepseek/deepseek-r1-0528:free"
 
 # Directory for storing chat history files
@@ -313,6 +313,7 @@ def call_gemini_api(messages, model_name=GEMINI_MODEL):
         "generationConfig": {
             "temperature": 0.7,
             "maxOutputTokens": 1024,
+            # "stream": True
         }
     }
     try:
@@ -350,7 +351,8 @@ def call_awan_api(messages, model_name=AWAN_MODEL):
     payload = {
         "model": model_name,
         "messages": messages,
-        "temperature": 0.7
+        "temperature": 0.7,
+        # "stream": True
     }
     try:
         response = requests.post(AWAN_API_URL, headers=headers, json=payload, timeout=60)
@@ -388,7 +390,7 @@ def call_groq_api(messages, model_name=GROQ_MODEL):
         "messages": messages,
         "temperature": 0.7,
         "max_tokens": 1024,
-        "stream": False
+        "stream": True
     }
     try:
         response = requests.post(GROQ_API_URL, headers=headers, json=payload, timeout=60)
@@ -1109,5 +1111,4 @@ def user_info():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-
 
