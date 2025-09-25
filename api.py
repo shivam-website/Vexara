@@ -22,9 +22,7 @@ from flask_cors import CORS   # ✅ NEW IMPORT
 app_name = '__main__'
 if '__app_id__' in globals():
     app_name = globals()['__app_id__']
-app_root = os.path.dirname(os.path.abspath(__file__))
-template_folder = os.path.join(app_root, "templates")
-app = Flask(app_name, template_folder=template_folder) # Using the det
+app = Flask(app_name)  # Using the determined app_name
 
 # ✅ Enable CORS (Allowing frontend calls from any domain for now)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -35,7 +33,7 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", str(uuid.uuid4()))
 # --- API KEYS ---
 # IMPORTANT: For production, load these from secure environment variables!
 # Example: os.environ.get("GOOGLE_GEMINI_API_KEY")
-GOOGLE_GEMINI_API_KEY = os.environ.get("GOOGLE_GEMINI_API_KEY", "") # Your Google Gemini API Key
+GOOGLE_GEMINI_API_KEY = os.environ.get("GOOGLE_GEMINI_API_KEY", "AIzaSyAvnhpZee6OfasDj15yBxexQ9fy8V81gf0") # Your Google Gemini API Key
 AWAN_API_KEY = os.environ.get("AWAN_API_KEY", "21f7fbb7-1209-4039-a7cc-dd0a6de383c3") # Your Awan API Key
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "") # Your Groq API Key
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "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") # Your OpenRouter API Key
@@ -569,51 +567,6 @@ def ask_ai_with_memory(user_id, chat_id, instruction, perform_search=False, mode
         return f"Sorry, all AI services are currently unavailable or experiencing issues. Please try again later. Last error: {openrouter_response.get('error', 'No specific error reported.')}"
 
 
-def summarize_text_mistral(text_to_summarize):
-    """Summarizes text using the fallback mechanism, prioritizing general models."""
-    prompt = f"Summarize the following text concisely and in plain language:\n\n{text_to_summarize}"
-    messages = [
-        {"role": "user", "content": "You are a concise summarization expert."},
-        {"role": "assistant", "content": "Understood. Please provide the text to summarize."},
-        {"role": "user", "content": prompt}
-    ]
-    # Use the main ask_ai_with_memory function to leverage the fallback logic
-    summary = ask_ai_with_memory(user_id="system_summarizer", chat_id="temp_summarizer", instruction=prompt, model_choice="general")
-    
-    if summary.startswith("Sorry, all AI services are currently unavailable"):
-        print(f"Summarization failed: {summary}")
-        return f"I cannot summarize this content: {summary}"
-    return summary
-
-def check_grammar_and_style_mistral(text_to_check):
-    """Uses the fallback mechanism to check grammar and style."""
-    prompt = f"Please correct the grammar and improve the writing style of the following text. Provide the corrected text and briefly explain any significant changes:\n\n{text_to_check}"
-    messages = [
-        {"role": "user", "content": "You are a grammar and style expert. Provide corrections and brief explanations."},
-        {"role": "assistant", "content": "Ready to review your text."},
-        {"role": "user", "content": prompt}
-    ]
-    corrected_text = ask_ai_with_memory(user_id="system_grammar", chat_id="temp_grammar", instruction=prompt, model_choice="general")
-    
-    if corrected_text.startswith("Sorry, all AI services are currently unavailable"):
-        print(f"Grammar/Style check failed: {corrected_text}")
-        return f"I cannot check this content: {corrected_text}"
-    return corrected_text
-
-def explain_code_mistral(code_to_explain):
-    """Uses the fallback mechanism to explain code."""
-    prompt = f"Please explain the following code. Break down its functionality, explain key parts, and provide insights into its purpose and usage. Use Markdown for formatting, especially for code snippets:\n\n\n{code_to_explain}\n"
-    messages = [
-        {"role": "user", "content": "You are a code explanation expert. Provide detailed and well-formatted explanations."},
-        {"role": "assistant", "content": "I can help explain code. Please provide it."},
-        {"role": "user", "content": prompt}
-    ]
-    explanation = ask_ai_with_memory(user_id="system_code_explain", chat_id="temp_code_explain", instruction=prompt, model_choice="general")
-    
-    if explanation.startswith("Sorry, all AI services are currently unavailable"):
-        print(f"Code explanation failed: {explanation}")
-        return f"I cannot explain this code: {explanation}"
-    return explanation
 
 def generate_code_mistral(prompt_for_code, language=None):
     """Uses the fallback mechanism to generate code based on a prompt."""
@@ -673,60 +626,55 @@ def index():
 
 @app.route('/ask', methods=['POST'])
 def handle_query():
-    """
-    Handles AI chat queries with model selection, quota tracking, and caching.
-    Automatically detects if the user wants to generate an image (now removed).
-    """
     user_id = get_user_id()
     chat_id = request.form.get('chat_id') 
     instruction = request.form.get('instruction', '').strip()
-    perform_search = request.form.get('web_search', 'false').lower() == 'true' 
-    model_choice = request.form.get('model_choice', 'general').lower() # Get model choice from frontend
+    perform_search = request.form.get('web_search', 'false').lower() == 'true'
+    model_choice = request.form.get('model_choice', 'general').lower()
 
     if not chat_id:
-        return jsonify({"response": "Error: Chat ID not provided."}), 400
-
+        return "Error: Chat ID not provided.", 400
     if not instruction:
-        return jsonify({"response": "Please provide a valid input."}), 400
+        return "Please provide a valid input.", 400
 
-    # --- QUOTA ENFORCEMENT ---
+    # --- QUOTA CHECK ---
     current_message_count = get_daily_message_count(user_id)
     if current_message_count >= DAILY_MESSAGE_LIMIT:
-        return jsonify({"response": f"You have reached your daily message limit of {DAILY_MESSAGE_LIMIT}. Please try again tomorrow."}), 429
-    
+        return f"You have reached your daily message limit of {DAILY_MESSAGE_LIMIT}. Please try again tomorrow.", 429
+
+    # Count this request immediately (so cache + errors still consume quota)
+    increment_daily_message_count(user_id)
+
     # --- CACHE CHECK ---
     cached_response = get_from_cache(user_id, instruction)
     if cached_response:
-        print(f"Serving response from cache for user {user_id}: {instruction[:50]}...")
-        # Increment quota even if from cache, as it still counts as a "use" of the bot's service
-        increment_daily_message_count(user_id)
-        # Update chat history with cached response
+        # Save to chat history
         current_chat_history = load_chat_history_from_file(user_id, chat_id)
         current_chat_history.append({"type": "user", "text": instruction, "timestamp": time.time()})
         current_chat_history.append({"type": "bot", "text": cached_response, "timestamp": time.time()})
         save_chat_history_to_file(user_id, chat_id, current_chat_history)
-        return jsonify({"response": cached_response})
 
-    # If not in cache, proceed with API call
+        return cached_response
+
+    # --- UPDATE CHAT HISTORY (user message) ---
     current_chat_history = load_chat_history_from_file(user_id, chat_id)
     current_chat_history.append({"type": "user", "text": instruction, "timestamp": time.time()})
     save_chat_history_to_file(user_id, chat_id, current_chat_history)
 
-    # Pass the model_choice to the AI function
-    ai_response = ask_ai_with_memory(user_id, chat_id, instruction, perform_search, model_choice) 
-    
-    # Increment message count after a successful (or attempted) API call
-    increment_daily_message_count(user_id)
+    # --- AI RESPONSE ---
+    ai_response = ask_ai_with_memory(user_id, chat_id, instruction, perform_search, model_choice)
 
-    # Add to cache if the response was successful (not an error message from fallback)
+    # Cache the response if valid
     if not ai_response.startswith("Sorry, all AI services are currently unavailable"):
         add_to_cache(user_id, instruction, ai_response)
 
-    current_chat_history = load_chat_history_from_file(user_id, chat_id) 
+    # --- UPDATE CHAT HISTORY (bot message) ---
+    current_chat_history = load_chat_history_from_file(user_id, chat_id)
     current_chat_history.append({"type": "bot", "text": ai_response, "timestamp": time.time()})
     save_chat_history_to_file(user_id, chat_id, current_chat_history)
 
     return ai_response
+
 
 
 
@@ -845,103 +793,7 @@ def upload_image_endpoint():
             os.unlink(temp_image_path)
 
 
-@app.route('/summarize_text', methods=['POST'])
-def summarize_text_endpoint():
-    """Handles text summarization requests."""
-    user_id = get_user_id()
-    chat_id = request.json.get('chat_id')
-    if not chat_id:
-        return jsonify({"error": "Error: Chat ID not provided for summarization."}), 400
 
-    text_to_summarize = request.json.get('text', '').strip()
-    if not text_to_summarize:
-        return jsonify({"error": "No text provided for summarization."}), 400
-
-    # Check quota before processing
-    current_message_count = get_daily_message_count(user_id)
-    if current_message_count >= DAILY_MESSAGE_LIMIT:
-        return jsonify({"response": f"You have reached your daily message limit of {DAILY_MESSAGE_LIMIT}. Please try again tomorrow."}), 429
-
-    current_chat_history = load_chat_history_from_file(user_id, chat_id)
-    current_chat_history.append({"type": "user", "text": f"Summarize: {text_to_summarize[:100]}...", "timestamp": time.time()})
-    save_chat_history_to_file(user_id, chat_id, current_chat_history)
-
-    summary = summarize_text_mistral(text_to_summarize)
-    
-    # Increment message count after a successful (or attempted) API call
-    increment_daily_message_count(user_id)
-
-    if summary and not summary.startswith("Sorry, all AI services are currently unavailable"):
-        current_chat_history = load_chat_history_from_file(user_id, chat_id)
-        current_chat_history.append({"type": "bot", "text": f"**Summary:** {summary}", "timestamp": time.time()})
-        save_chat_history_to_file(user_id, chat_id, current_chat_history)
-        return jsonify({"summary": summary, "response": f"**Summary:** {summary}"})
-    else:
-        return jsonify({"error": "Failed to generate summary.", "response": summary}), 500
-
-@app.route('/check_grammar_style', methods=['POST'])
-def check_grammar_style_endpoint():
-    """Endpoint for grammar and style checking."""
-    user_id = get_user_id()
-    chat_id = request.form.get('chat_id')
-    text_to_check = request.form.get('text', '').strip()
-
-    if not chat_id:
-        return jsonify({"error": "Chat ID not provided."}), 400
-    if not text_to_check:
-        return jsonify({"error": "No text provided for grammar and style check."}), 400
-
-    # Check quota before processing
-    current_message_count = get_daily_message_count(user_id)
-    if current_message_count >= DAILY_MESSAGE_LIMIT:
-        return jsonify({"response": f"You have reached your daily message limit of {DAILY_MESSAGE_LIMIT}. Please try again tomorrow."}), 429
-
-    current_chat_history = load_chat_history_from_file(user_id, chat_id)
-    current_chat_history.append({"type": "user", "text": f"Please check my grammar and style: {text_to_check}", "timestamp": time.time()})
-    save_chat_history_to_file(user_id, chat_id, current_chat_history)
-
-    corrected_text = check_grammar_and_style_mistral(text_to_check)
-    
-    # Increment message count after a successful (or attempted) API call
-    increment_daily_message_count(user_id)
-
-    current_chat_history = load_chat_history_from_file(user_id, chat_id)
-    current_chat_history.append({"type": "bot", "text": corrected_text, "timestamp": time.time()})
-    save_chat_history_to_file(user_id, chat_id, current_chat_history)
-
-    return jsonify({"corrected_text": corrected_text, "response": corrected_text})
-
-@app.route('/explain_code', methods=['POST'])
-def explain_code_endpoint():
-    """Endpoint for code explanation."""
-    user_id = get_user_id()
-    chat_id = request.form.get('chat_id')
-    code_to_explain = request.form.get('code', '').strip()
-
-    if not chat_id:
-        return jsonify({"error": "Chat ID not provided."}), 400
-    if not code_to_explain:
-        return jsonify({"error": "No code provided for explanation."}), 400
-
-    # Check quota before processing
-    current_message_count = get_daily_message_count(user_id)
-    if current_message_count >= DAILY_MESSAGE_LIMIT:
-        return jsonify({"response": f"You have reached your daily message limit of {DAILY_MESSAGE_LIMIT}. Please try again tomorrow."}), 429
-
-    current_chat_history = load_chat_history_from_file(user_id, chat_id)
-    current_chat_history.append({"type": "user", "text": f"Explain this code:\n```\n{code_to_explain}\n```", "timestamp": time.time()})
-    save_chat_history_to_file(user_id, chat_id, current_chat_history)
-
-    explanation = explain_code_mistral(code_to_explain)
-    
-    # Increment message count after a successful (or attempted) API call
-    increment_daily_message_count(user_id)
-
-    current_chat_history = load_chat_history_from_file(user_id, chat_id)
-    current_chat_history.append({"type": "bot", "text": explanation, "timestamp": time.time()})
-    save_chat_history_to_file(user_id, chat_id, current_chat_history)
-
-    return jsonify({"explanation": explanation, "response": explanation})
 
 @app.route('/generate_code', methods=['POST'])
 def generate_code_endpoint():
@@ -1111,6 +963,4 @@ def user_info():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-
-
 
