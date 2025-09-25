@@ -20,11 +20,18 @@ from flask_cors import CORS   # ✅ NEW IMPORT
 current_dir = os.path.dirname(os.path.abspath(__file__))
 template_path = os.path.join(current_dir, 'templates')
 static_path = os.path.join(current_dir, 'static')
-# Fixed: Handle __app_id__ not being defined when running outside Canvas
+
 app_name = '__main__'
 if '__app_id__' in globals():
     app_name = globals()['__app_id__']
-app = Flask(app_name)  # Using the determined app_name
+
+# ✅ Tell Flask where to find templates + static
+app = Flask(
+    app_name,
+    template_folder=template_path,
+    static_folder=static_path
+)
+ # Using the determined app_name
 
 # ✅ Enable CORS (Allowing frontend calls from any domain for now)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -965,5 +972,6 @@ def user_info():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+
 
 
