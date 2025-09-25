@@ -17,7 +17,9 @@ from flask_cors import CORS   # ✅ NEW IMPORT
 # import torch
 # from diffusers import StableDiffusionPipeline
 # --- END REMOVED IMPORTS ---
-
+current_dir = os.path.dirname(os.path.abspath(__file__))
+template_path = os.path.join(current_dir, 'templates')
+static_path = os.path.join(current_dir, 'static')
 # Fixed: Handle __app_id__ not being defined when running outside Canvas
 app_name = '__main__'
 if '__app_id__' in globals():
@@ -963,4 +965,5 @@ def user_info():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+
 
