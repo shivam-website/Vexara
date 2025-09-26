@@ -4,11 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vexara AI Assistant</title>
-<link 
-  rel="icon" 
-  type="image/png" 
-  href="{{ url_for('static', filename='images/vexara-new1-removebg-preview.png') }}">
-
+    <link
+      rel="icon"
+      href="/static/images/vexara-new1-removebg-preview.png"
+      type="image/png"
+    />
     <!-- In your HTML head -->
     <link
       href="https://fonts.googleapis.com/css2?family=Cascadia+Code&display=swap"
@@ -1858,7 +1858,7 @@ display: flex;
 align-items: center;
 justify-content: center;
 gap: 8px;
-padding: 6px 14px;       /* slightly smaller than before */
+padding: 6px 10px;       /* slightly smaller than before */
 border: 1px solid var(--web-search); /* same as web search btn */
 border-radius: 30px;
 font-size: 0.9rem;        /* slightly smaller text */
@@ -1912,10 +1912,9 @@ color: var(--text-color);
 @media (max-width: 480px) {
 .model-option,
 #web-search-btn {
-padding: 5px 12px;
-font-size: 0.8rem;
-min-width: auto;
-flex: 1; /* take equal space if multiple buttons */
+    font-size: 12px;
+    padding: 5px 10px;
+    gap: 6px; /* take equal space if multiple buttons */
 }
 
 .model-option i,
@@ -2569,6 +2568,36 @@ margin-right: 0;
         opacity: 1;
     }
 }
+@media (max-width: 768px) {
+  .input-container {
+    flex-wrap: nowrap;
+    align-items: flex-end;
+    /* FIX 1: Set horizontal padding to 0, rely on .input-area padding */
+    padding: 10px 0; 
+  }
+
+  #text-input {
+    flex: 1;
+    min-height: 48px;
+    padding: 0px 0px;
+    font-size: 18px;
+  }
+  
+  /* FIX 2: Reduce button/icon size for safety on narrowest devices */
+  .submit-btn, .stop-btn {
+    width: 34px; 
+    height: 34px;
+    padding: 0;
+  }
+  
+  .input-icon-btn {
+    width: 34px; 
+    height: 34px;
+    padding: 4px;
+  }
+
+  /* ... rest of your mobile styles ... */
+}
       
       /* CSS Variables for ChatGPT-like theming */
       
@@ -2806,7 +2835,7 @@ margin-right: 0;
     padding: 6px 10px;
     font-size: 0.9rem;        /* slightly smaller text */
     font-weight: 500;
-    border-radius: 10px;
+    border-radius: 30px;
     border: 1px solid var(--web-search);
     cursor: pointer;
     user-select: none;
@@ -2836,6 +2865,17 @@ margin-right: 0;
   /* small hover polish */
   .web-search-toggle:hover { transform: translateY(-0.5px); }
   .web-search-label { line-height: 1; }
+  @media (max-width: 600px) {
+  .web-search-toggle {
+    font-size: 12px;
+    padding: 5px 10px;
+    gap: 6px;
+  }
+  .web-search-toggle .web-search-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
 </style>
 
 <!-- ===== Script (paste near end of body, after other scripts for safety) ===== -->
@@ -3245,7 +3285,7 @@ margin-right: 0;
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.0/marked.min.js"></script>
-    
+    <script src="/static/app.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const inputContainer = document.querySelector(".input-container");
@@ -3545,7 +3585,7 @@ function addBotMessage(content, thinking = null) {
   document.querySelector("#chat-container").scrollTop =
     document.querySelector("#chat-container").scrollHeight;
 }
-    // Global variables for chat management
+  // Global variables for chat management
 let currentChatId = null;
 let sidebarHidden = false; // Tracks if sidebar is manually collapsed on desktop
 let isFullScreen = false; // Tracks if full screen chat mode is active
@@ -6215,9 +6255,81 @@ function addThinkingMessage() {
   scrollToBottom();
   return thinkingMessage;
 }
+// Fix: Ensure the correct button state (Send visible, Stop hidden) on initial page load
+document.addEventListener('DOMContentLoaded', () => {
+  // Check if the function exists before calling it (for safety)
+  if (typeof window.showSendButton === 'function') {
+      window.showSendButton();
+  }
+});
+// ==========================================================
+// START: Code for Voice Talk/Submit Button Toggle and Fixes
+// ==========================================================
 
+// Function to manage the visibility of the Voice Talk and Send buttons
+// This runs when the user types or when a response finishes.
+function updateInputButtonState() {
+  // Check if the required elements exist before proceeding
+  const textInput = document.getElementById("text-input");
+  const sendBtn = document.getElementById("send-btn");
+  const voiceTalkBtn = document.getElementById("voice-talk-btn");
+  const stopBtn = document.getElementById("stop-btn");
+
+  if (!textInput || !sendBtn || !voiceTalkBtn || !stopBtn) return;
+
+  // We assume the stop button is only visible when a response is generating.
+  const isResponseGenerating = stopBtn.style.display !== "none";
+
+  // If the AI is busy or Voice Talk is active, do not change the button state.
+  if (isResponseGenerating || window.isVoiceTalkActive) {
+      return;
+  }
+
+  // Check if the input field is empty (trimmed)
+  if (textInput.value.trim().length === 0) {
+      // Input is empty: Show Voice Talk, Hide Send
+      voiceTalkBtn.style.display = "flex";
+      sendBtn.style.display = "none";
+  } else {
+      // Input has text: Hide Voice Talk, Show Send
+      voiceTalkBtn.style.display = "none";
+      sendBtn.style.display = "flex";
+  }
+}
+
+// Attach the new function to the input field so it updates dynamically as the user types
+const textInput = document.getElementById("text-input");
+if (textInput) {
+  textInput.addEventListener("input", updateInputButtonState);
+}
+
+
+// IMPORTANT: You must MODIFY your existing showSendButton function, 
+// DO NOT duplicate it. If you cannot modify it, ensure this code
+// overwrites the old one if it's placed later in the file.
+// This new version calls updateInputButtonState() to show the correct button.
+window.showSendButton = function() {
+  if (window.isVoiceTalkActive) return;
+  document.getElementById("stop-btn").style.display = "none";
+  
+  // Determine whether to show Send or Voice Talk based on input content
+  updateInputButtonState(); 
+}
+
+
+// Page Load Fix: Ensures the correct button state (Voice Talk visible if empty)
+// is set when the page loads, resolving the initial "Stop Response" button issue.
+document.addEventListener('DOMContentLoaded', () => {
+  // Set the initial button state (shows Voice Talk if input is empty)
+  if (typeof updateInputButtonState === 'function') {
+      updateInputButtonState();
+  }
+});
+
+// ==========================================================
+// END: Code for Voice Talk/Submit Button Toggle and Fixes
+// ==========================================================
 </script>
-      
 
   </body>
 </html>
