@@ -794,7 +794,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: var(--text-light);
+    color: var(--text-color);
     font-size: 1rem;
     text-align: center;
     padding-bottom: 100px; /* Space for the input area */
@@ -3247,7 +3247,308 @@ margin-right: 0;
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.0/marked.min.js"></script>
-    <script>// Global variables for chat management
+    <script src="/static/app.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const inputContainer = document.querySelector(".input-container");
+        const textInput = document.getElementById("text-input");
+        const sendBtn = document.getElementById("send-btn");
+        const stopBtn = document.getElementById("stop-btn");
+        const fileInput = document.getElementById("file-input");
+        const attachBtn = document.getElementById("attach-file-btn");
+
+        // Focus textarea when clicking anywhere in the container
+        inputContainer.addEventListener("click", function (e) {
+          if (
+            !e.target.closest(".input-icon-btn") &&
+            !e.target.closest(".submit-btn") &&
+            !e.target.closest(".stop-btn") &&
+            e.target !== fileInput
+          ) {
+            textInput.focus();
+          }
+        });
+
+        // Auto-resize textarea
+        textInput.addEventListener("input", function () {
+          this.style.height = "auto";
+          this.style.height = this.scrollHeight + "px";
+        });
+
+        // File input
+        attachBtn.addEventListener("click", function () {
+          fileInput.click();
+        });
+
+        fileInput.addEventListener("change", function () {
+          if (this.files && this.files[0]) {
+            console.log("File selected:", this.files[0].name);
+          }
+        });
+
+        // ✅ Show and hide stop button explicitly
+        function showStopButton() {
+          stopBtn.style.display = "inline-flex";
+          sendBtn.style.display = "none";
+        }
+
+        function hideStopButton() {
+          stopBtn.style.display = "none";
+          sendBtn.style.display = "inline-flex";
+        }
+
+        // When send is clicked
+        sendBtn.addEventListener("click", function () {
+          if (textInput.value.trim() !== "") {
+            showStopButton();
+
+            // Simulate AI response completion
+            setTimeout(function () {
+              hideStopButton();
+            }, 3000);
+          }
+        });
+
+        // Stop button click
+        stopBtn.addEventListener("click", function () {
+          hideStopButton();
+          console.log("AI response stopped");
+        });
+
+        // Initially hide stop button
+        hideStopButton();
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const inputContainer = document.querySelector(".input-container");
+        const textInput = document.getElementById("text-input");
+        const sendBtn = document.getElementById("send-btn");
+        const stopBtn = document.getElementById("stop-btn");
+        const fileInput = document.getElementById("file-input");
+        const attachBtn = document.getElementById("attach-file-btn");
+
+        // Focus textarea when clicking anywhere in the container
+        inputContainer.addEventListener("click", function (e) {
+          // Don't focus if clicking on a button or file input
+          if (
+            !e.target.closest(".input-icon-btn") &&
+            !e.target.closest(".submit-btn") &&
+            !e.target.closest(".stop-btn") &&
+            e.target !== fileInput
+          ) {
+            textInput.focus();
+          }
+        });
+
+        // Auto-resize textarea as user types
+        textInput.addEventListener("input", function () {
+          this.style.height = "auto";
+          this.style.height = this.scrollHeight + "px";
+        });
+
+        // File input functionality
+        attachBtn.addEventListener("click", function () {
+          fileInput.click();
+        });
+
+        fileInput.addEventListener("change", function (e) {
+          if (this.files && this.files[0]) {
+            // Handle file selection here
+            console.log("File selected:", this.files[0].name);
+            // You can show a preview or process the file
+          }
+        });
+
+        // Function to show stop button (when AI is responding)
+        function showStopButton() {
+          stopBtn.style.display = "inline-flex";
+          sendBtn.style.display = "none";
+        }
+
+        // Function to hide stop button (when AI is done responding)
+        function hideStopButton() {
+          stopBtn.style.display = "none";
+          sendBtn.style.display = "inline-flex";
+        }
+
+        // Example usage - call these functions when AI starts/stops responding
+        sendBtn.addEventListener("click", function () {
+          if (textInput.value.trim() !== "") {
+            showStopButton();
+
+            // Simulate AI response (remove this in your actual implementation)
+            setTimeout(function () {
+              hideStopButton();
+            }, 3000);
+          }
+        });
+
+        // Stop button functionality
+        stopBtn.addEventListener("click", function () {
+          // Stop AI response logic here
+          hideStopButton();
+          console.log("AI response stopped");
+        });
+
+        // ✅ FIX: Hide the stop button when the page loads
+        hideStopButton();
+      });
+    </script>
+    <script>// Function to show loader at the response position
+function showLoader() {
+  const loader = document.getElementById('loader');
+  loader.style.display = 'block';
+  // Scroll to the loader position
+  loader.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Function to hide loader
+function hideLoader() {
+  document.getElementById('loader').style.display = 'none';
+}</script>
+          <script>
+            const deepthinkToggle = document.getElementById("deepthink-toggle");
+            const generalInput = document.getElementById("modelGeneral");
+          
+            deepthinkToggle.addEventListener("click", () => {
+              const isActive = deepthinkToggle.getAttribute("data-active") === "true";
+          
+              if (isActive) {
+                // Switch OFF DeepThink -> select general input
+                deepthinkToggle.setAttribute("data-active", "false");
+                generalInput.checked = true;
+                console.log("🔄 Switched back to General Mode");
+              } else {
+                // Switch ON DeepThink -> create & check a hidden input dynamically
+                deepthinkToggle.setAttribute("data-active", "true");
+          
+                // remove old hidden deepthink if exists
+                let deepthinkInput = document.getElementById("modelDeepThink");
+                if (!deepthinkInput) {
+                  deepthinkInput = document.createElement("input");
+                  deepthinkInput.type = "radio";
+                  deepthinkInput.name = "modelChoice";
+                  deepthinkInput.value = "deep_think";
+                  deepthinkInput.id = "modelDeepThink";
+                  deepthinkInput.style.display = "none";
+                  deepthinkToggle.parentElement.appendChild(deepthinkInput);
+                }
+                deepthinkInput.checked = true;
+          
+                console.log("🧠 DeepThink Mode Activated");
+              }
+            });
+          </script>
+          <script>
+            document.addEventListener("DOMContentLoaded", () => {
+              const webSearchBtn = document.getElementById("web-search-btn");
+              const multiActionForm = document.getElementById("multi-action-form");
+              let isWebSearchEnabled = false;
+          
+              // ✅ Toggle Web Search Mode
+              webSearchBtn.addEventListener("click", () => {
+                isWebSearchEnabled = !isWebSearchEnabled;
+                webSearchBtn.classList.toggle("selected", isWebSearchEnabled);
+              });
+          
+              // ✅ Intercept form submit to include web search flag
+              multiActionForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+          
+                const textInput = document.getElementById("text-input");
+                const userText = textInput.value.trim();
+                if (!userText) return;
+          
+                // Detect selected model choice
+                const selectedModelRadio = document.querySelector(
+                  "input[name='modelChoice']:checked"
+                );
+                const modelChoice = selectedModelRadio ? selectedModelRadio.value : "general";
+          
+                // Show user message
+                addMessage(userText, "user", null, new Date());
+          
+                // ✅ Perform AI request with web search if enabled
+                if (isWebSearchEnabled) {
+                  await askAI(userText, modelChoice, true);
+                } else {
+                  await askAI(userText, modelChoice, false);
+                }
+              });
+            });
+          </script>
+          
+          <style>
+            /* ✅ Web Search Button Active State */
+            #web-search-btn.selected {
+              background: var(--accent-color);
+              color: white;
+              border-radius: 10px;
+              box-shadow: 0 0 10px var(--accent-color);
+            }
+            /* Thinking Process Styles */
+            
+.thinking {
+  font-size: 0.8rem;
+  color: rgba(128,128,128,0.8); /* greyed out */
+  margin-top: 6px;
+  padding-left: 8px;
+  border-left: 2px dashed #ccc;
+  display: none; /* hidden by default */
+}
+
+.thinking.show {
+  display: block;
+}
+
+.toggle-thinking {
+  font-size: 0.75rem;
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  margin-top: 4px;
+}
+</style>
+
+<script>
+function addBotMessage(content, thinking = null) {
+  const messageDiv = document.createElement("div");
+  messageDiv.classList.add("bot-message");
+
+  // Main AI answer
+  const answerDiv = document.createElement("div");
+  answerDiv.classList.add("answer");
+  answerDiv.innerHTML = content;
+  messageDiv.appendChild(answerDiv);
+
+  // Optional reasoning trace
+  if (thinking) {
+    const thinkingDiv = document.createElement("div");
+    thinkingDiv.classList.add("thinking");
+    thinkingDiv.innerHTML = thinking;
+
+    const toggleBtn = document.createElement("button");
+    toggleBtn.classList.add("toggle-thinking");
+    toggleBtn.textContent = "Show Thinking";
+    toggleBtn.onclick = function () {
+      thinkingDiv.classList.toggle("show");
+      toggleBtn.textContent = thinkingDiv.classList.contains("show")
+        ? "Hide Thinking"
+        : "Show Thinking";
+    };
+
+    messageDiv.appendChild(toggleBtn);
+    messageDiv.appendChild(thinkingDiv);
+  }
+
+  document.querySelector("#chat-container").appendChild(messageDiv);
+  document.querySelector("#chat-container").scrollTop =
+    document.querySelector("#chat-container").scrollHeight;
+}
+</script>
+<script>// Global variables for chat management
 let currentChatId = null;
 let sidebarHidden = false; // Tracks if sidebar is manually collapsed on desktop
 let isFullScreen = false; // Tracks if full screen chat mode is active
@@ -4251,7 +4552,7 @@ window.startNewChat = async function (isInitialLoad = false) {
       placeholderDiv.id = "new-chat-placeholder";
       placeholderDiv.className = "new-chat-placeholder";
       placeholderDiv.innerHTML = `
-<img src="/static/images/vexara-new1-removebg-preview.png" alt="V" style="width: 40px; height: 40px; object-fit: contain; filter: hue-rotate(220deg);" />
+<img src="/static/images/vexara-new1-removebg-preview.png" alt="V" style="width: 60px; height: 60px; object-fit: contain;" />
           <span>How can I help you?</span>
 `;
       chatbox.appendChild(placeholderDiv);
@@ -5164,7 +5465,7 @@ async function loadChat(id) {
         placeholderDiv.className = "new-chat-placeholder";
         placeholderDiv.innerHTML = `
      <img src="/static/images/vexara-new1-removebg-preview.png" alt="V" style="width: 60px; height: 60px;     background-repeat: no-repeat;" />
-          <span style="font-weight=2rem; font-size: 24px; font-weight: 600;">How can I help you?</span>
+          <span style="color = var(--text-color); font-size: 24px; font-weight: 600;">How can I help you?</span>
           
       `;
         chatbox.appendChild(placeholderDiv);
@@ -5733,7 +6034,7 @@ document.addEventListener("DOMContentLoaded", async function () {
               placeholderDiv.id = "new-chat-placeholder";
               placeholderDiv.className = "new-chat-placeholder";
               placeholderDiv.innerHTML = `
-                  <<img src="/static/images/vexara-new1-removebg-preview.png" alt="V" style="width: 40px; height: 40px; object-fit: contain; filter: hue-rotate(220deg);" />
+                  <<img src="/static/images/vexara-new1-removebg-preview.png" alt="V" style="width: 90px; height: 90px; object-fit: contain;" />
           <span>How can I help you?</span>
                   
               `;
@@ -6606,307 +6907,6 @@ if (chatbox) {
 // END: Code for Copy, Edit, Regenerate, and Read Aloud Functionality
 // ==========================================================
 </script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const inputContainer = document.querySelector(".input-container");
-        const textInput = document.getElementById("text-input");
-        const sendBtn = document.getElementById("send-btn");
-        const stopBtn = document.getElementById("stop-btn");
-        const fileInput = document.getElementById("file-input");
-        const attachBtn = document.getElementById("attach-file-btn");
-
-        // Focus textarea when clicking anywhere in the container
-        inputContainer.addEventListener("click", function (e) {
-          if (
-            !e.target.closest(".input-icon-btn") &&
-            !e.target.closest(".submit-btn") &&
-            !e.target.closest(".stop-btn") &&
-            e.target !== fileInput
-          ) {
-            textInput.focus();
-          }
-        });
-
-        // Auto-resize textarea
-        textInput.addEventListener("input", function () {
-          this.style.height = "auto";
-          this.style.height = this.scrollHeight + "px";
-        });
-
-        // File input
-        attachBtn.addEventListener("click", function () {
-          fileInput.click();
-        });
-
-        fileInput.addEventListener("change", function () {
-          if (this.files && this.files[0]) {
-            console.log("File selected:", this.files[0].name);
-          }
-        });
-
-        // ✅ Show and hide stop button explicitly
-        function showStopButton() {
-          stopBtn.style.display = "inline-flex";
-          sendBtn.style.display = "none";
-        }
-
-        function hideStopButton() {
-          stopBtn.style.display = "none";
-          sendBtn.style.display = "inline-flex";
-        }
-
-        // When send is clicked
-        sendBtn.addEventListener("click", function () {
-          if (textInput.value.trim() !== "") {
-            showStopButton();
-
-            // Simulate AI response completion
-            setTimeout(function () {
-              hideStopButton();
-            }, 3000);
-          }
-        });
-
-        // Stop button click
-        stopBtn.addEventListener("click", function () {
-          hideStopButton();
-          console.log("AI response stopped");
-        });
-
-        // Initially hide stop button
-        hideStopButton();
-      });
-    </script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const inputContainer = document.querySelector(".input-container");
-        const textInput = document.getElementById("text-input");
-        const sendBtn = document.getElementById("send-btn");
-        const stopBtn = document.getElementById("stop-btn");
-        const fileInput = document.getElementById("file-input");
-        const attachBtn = document.getElementById("attach-file-btn");
-
-        // Focus textarea when clicking anywhere in the container
-        inputContainer.addEventListener("click", function (e) {
-          // Don't focus if clicking on a button or file input
-          if (
-            !e.target.closest(".input-icon-btn") &&
-            !e.target.closest(".submit-btn") &&
-            !e.target.closest(".stop-btn") &&
-            e.target !== fileInput
-          ) {
-            textInput.focus();
-          }
-        });
-
-        // Auto-resize textarea as user types
-        textInput.addEventListener("input", function () {
-          this.style.height = "auto";
-          this.style.height = this.scrollHeight + "px";
-        });
-
-        // File input functionality
-        attachBtn.addEventListener("click", function () {
-          fileInput.click();
-        });
-
-        fileInput.addEventListener("change", function (e) {
-          if (this.files && this.files[0]) {
-            // Handle file selection here
-            console.log("File selected:", this.files[0].name);
-            // You can show a preview or process the file
-          }
-        });
-
-        // Function to show stop button (when AI is responding)
-        function showStopButton() {
-          stopBtn.style.display = "inline-flex";
-          sendBtn.style.display = "none";
-        }
-
-        // Function to hide stop button (when AI is done responding)
-        function hideStopButton() {
-          stopBtn.style.display = "none";
-          sendBtn.style.display = "inline-flex";
-        }
-
-        // Example usage - call these functions when AI starts/stops responding
-        sendBtn.addEventListener("click", function () {
-          if (textInput.value.trim() !== "") {
-            showStopButton();
-
-            // Simulate AI response (remove this in your actual implementation)
-            setTimeout(function () {
-              hideStopButton();
-            }, 3000);
-          }
-        });
-
-        // Stop button functionality
-        stopBtn.addEventListener("click", function () {
-          // Stop AI response logic here
-          hideStopButton();
-          console.log("AI response stopped");
-        });
-
-        // ✅ FIX: Hide the stop button when the page loads
-        hideStopButton();
-      });
-    </script>
-    <script>// Function to show loader at the response position
-function showLoader() {
-  const loader = document.getElementById('loader');
-  loader.style.display = 'block';
-  // Scroll to the loader position
-  loader.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-// Function to hide loader
-function hideLoader() {
-  document.getElementById('loader').style.display = 'none';
-}</script>
-          <script>
-            const deepthinkToggle = document.getElementById("deepthink-toggle");
-            const generalInput = document.getElementById("modelGeneral");
-          
-            deepthinkToggle.addEventListener("click", () => {
-              const isActive = deepthinkToggle.getAttribute("data-active") === "true";
-          
-              if (isActive) {
-                // Switch OFF DeepThink -> select general input
-                deepthinkToggle.setAttribute("data-active", "false");
-                generalInput.checked = true;
-                console.log("🔄 Switched back to General Mode");
-              } else {
-                // Switch ON DeepThink -> create & check a hidden input dynamically
-                deepthinkToggle.setAttribute("data-active", "true");
-          
-                // remove old hidden deepthink if exists
-                let deepthinkInput = document.getElementById("modelDeepThink");
-                if (!deepthinkInput) {
-                  deepthinkInput = document.createElement("input");
-                  deepthinkInput.type = "radio";
-                  deepthinkInput.name = "modelChoice";
-                  deepthinkInput.value = "deep_think";
-                  deepthinkInput.id = "modelDeepThink";
-                  deepthinkInput.style.display = "none";
-                  deepthinkToggle.parentElement.appendChild(deepthinkInput);
-                }
-                deepthinkInput.checked = true;
-          
-                console.log("🧠 DeepThink Mode Activated");
-              }
-            });
-          </script>
-          <script>
-            document.addEventListener("DOMContentLoaded", () => {
-              const webSearchBtn = document.getElementById("web-search-btn");
-              const multiActionForm = document.getElementById("multi-action-form");
-              let isWebSearchEnabled = false;
-          
-              // ✅ Toggle Web Search Mode
-              webSearchBtn.addEventListener("click", () => {
-                isWebSearchEnabled = !isWebSearchEnabled;
-                webSearchBtn.classList.toggle("selected", isWebSearchEnabled);
-              });
-          
-              // ✅ Intercept form submit to include web search flag
-              multiActionForm.addEventListener("submit", async (e) => {
-                e.preventDefault();
-          
-                const textInput = document.getElementById("text-input");
-                const userText = textInput.value.trim();
-                if (!userText) return;
-          
-                // Detect selected model choice
-                const selectedModelRadio = document.querySelector(
-                  "input[name='modelChoice']:checked"
-                );
-                const modelChoice = selectedModelRadio ? selectedModelRadio.value : "general";
-          
-                // Show user message
-                addMessage(userText, "user", null, new Date());
-          
-                // ✅ Perform AI request with web search if enabled
-                if (isWebSearchEnabled) {
-                  await askAI(userText, modelChoice, true);
-                } else {
-                  await askAI(userText, modelChoice, false);
-                }
-              });
-            });
-          </script>
-          
-          <style>
-            /* ✅ Web Search Button Active State */
-            #web-search-btn.selected {
-              background: var(--accent-color);
-              color: white;
-              border-radius: 10px;
-              box-shadow: 0 0 10px var(--accent-color);
-            }
-            /* Thinking Process Styles */
-            
-.thinking {
-  font-size: 0.8rem;
-  color: rgba(128,128,128,0.8); /* greyed out */
-  margin-top: 6px;
-  padding-left: 8px;
-  border-left: 2px dashed #ccc;
-  display: none; /* hidden by default */
-}
-
-.thinking.show {
-  display: block;
-}
-
-.toggle-thinking {
-  font-size: 0.75rem;
-  background: none;
-  border: none;
-  color: #888;
-  cursor: pointer;
-  margin-top: 4px;
-}
-</style>
-
-<script>
-function addBotMessage(content, thinking = null) {
-  const messageDiv = document.createElement("div");
-  messageDiv.classList.add("bot-message");
-
-  // Main AI answer
-  const answerDiv = document.createElement("div");
-  answerDiv.classList.add("answer");
-  answerDiv.innerHTML = content;
-  messageDiv.appendChild(answerDiv);
-
-  // Optional reasoning trace
-  if (thinking) {
-    const thinkingDiv = document.createElement("div");
-    thinkingDiv.classList.add("thinking");
-    thinkingDiv.innerHTML = thinking;
-
-    const toggleBtn = document.createElement("button");
-    toggleBtn.classList.add("toggle-thinking");
-    toggleBtn.textContent = "Show Thinking";
-    toggleBtn.onclick = function () {
-      thinkingDiv.classList.toggle("show");
-      toggleBtn.textContent = thinkingDiv.classList.contains("show")
-        ? "Hide Thinking"
-        : "Show Thinking";
-    };
-
-    messageDiv.appendChild(toggleBtn);
-    messageDiv.appendChild(thinkingDiv);
-  }
-
-  document.querySelector("#chat-container").appendChild(messageDiv);
-  document.querySelector("#chat-container").scrollTop =
-    document.querySelector("#chat-container").scrollHeight;
-}
-</script>
-    
 
   </body>
 </html>
