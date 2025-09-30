@@ -6,146 +6,116 @@
     <title>Vexara AI - Your Revolutionary AI Assistant</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Three.js for 3D animations -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- Lottie for advanced animations -->
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
-    <!-- Animate.css for animations -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <!-- GSAP for advanced animations -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --primary-light: #818cf8;
-            --secondary: #10b981;
-            --accent: #f59e0b;
-            --dark: #1e293b;
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --primary-light: #3b82f6;
+            --accent: #0ea5e9;
+            --dark: #0f172a;
+            --gray: #64748b;
             --light: #f8fafc;
-            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
-            --gradient-accent: linear-gradient(135deg, var(--primary), var(--accent));
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--light);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #ffffff;
             color: var(--dark);
-            overflow-x: hidden;
-        }
-                
-
-           
-
-
-        
-        .hero-heading {
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(90deg, #4f46e5, #10b981, #f59e0b);
-            background-size: 200% auto;
-            color: #000;
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shine 3s linear infinite;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
-        @keyframes shine {
-            to {
-                background-position: 200% center;
-            }
+        /* Typography */
+        .font-display {
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.02em;
         }
         
+        /* Smooth transitions */
+        a, button {
+            transition: all 0.2s ease;
+        }
+        
+        /* Premium button styles */
         .btn-primary {
-            background: var(--gradient);
+            background: var(--primary);
             color: white;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-            position: relative;
-            overflow: hidden;
+            padding: 0.875rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            display: inline-block;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9375rem;
         }
         
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
-        }
-        
-        .btn-primary::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                to bottom right,
-                rgba(255,255,255,0) 0%,
-                rgba(255,255,255,0.1) 50%,
-                rgba(255,255,255,0) 100%
-            );
-            transform: rotate(30deg);
-            animation: shine 3s infinite;
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
         
         .btn-outline {
-            border: 2px solid var(--primary);
-            color: var(--primary);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            border: 1.5px solid var(--dark);
+            color: var(--dark);
+            padding: 0.875rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            display: inline-block;
+            text-decoration: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.9375rem;
         }
         
         .btn-outline:hover {
-            background: var(--primary);
+            background: var(--dark);
             color: white;
         }
         
+        /* Feature cards */
         .feature-card {
-            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
             background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            position: relative;
-            z-index: 1;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-            transform-style: preserve-3d;
-            perspective: 1000px;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
         }
         
         .feature-card:hover {
-            transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
-            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+            border-color: var(--primary);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            transform: translateY(-4px);
         }
         
         .feature-icon {
-            transition: all 0.5s ease;
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            transform-style: preserve-3d;
+            width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1.25rem;
         }
         
-        .feature-card:hover .feature-icon {
-            transform: scale(1.2) rotateY(20deg);
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
-        }
-        
+        /* Hero section */
         .hero-section {
-            background: linear-gradient(135deg, #1e293b, #0f172a);
+            background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
             position: relative;
             overflow: hidden;
         }
@@ -154,35 +124,31 @@
             content: '';
             position: absolute;
             top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noiseFilter)' opacity='0.1'/%3E%3C/svg%3E");
-            opacity: 0.3;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1400px;
+            height: 1400px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
+            pointer-events: none;
         }
         
-        .particles-js {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: 0;
-        }
-        
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-        
+        /* Navigation */
         .nav-link {
             position: relative;
+            color: var(--gray);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9375rem;
+        }
+        
+        .nav-link:hover {
+            color: var(--dark);
         }
         
         .nav-link::after {
             content: '';
             position: absolute;
-            bottom: -2px;
+            bottom: -4px;
             left: 0;
             width: 0;
             height: 2px;
@@ -194,89 +160,55 @@
             width: 100%;
         }
         
+        /* Testimonial cards */
         .testimonial-card {
             background: white;
-            border-radius: 16px;
-            position: relative;
-            transition: all 0.5s ease;
-            transform-style: preserve-3d;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
         }
         
         .testimonial-card:hover {
-            transform: translateY(-10px) rotateY(5deg);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
         }
         
-        .testimonial-card::before {
-            content: '"';
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 5rem;
-            color: rgba(99, 102, 241, 0.1);
-            font-family: serif;
-            line-height: 1;
+        /* Pricing cards */
+        .pricing-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+            position: relative;
         }
         
-        /* 3D Card Effect */
-        .card-3d {
-            transform-style: preserve-3d;
-            transition: all 0.5s ease;
+        .pricing-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
         }
         
-        .card-3d:hover {
-            transform: rotateY(10deg) rotateX(5deg);
+        .pricing-card.featured {
+            border: 2px solid var(--primary);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.12);
         }
         
-        /* Floating animation */
-        .floating {
-            animation: floating 6s ease-in-out infinite;
-        }
-        
-        @keyframes floating {
-            0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
-        }
-        
-        /* Glow effect */
-        .glow {
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-        
-        @keyframes glow {
-            from {
-                box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
-            }
-            to {
-                box-shadow: 0 0 20px rgba(99, 102, 241, 0.8), 0 0 30px rgba(99, 102, 241, 0.6);
-            }
-        }
-        
-        /* Gradient text */
-        .gradient-text {
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        /* Login Modal Styles */
+        /* Modal styles */
         .modal-backdrop {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(8px);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.4s ease;
-            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
         }
         
         .modal-backdrop.active {
@@ -285,503 +217,389 @@
         }
         
         .login-container {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 2.5rem;
-            border-radius: 16px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            background: white;
+            padding: 3rem;
+            border-radius: 1.25rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             width: 100%;
-            max-width: 420px;
+            max-width: 440px;
             position: relative;
-            transform: translateY(20px);
-            opacity: 0;
-            transition: all 0.4s ease 0.1s;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(5px);
+            transform: scale(0.95);
+            transition: all 0.3s ease;
         }
         
         .modal-backdrop.active .login-container {
-            transform: translateY(0);
-            opacity: 1;
+            transform: scale(1);
         }
         
         .login-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            margin-bottom: 1rem;
-            position: relative;
-            overflow: hidden;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            margin-bottom: 0.75rem;
+            text-decoration: none;
+            border: 1.5px solid #e2e8f0;
+            background: white;
+            color: var(--dark);
+            cursor: pointer;
+            font-size: 0.9375rem;
         }
         
-        .login-btn::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                to bottom right,
-                rgba(255,255,255,0) 0%,
-                rgba(255,255,255,0.2) 50%,
-                rgba(255,255,255,0) 100%
-            );
-            transform: rotate(30deg);
-            animation: shine 3s infinite;
+        .login-btn:hover {
+            border-color: var(--primary);
+            background: #f8fafc;
+            transform: translateY(-1px);
         }
         
         .login-btn.google {
-            background: #4285F4;
-            color: white;
-            display : none;
+            border-color: #4285F4;
+            color: #4285F4;
         }
         
         .login-btn.google:hover {
-            background: #3367D6;
-            transform: translateY(-2px);
+            background: #4285F4;
+            color: white;
         }
         
         .login-btn.microsoft {
-            background: #2F2F2F;
-            color: white;
-             display : none;
+            border-color: #2F2F2F;
+            color: #2F2F2F;
         }
         
         .login-btn.microsoft:hover {
-            background: #1F1F1F;
-            transform: translateY(-2px);
-        }
-        
-        .login-btn.guest {
-            border: 1px solid #e2e8f0;
-            color: var(--dark);
-        }
-        
-        .login-btn.guest:hover {
-            background: #f8fafc;
-            transform: translateY(-2px);
+            background: #2F2F2F;
+            color: white;
         }
         
         .close-button {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
+            top: 1.25rem;
+            right: 1.25rem;
             background: transparent;
             border: none;
             font-size: 1.5rem;
-            color: #64748b;
+            color: var(--gray);
             cursor: pointer;
-            transition: all 0.3s ease;
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.375rem;
         }
         
         .close-button:hover {
-            color: var(--primary);
-            transform: rotate(90deg);
+            background: #f1f5f9;
+            color: var(--dark);
         }
         
-        /* 3D Floating Elements */
-        .floating-3d {
-            animation: floating3d 8s ease-in-out infinite;
-            transform-style: preserve-3d;
+        /* FAQ */
+        .faq-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            margin-bottom: 1rem;
         }
         
-        @keyframes floating3d {
-            0% { transform: translateY(0px) rotateY(0deg) rotateX(0deg); }
-            50% { transform: translateY(-30px) rotateY(10deg) rotateX(5deg); }
-            100% { transform: translateY(0px) rotateY(0deg) rotateX(0deg); }
+        .faq-question {
+            width: 100%;
+            text-align: left;
+            padding: 1.5rem;
+            background: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--dark);
+            transition: all 0.2s ease;
         }
         
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .hero-section {
-                text-align: center;
-            }
-            
-            .hero-image {
-                margin-top: 2rem;
-            }
+        .faq-question:hover {
+            background: #f8fafc;
         }
         
-        /* Stats counter */
+        .faq-answer {
+            padding: 0 1.5rem 1.5rem;
+            color: var(--gray);
+            display: none;
+        }
+        
+        .faq-answer.active {
+            display: block;
+        }
+        
+        .faq-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .faq-icon.rotate {
+            transform: rotate(180deg);
+        }
+        
+        /* Stats */
         .stat-item {
-            transition: all 0.5s ease;
+            text-align: center;
+            padding: 2rem;
         }
         
-        .stat-item:hover {
-            transform: scale(1.05);
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+            font-family: 'Space Grotesk', sans-serif;
         }
         
-        /* Pricing card hover effect */
-        .pricing-card {
-            transition: all 0.5s ease;
-            transform-style: preserve-3d;
+        .stat-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9375rem;
         }
         
-        .pricing-card:hover {
-            transform: translateY(-10px) rotateY(5deg);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 0.375rem 0.875rem;
+            background: #eff6ff;
+            color: var(--primary);
+            border-radius: 2rem;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            letter-spacing: 0.025em;
+            text-transform: uppercase;
+        }
+        
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
         }
         
         /* Custom scrollbar */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 10px;
         }
         
         ::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: #f1f5f9;
         }
         
         ::-webkit-scrollbar-thumb {
             background: var(--primary);
-            border-radius: 10px;
+            border-radius: 5px;
         }
         
         ::-webkit-scrollbar-thumb:hover {
             background: var(--primary-dark);
         }
         
-        /* Particle container */
-        #particles-js {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: 0;
-        }
-        
-        /* 3D Cube Animation */
-        .cube-container {
-            perspective: 1000px;
-            width: 200px;
-            height: 200px;
-            margin: 0 auto;
-        }
-        
-        .cube {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            animation: rotate 20s infinite linear;
-        }
-        
-        .face {
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: white;
-            backdrop-filter: blur(5px);
-        }
-        
-        .front { transform: rotateY(0deg) translateZ(100px); }
-        .back { transform: rotateY(180deg) translateZ(100px); }
-        .right { transform: rotateY(90deg) translateZ(100px); }
-        .left { transform: rotateY(-90deg) translateZ(100px); }
-        .top { transform: rotateX(90deg) translateZ(100px); }
-        .bottom { transform: rotateX(-90deg) translateZ(100px); }
-        
-        @keyframes rotate {
-            from { transform: rotateX(0deg) rotateY(0deg); }
-            to { transform: rotateX(360deg) rotateY(360deg); }
-        }
-        
-        /* AI Brain Animation */
-        .ai-brain {
-            position: relative;
-            width: 300px;
-            height: 300px;
-            margin: 0 auto;
-        }
-        
-        .neuron {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: var(--primary);
-            border-radius: 50%;
-            filter: blur(1px);
-            animation: pulse 2s infinite ease-in-out;
-        }
-        
-        .connection {
-            position: absolute;
-            height: 2px;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            transform-origin: left center;
-            animation: connect 3s infinite ease-in-out;
-        }
-        
-        @keyframes connect {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
-<body class="antialiased">
+<body>
 
     <!-- Header Section -->
-    <header class="bg-white/90 backdrop-blur-md shadow-sm py-4 sticky top-0 z-50">
-        <div class="container mx-auto px-4 flex justify-between items-center">
-            <a href="/" class="text-2xl font-bold text-primary flex items-center">
+    <header class="bg-white/80 backdrop-blur-md border-b border-gray-100 py-4 sticky top-0 z-50">
+        <div class="container mx-auto px-4 flex justify-between items-center max-w-7xl">
+            <a href="/" class="text-2xl font-bold flex items-center font-display">
                 <i class="fas fa-robot mr-2 gradient-text"></i>
                 <span class="gradient-text">Vexara AI</span>
             </a>
             <nav class="hidden md:block">
-                <ul class="flex space-x-8">
-                    <li><a href="#features" class="nav-link text-gray-600 hover:text-primary transition duration-300">Features</a></li>
-                    <li><a href="#how-it-works" class="nav-link text-gray-600 hover:text-primary transition duration-300">How It Works</a></li>
-                    <li><a href="#testimonials" class="nav-link text-gray-600 hover:text-primary transition duration-300">Testimonials</a></li>
-                    <li><a href="#pricing" class="nav-link text-gray-600 hover:text-primary transition duration-300">Pricing</a></li>
-                    <li><a href="#" id="login-link" class="btn-primary px-6 py-2 rounded-full text-sm">Get Started</a></li>
+                <ul class="flex items-center space-x-8">
+                    <li><a href="#features" class="nav-link">Features</a></li>
+                    <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+                    <li><a href="#testimonials" class="nav-link">Testimonials</a></li>
+                    <li><a href="#pricing" class="nav-link">Pricing</a></li>
+                    <li><a href="#" id="login-link" class="btn-primary">Get Started</a></li>
                 </ul>
             </nav>
-            <button class="md:hidden text-gray-600 hover:text-primary">
-                <i class="fas fa-bars text-xl"></i>
+            <button class="md:hidden text-gray-600 hover:text-primary text-xl">
+                <i class="fas fa-bars"></i>
             </button>
         </div>
     </header>
 
     <!-- Hero Section -->
-    <section class="hero-section text-white py-20 px-4 relative">
-        <div id="particles-js"></div>
-        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between relative z-10">
-            <div class="hero-content md:w-1/2 mb-10 md:mb-0">
-                <h1 class="text-5xl md:text-6xl font-extrabold leading-tight mb-6 hero-heading">Revolutionize Your Workflow With AI</h1>
-                <p class="text-xl mb-8 opacity-90">Vexara AI harnesses the power of Google Gemini to provide intelligent assistance that adapts to your unique needs.</p>
-                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                    <a href="#" id="get-started-link" class="btn-primary py-3 px-8 rounded-full text-center glow">Start Free Trial</a>
-                    <a href="#how-it-works" class="btn-outline py-3 px-8 rounded-full text-center">See Demo</a>
+    <section class="hero-section text-dark py-24 px-4 relative">
+        <div class="container mx-auto max-w-7xl relative z-10">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-5xl md:text-7xl font-bold leading-tight mb-6 font-display">
+                    Revolutionize Your Workflow With <span class="gradient-text">AI</span>
+                </h1>
+                <p class="text-xl md:text-2xl mb-10 text-gray-600 max-w-2xl mx-auto font-light">
+                    Vexara AI harnesses the power of Google Gemini to provide intelligent assistance that adapts to your unique needs.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4 mb-12">
+                    <a href="#" id="get-started-link" class="btn-primary">Start Free Trial</a>
+                    <a href="#how-it-works" class="btn-outline">See How It Works</a>
                 </div>
-                <div class="mt-8 flex items-center space-x-4">
+                <div class="flex items-center justify-center gap-6 text-sm text-gray-600">
                     <div class="flex -space-x-2">
-                        <img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-10 h-10 rounded-full border-2 border-white hover:transform hover:scale-110 transition duration-300" alt="User">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-10 h-10 rounded-full border-2 border-white hover:transform hover:scale-110 transition duration-300" alt="User">
-                        <img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-10 h-10 rounded-full border-2 border-white hover:transform hover:scale-110 transition duration-300" alt="User">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-10 h-10 rounded-full border-2 border-white" alt="User">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-10 h-10 rounded-full border-2 border-white" alt="User">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-10 h-10 rounded-full border-2 border-white" alt="User">
                     </div>
-                    <div>
-                        <p class="text-sm opacity-80">Trusted by <span class="font-bold">25,000+</span> users worldwide</p>
-                    </div>
-                </div>
-            </div>
-            <div class="md:w-1/2 flex justify-center floating-3d">
-                <div class="cube-container">
-                    <div class="cube">
-                        <div class="face front"><i class="fas fa-brain text-6xl gradient-text"></i></div>
-                        <div class="face back"><i class="fas fa-robot text-6xl gradient-text"></i></div>
-                        <div class="face right"><i class="fas fa-lightbulb text-6xl gradient-text"></i></div>
-                        <div class="face left"><i class="fas fa-chart-line text-6xl gradient-text"></i></div>
-                        <div class="face top"><i class="fas fa-code text-6xl gradient-text"></i></div>
-                        <div class="face bottom"><i class="fas fa-comments text-6xl gradient-text"></i></div>
-                    </div>
+                    <p>Trusted by <span class="font-semibold text-dark">25,000+</span> users worldwide</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Stats Section -->
-    <section class="py-12 bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                <div class="stat-item p-6 rounded-xl bg-white/10 backdrop-blur-sm">
-                    <div class="text-4xl font-bold mb-2" id="stat1">0</div>
-                    <p class="text-sm opacity-80">Active Users</p>
+    <section class="py-16 bg-gradient-to-br from-blue-600 to-cyan-500">
+        <div class="container mx-auto px-4 max-w-7xl">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+                <div class="stat-item">
+                    <div class="stat-number" id="stat1">25,000</div>
+                    <p class="stat-label">Active Students</p>
                 </div>
-                <div class="stat-item p-6 rounded-xl bg-white/10 backdrop-blur-sm">
-                    <div class="text-4xl font-bold mb-2" id="stat2">0</div>
-                    <p class="text-sm opacity-80">Tasks Automated</p>
+                <div class="stat-item">
+                    <div class="stat-number" id="stat3">350,000</div>
+                    <p class="stat-label">Questions Answered</p>
                 </div>
-                <div class="stat-item p-6 rounded-xl bg-white/10 backdrop-blur-sm">
-                    <div class="text-4xl font-bold mb-2" id="stat3">0</div>
-                    <p class="text-sm opacity-80">Hours Saved</p>
-                </div>
-                <div class="stat-item p-6 rounded-xl bg-white/10 backdrop-blur-sm">
-                    <div class="text-4xl font-bold mb-2" id="stat4">0</div>
-                    <p class="text-sm opacity-80">5-Star Reviews</p>
+                <div class="stat-item col-span-2 md:col-span-1">
+                    <div class="stat-number" id="stat4">4,800</div>
+                    <p class="stat-label">5-Star Reviews</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Clients Section -->
-    <section class="py-12 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <p class="text-center text-gray-500 mb-8">TRUSTED BY INNOVATIVE COMPANIES</p>
-            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 hover:opacity-100 transition duration-500">
-                <img src="https://logo.clearbit.com/google.com" alt="Google" class="h-8 hover:transform hover:scale-110 transition duration-300">
-                <img src="https://logo.clearbit.com/microsoft.com" alt="Microsoft" class="h-8 hover:transform hover:scale-110 transition duration-300">
-                <img src="https://logo.clearbit.com/spotify.com" alt="Spotify" class="h-8 hover:transform hover:scale-110 transition duration-300">
-                <img src="https://logo.clearbit.com/airbnb.com" alt="Airbnb" class="h-8 hover:transform hover:scale-110 transition duration-300">
-                <img src="https://logo.clearbit.com/slack.com" alt="Slack" class="h-8 hover:transform hover:scale-110 transition duration-300">
+    <section class="py-16 bg-white border-b border-gray-100">
+        <div class="container mx-auto px-4 max-w-7xl">
+            <p class="text-center text-gray-500 mb-10 text-sm font-semibold tracking-wide uppercase">Trusted by innovative companies</p>
+            <div class="flex flex-wrap justify-center items-center gap-12 opacity-50">
+                <img src="https://logo.clearbit.com/google.com" alt="Google" class="h-8">
+                <img src="https://logo.clearbit.com/microsoft.com" alt="Microsoft" class="h-8">
+                <img src="https://logo.clearbit.com/spotify.com" alt="Spotify" class="h-8">
+                <img src="https://logo.clearbit.com/airbnb.com" alt="Airbnb" class="h-8">
+                <img src="https://logo.clearbit.com/slack.com" alt="Slack" class="h-8">
             </div>
         </div>
     </section>
 
     <!-- Features Section -->
-    <section id="features" class="py-16 px-4 bg-white">
-        <div class="container mx-auto">
-            <div class="text-center mb-16">
-                <span class="inline-block px-3 py-1 text-sm font-semibold text-primary bg-indigo-100 rounded-full mb-4">FEATURES</span>
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">AI-Powered Solutions That Transform Work</h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Vexara AI adapts to your workflow with powerful features designed to enhance productivity and creativity.</p>
+    <section id="features" class="py-24 px-4 bg-gray-50">
+        <div class="container mx-auto max-w-7xl">
+            <div class="text-center mb-16 max-w-3xl mx-auto">
+                <span class="badge mb-4">Features</span>
+                <h2 class="text-4xl md:text-5xl font-bold mb-6 font-display">AI-Powered Solutions That Transform Work</h2>
+                <p class="text-lg text-gray-600">Vexara AI adapts to your workflow with powerful features designed to enhance productivity and creativity.</p>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Feature 1 -->
-                <div class="feature-card p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-comment-dots"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-3">Natural Conversations</h3>
                     <p class="text-gray-600">Engage in human-like dialogue with context-aware responses that understand your needs.</p>
-                    <div class="mt-4">
-                        <lottie-player src="https://assets10.lottiefiles.com/packages/lf20_5tkzkblw.json" background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay></lottie-player>
-                    </div>
                 </div>
                 
-                <!-- Feature 2 -->
-                <div class="feature-card p-8">
+                <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-lightbulb"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-3">Creative Ideation</h3>
                     <p class="text-gray-600">Generate innovative ideas, content, and solutions tailored to your specific requirements.</p>
-                    <div class="mt-4">
-                        <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_5itoumpj.json" background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay></lottie-player>
-                    </div>
                 </div>
                 
-                <!-- Feature 3 -->
-                <div class="feature-card p-8">
+                <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-chart-line"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-3">Data Analysis</h3>
                     <p class="text-gray-600">Process and visualize complex data sets to uncover valuable insights and trends.</p>
-                    <div class="mt-4">
-                        <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_obhph3sh.json" background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay></lottie-player>
-                    </div>
                 </div>
                 
-                <!-- Feature 4 -->
-                <div class="feature-card p-8">
+                <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-code"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-3">Code Generation</h3>
                     <p class="text-gray-600">Write, debug, and explain code in multiple programming languages with AI assistance.</p>
-                    <div class="mt-4">
-                        <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_2znxgjyt.json" background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay></lottie-player>
-                    </div>
                 </div>
                 
-                <!-- Feature 5 -->
-                <div class="feature-card p-8">
+                <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-language"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-3">Multilingual Support</h3>
                     <p class="text-gray-600">Communicate and create content in dozens of languages with native-level fluency.</p>
-                    <div class="mt-4">
-                        <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_5tkzkblw.json" background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay></lottie-player>
-                    </div>
                 </div>
                 
-                <!-- Feature 6 -->
-                <div class="feature-card p-8">
+                <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-shield-alt"></i>
                     </div>
                     <h3 class="text-xl font-semibold mb-3">Enterprise Security</h3>
                     <p class="text-gray-600">Military-grade encryption and privacy controls to protect your sensitive data.</p>
-                    <div class="mt-4">
-                        <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_5tkzkblw.json" background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay></lottie-player>
-                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- How It Works Section -->
-    <section id="how-it-works" class="py-16 px-4 bg-gray-50">
-        <div class="container mx-auto">
-            <div class="text-center mb-16">
-                <span class="inline-block px-3 py-1 text-sm font-semibold text-primary bg-indigo-100 rounded-full mb-4">HOW IT WORKS</span>
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Simple Integration, Powerful Results</h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Get started with Vexara AI in minutes and experience the difference immediately.</p>
+    <section id="how-it-works" class="py-24 px-4 bg-white">
+        <div class="container mx-auto max-w-7xl">
+            <div class="text-center mb-16 max-w-3xl mx-auto">
+                <span class="badge mb-4">How It Works</span>
+                <h2 class="text-4xl md:text-5xl font-bold mb-6 font-display">Simple Integration, Powerful Results</h2>
+                <p class="text-lg text-gray-600">Get started with Vexara AI in minutes and experience the difference immediately.</p>
             </div>
             
-            <div class="flex flex-col md:flex-row items-center justify-between gap-12">
-                <div class="md:w-1/2">
-                    <div class="space-y-8">
-                        <!-- Step 1 -->
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0 bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mr-4">
-                                <span class="text-xl font-bold">1</span>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-semibold mb-2">Sign Up in Seconds</h3>
-                                <p class="text-gray-600">Create your account using your preferred method - Google, Microsoft, or email.</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Step 2 -->
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0 bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mr-4">
-                                <span class="text-xl font-bold">2</span>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-semibold mb-2">Customize Your Experience</h3>
-                                <p class="text-gray-600">Tell us about your needs and preferences to personalize your AI assistant.</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Step 3 -->
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0 bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mr-4">
-                                <span class="text-xl font-bold">3</span>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-semibold mb-2">Start Interacting</h3>
-                                <p class="text-gray-600">Begin chatting with Vexara AI and discover how it can transform your workflow.</p>
-                            </div>
-                        </div>
+            <div class="max-w-3xl mx-auto space-y-8">
+                <div class="flex items-start gap-6">
+                    <div class="flex-shrink-0 w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-xl font-display">
+                        1
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Sign Up in Seconds</h3>
+                        <p class="text-gray-600">Create your account using your preferred method - Google, Microsoft, or email.</p>
                     </div>
                 </div>
                 
-                <div class="md:w-1/2">
-                    <div class="ai-brain">
-                        <!-- This will be populated with neurons and connections via JavaScript -->
+                <div class="flex items-start gap-6">
+                    <div class="flex-shrink-0 w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-xl font-display">
+                        2
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Customize Your Experience</h3>
+                        <p class="text-gray-600">Tell us about your needs and preferences to personalize your AI assistant.</p>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Demo Video Section -->
-    <section class="py-16 px-4 bg-white">
-        <div class="container mx-auto text-center">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">See Vexara AI in Action</h2>
-            <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-8">Watch how Vexara AI can transform your daily workflow in just minutes.</p>
-            <div class="relative max-w-4xl mx-auto rounded-xl overflow-hidden shadow-2xl">
-                <div class="aspect-w-16 aspect-h-9">
-                    <div class="w-full h-0 pb-[56.25%] relative">
-                        <div class="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center">
-                            <button id="play-button" class="w-20 h-20 bg-white rounded-full flex items-center justify-center text-primary text-3xl hover:transform hover:scale-110 transition duration-300">
-                                <i class="fas fa-play"></i>
-                            </button>
-                        </div>
-                        <iframe id="demo-video" class="absolute inset-0 w-full h-full hidden" src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                
+                <div class="flex items-start gap-6">
+                    <div class="flex-shrink-0 w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-xl font-display">
+                        3
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Start Interacting</h3>
+                        <p class="text-gray-600">Begin chatting with Vexara AI and discover how it can transform your workflow.</p>
                     </div>
                 </div>
             </div>
@@ -789,17 +607,16 @@
     </section>
 
     <!-- Testimonials Section -->
-    <section id="testimonials" class="py-16 px-4 bg-white">
-        <div class="container mx-auto">
-            <div class="text-center mb-16">
-                <span class="inline-block px-3 py-1 text-sm font-semibold text-primary bg-indigo-100 rounded-full mb-4">TESTIMONIALS</span>
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">What Our Users Say</h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Don't just take our word for it - hear from people who use Vexara AI every day.</p>
+    <section id="testimonials" class="py-24 px-4 bg-gray-50">
+        <div class="container mx-auto max-w-7xl">
+            <div class="text-center mb-16 max-w-3xl mx-auto">
+                <span class="badge mb-4">Testimonials</span>
+                <h2 class="text-4xl md:text-5xl font-bold mb-6 font-display">What Our Users Say</h2>
+                <p class="text-lg text-gray-600">Don't just take our word for it - hear from people who use Vexara AI every day.</p>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Testimonial 1 -->
-                <div class="testimonial-card p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="testimonial-card">
                     <div class="flex items-center mb-4">
                         <img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-12 h-12 rounded-full mr-4" alt="Sarah Johnson">
                         <div>
@@ -807,8 +624,8 @@
                             <p class="text-gray-500 text-sm">Marketing Director</p>
                         </div>
                     </div>
-                    <p class="text-gray-700">"Vexara AI has transformed how we create content. It's like having an entire creative team at my fingertips. Our engagement rates have doubled since we started using it."</p>
-                    <div class="mt-4 text-yellow-400">
+                    <p class="text-gray-700 mb-4">"Vexara AI has transformed how we create content. It's like having an entire creative team at my fingertips. Our engagement rates have doubled since we started using it."</p>
+                    <div class="text-yellow-400 text-sm">
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
@@ -817,8 +634,7 @@
                     </div>
                 </div>
                 
-                <!-- Testimonial 2 -->
-                <div class="testimonial-card p-8">
+                <div class="testimonial-card">
                     <div class="flex items-center mb-4">
                         <img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-12 h-12 rounded-full mr-4" alt="Michael Chen">
                         <div>
@@ -826,8 +642,8 @@
                             <p class="text-gray-500 text-sm">Software Engineer</p>
                         </div>
                     </div>
-                    <p class="text-gray-700">"As a developer, I use Vexara daily for code reviews and debugging. It catches errors I miss and explains complex concepts in simple terms. An indispensable tool."</p>
-                    <div class="mt-4 text-yellow-400">
+                    <p class="text-gray-700 mb-4">"As a developer, I use Vexara daily for code reviews and debugging. It catches errors I miss and explains complex concepts in simple terms. An indispensable tool."</p>
+                    <div class="text-yellow-400 text-sm">
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
@@ -836,8 +652,7 @@
                     </div>
                 </div>
                 
-                <!-- Testimonial 3 -->
-                <div class="testimonial-card p-8">
+                <div class="testimonial-card">
                     <div class="flex items-center mb-4">
                         <img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-12 h-12 rounded-full mr-4" alt="Emma Rodriguez">
                         <div>
@@ -845,8 +660,8 @@
                             <p class="text-gray-500 text-sm">Small Business Owner</p>
                         </div>
                     </div>
-                    <p class="text-gray-700">"Running a business alone was overwhelming until I found Vexara. It handles customer inquiries, writes emails, and even helps with accounting questions. Game changer!"</p>
-                    <div class="mt-4 text-yellow-400">
+                    <p class="text-gray-700 mb-4">"Running a business alone was overwhelming until I found Vexara. It handles customer inquiries, writes emails, and even helps with accounting questions. Game changer!"</p>
+                    <div class="text-yellow-400 text-sm">
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
@@ -859,159 +674,152 @@
     </section>
 
     <!-- Pricing Section -->
-    <section id="pricing" class="py-16 px-4 bg-gray-50">
-        <div class="container mx-auto">
-            <div class="text-center mb-16">
-                <span class="inline-block px-3 py-1 text-sm font-semibold text-primary bg-indigo-100 rounded-full mb-4">PRICING</span>
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Flexible Plans for Every Need</h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Choose the perfect plan for your requirements, with options to scale as you grow.</p>
+    <section id="pricing" class="py-24 px-4 bg-white">
+        <div class="container mx-auto max-w-7xl">
+            <div class="text-center mb-16 max-w-3xl mx-auto">
+                <span class="badge mb-4">Pricing</span>
+                <h2 class="text-4xl md:text-5xl font-bold mb-6 font-display">Flexible Plans for Every Need</h2>
+                <p class="text-lg text-gray-600">Choose the perfect plan for your requirements, with options to scale as you grow.</p>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                <!-- Free Plan -->
-                <div class="pricing-card bg-white p-8 rounded-xl shadow-md border border-gray-200 hover:border-primary transition duration-300">
-                    <h3 class="text-2xl font-bold mb-2">Starter</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                <div class="pricing-card">
+                    <h3 class="text-2xl font-bold mb-2 font-display">Starter</h3>
                     <p class="text-gray-600 mb-6">Perfect for individuals getting started with AI</p>
                     <div class="mb-6">
-                        <span class="text-4xl font-bold">$0</span>
+                        <span class="text-5xl font-bold font-display">$0</span>
                         <span class="text-gray-500">/month</span>
                     </div>
                     <ul class="space-y-3 mb-8">
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
+                        <li class="flex items-center text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
                             <span>20 requests per day</span>
                         </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
+                        <li class="flex items-center text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
                             <span>Basic AI capabilities</span>
                         </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
+                        <li class="flex items-center text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
                             <span>Email support</span>
                         </li>
                     </ul>
-                    <a href="#" class="btn-outline block text-center py-3 rounded-lg font-medium">Get Started</a>
+                    <a href="#" class="btn-outline block text-center">Get Started</a>
                 </div>
                 
-                <!-- Pro Plan (Featured) -->
-                <div class="pricing-card bg-white p-8 rounded-xl shadow-lg border-2 border-primary relative transform scale-105">
-                    <div class="absolute top-0 right-0 bg-primary text-white px-4 py-1 rounded-bl-lg rounded-tr-lg text-sm font-semibold">
+                <div class="pricing-card featured">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
                         MOST POPULAR
                     </div>
-                    <h3 class="text-2xl font-bold mb-2">Professional</h3>
+                    <h3 class="text-2xl font-bold mb-2 font-display">Professional</h3>
                     <p class="text-gray-600 mb-6">For professionals and small teams</p>
                     <div class="mb-6">
-                        <span class="text-4xl font-bold">$29</span>
+                        <span class="text-5xl font-bold font-display">$29</span>
                         <span class="text-gray-500">/month</span>
                     </div>
                     <ul class="space-y-3 mb-8">
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
+                        <li class="flex items-center text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
                             <span>500 requests per month</span>
                         </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
+                        <li class="flex items-center text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
                             <span>Advanced AI capabilities</span>
                         </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
+                        <li class="flex items-center text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
                             <span>Priority support</span>
                         </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
+                        <li class="flex items-center text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
                             <span>API access</span>
                         </li>
                     </ul>
-                    <a href="#" class="btn-primary block text-center py-3 rounded-lg font-medium">Start Free Trial</a>
+                    <a href="#" class="btn-primary block text-center">Start Free Trial</a>
                 </div>
                 
-                <!-- Enterprise Plan -->
-                <div class="pricing-card bg-white p-8 rounded-xl shadow-md border border-gray-200 hover:border-primary transition duration-300">
-                    <h3 class="text-2xl font-bold mb-2">Enterprise</h3>
+                <div class="pricing-card">
+                    <h3 class="text-2xl font-bold mb-2 font-display">Enterprise</h3>
                     <p class="text-gray-600 mb-6">For organizations with advanced needs</p>
                     <div class="mb-6">
-                        <span class="text-4xl font-bold">$99</span>
+                        <span class="text-5xl font-bold font-display">$99</span>
                         <span class="text-gray-500">/month</span>
                     </div>
                     <ul class="space-y-3 mb-8">
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
+                        <li class="flex items-center text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
                             <span>Unlimited requests</span>
                         </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
+                        <li class="flex items-center text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
                             <span>Premium AI capabilities</span>
                         </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
+                        <li class="flex items-center text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
                             <span>24/7 dedicated support</span>
                         </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
+                        <li class="flex items-center text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
                             <span>Custom integrations</span>
                         </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
+                        <li class="flex items-center text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
                             <span>Team management</span>
                         </li>
                     </ul>
-                    <a href="#" class="btn-outline block text-center py-3 rounded-lg font-medium">Contact Sales</a>
+                    <a href="#" class="btn-outline block text-center">Contact Sales</a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- FAQ Section -->
-    <section class="py-16 px-4 bg-white">
+    <section class="py-24 px-4 bg-gray-50">
         <div class="container mx-auto max-w-4xl">
             <div class="text-center mb-16">
-                <span class="inline-block px-3 py-1 text-sm font-semibold text-primary bg-indigo-100 rounded-full mb-4">FAQ</span>
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Find answers to common questions about Vexara AI.</p>
+                <span class="badge mb-4">FAQ</span>
+                <h2 class="text-4xl md:text-5xl font-bold mb-6 font-display">Frequently Asked Questions</h2>
+                <p class="text-lg text-gray-600">Find answers to common questions about Vexara AI.</p>
             </div>
             
             <div class="space-y-4">
-                <!-- FAQ Item 1 -->
-                <div class="border border-gray-200 rounded-lg overflow-hidden">
-                    <button class="faq-question w-full text-left p-6 bg-gray-50 hover:bg-gray-100 transition duration-200 flex justify-between items-center">
-                        <span class="font-medium text-lg">What makes Vexara AI different from other AI assistants?</span>
-                        <i class="fas fa-chevron-down transition-transform duration-200"></i>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>What makes Vexara AI different from other AI assistants?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
                     </button>
-                    <div class="faq-answer p-6 hidden">
-                        <p class="text-gray-600">Vexara AI leverages Google Gemini's cutting-edge technology combined with our proprietary customization layer to provide more accurate, context-aware responses. Unlike generic AI assistants, Vexara learns your preferences and adapts to your specific needs over time.</p>
+                    <div class="faq-answer">
+                        <p>Vexara AI leverages Google Gemini's cutting-edge technology combined with our proprietary customization layer to provide more accurate, context-aware responses. Unlike generic AI assistants, Vexara learns your preferences and adapts to your specific needs over time.</p>
                     </div>
                 </div>
                 
-                <!-- FAQ Item 2 -->
-                <div class="border border-gray-200 rounded-lg overflow-hidden">
-                    <button class="faq-question w-full text-left p-6 bg-gray-50 hover:bg-gray-100 transition duration-200 flex justify-between items-center">
-                        <span class="font-medium text-lg">Is my data secure with Vexara AI?</span>
-                        <i class="fas fa-chevron-down transition-transform duration-200"></i>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Is my data secure with Vexara AI?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
                     </button>
-                    <div class="faq-answer p-6 hidden">
-                        <p class="text-gray-600">Absolutely. We implement enterprise-grade security measures including end-to-end encryption, regular security audits, and strict data access controls. Your conversations are never used to train public models without your explicit consent.</p>
+                    <div class="faq-answer">
+                        <p>Absolutely. We implement enterprise-grade security measures including end-to-end encryption, regular security audits, and strict data access controls. Your conversations are never used to train public models without your explicit consent.</p>
                     </div>
                 </div>
                 
-                <!-- FAQ Item 3 -->
-                <div class="border border-gray-200 rounded-lg overflow-hidden">
-                    <button class="faq-question w-full text-left p-6 bg-gray-50 hover:bg-gray-100 transition duration-200 flex justify-between items-center">
-                        <span class="font-medium text-lg">Can I integrate Vexara AI with other tools I use?</span>
-                        <i class="fas fa-chevron-down transition-transform duration-200"></i>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Can I integrate Vexara AI with other tools I use?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
                     </button>
-                    <div class="faq-answer p-6 hidden">
-                        <p class="text-gray-600">Yes! Vexara offers API access for Professional and Enterprise plans, allowing integration with popular productivity tools like Slack, Microsoft Teams, and Google Workspace. We also provide documentation for custom integrations.</p>
+                    <div class="faq-answer">
+                        <p>Yes! Vexara offers API access for Professional and Enterprise plans, allowing integration with popular productivity tools like Slack, Microsoft Teams, and Google Workspace. We also provide documentation for custom integrations.</p>
                     </div>
                 </div>
                 
-                <!-- FAQ Item 4 -->
-                <div class="border border-gray-200 rounded-lg overflow-hidden">
-                    <button class="faq-question w-full text-left p-6 bg-gray-50 hover:bg-gray-100 transition duration-200 flex justify-between items-center">
-                        <span class="font-medium text-lg">What happens if I exceed my monthly request limit?</span>
-                        <i class="fas fa-chevron-down transition-transform duration-200"></i>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>What happens if I exceed my monthly request limit?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
                     </button>
-                    <div class="faq-answer p-6 hidden">
-                        <p class="text-gray-600">If you exceed your plan's request limit, you'll have the option to purchase additional requests or upgrade your plan. We'll notify you before you reach your limit so you can make adjustments as needed.</p>
+                    <div class="faq-answer">
+                        <p>If you exceed your plan's request limit, you'll have the option to purchase additional requests or upgrade your plan. We'll notify you before you reach your limit so you can make adjustments as needed.</p>
                     </div>
                 </div>
             </div>
@@ -1019,73 +827,66 @@
     </section>
 
     <!-- Final CTA Section -->
-    <section class="py-20 px-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10">
-            <div id="particles-js-2"></div>
-        </div>
-        <div class="container mx-auto text-center relative z-10">
-            <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to Experience the Future of AI?</h2>
-            <p class="text-xl mb-8 max-w-2xl mx-auto">Join thousands of professionals already boosting their productivity with Vexara AI.</p>
+    <section class="py-24 px-4 bg-gradient-to-br from-blue-600 to-cyan-500 text-white">
+        <div class="container mx-auto text-center max-w-4xl">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6 font-display">Ready to Experience the Future of AI?</h2>
+            <p class="text-xl mb-10 opacity-95">Join thousands of professionals already boosting their productivity with Vexara AI.</p>
             <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="#" id="call-to-action-link" class="btn-primary py-4 px-10 rounded-full text-lg glow">Start Your Free Trial</a>
-                <a href="#" class="bg-white bg-opacity-10 hover:bg-opacity-20 py-4 px-10 rounded-full text-lg border border-white border-opacity-30 transition duration-300">Schedule a Demo</a>
+                <a href="#" id="call-to-action-link" class="bg-white text-blue-600 hover:bg-gray-50 py-4 px-10 rounded-lg text-lg font-semibold inline-block">Start Your Free Trial</a>
+                <a href="#" class="bg-white/10 hover:bg-white/20 py-4 px-10 rounded-lg text-lg font-semibold border border-white/30 inline-block">Schedule a Demo</a>
             </div>
         </div>
     </section>
 
     <!-- Footer Section -->
-    <footer class="bg-gray-900 text-white py-12 px-4">
-        <div class="container mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-                <!-- Column 1 -->
+    <footer class="bg-slate-900 text-white py-16 px-4">
+        <div class="container mx-auto max-w-7xl">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                 <div>
-                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <h3 class="text-xl font-bold mb-4 flex items-center font-display">
                         <i class="fas fa-robot mr-2 gradient-text"></i> Vexara AI
                     </h3>
-                    <p class="text-gray-400 mb-4">Your personal AI assistant, powered by Google Gemini.</p>
+                    <p class="text-gray-400 mb-6">Your personal AI assistant, powered by Google Gemini.</p>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                        <a href="#" class="text-gray-400 hover:text-white text-lg">
                             <i class="fab fa-twitter"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                        <a href="#" class="text-gray-400 hover:text-white text-lg">
                             <i class="fab fa-linkedin"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                        <a href="#" class="text-gray-400 hover:text-white text-lg">
                             <i class="fab fa-github"></i>
                         </a>
                     </div>
                 </div>
                 
-                <!-- Column 2 -->
                 <div>
                     <h4 class="font-semibold mb-4">Product</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Features</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Pricing</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">API</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Integrations</a></li>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Features</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Pricing</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">API</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Integrations</a></li>
                     </ul>
                 </div>
                 
-                <!-- Column 3 -->
                 <div>
                     <h4 class="font-semibold mb-4">Resources</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Documentation</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Guides</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Blog</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Support</a></li>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Documentation</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Guides</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Blog</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Support</a></li>
                     </ul>
                 </div>
                 
-                <!-- Column 4 -->
                 <div>
                     <h4 class="font-semibold mb-4">Company</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">About Us</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Careers</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Privacy Policy</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Terms of Service</a></li>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Careers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>
@@ -1101,437 +902,90 @@
         <div class="login-container">
             <button class="close-button" id="close-modal">&times;</button>
             <div class="text-center mb-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">Welcome to Vexara AI</h2>
+                <h2 class="text-3xl font-bold mb-2 font-display">Welcome to Vexara AI</h2>
                 <p class="text-gray-600">Sign in to access your personal AI assistant</p>
             </div>
             
-            <div class="space-y-4">
-                <a href="#" class="login-btn google" id="google-login-btn">
+            <div class="space-y-3">
+                <!-- <a href="#" class="login-btn google" id="google-login-btn">
                     <i class="fab fa-google mr-3"></i> Continue with Google
                 </a>
                 <a href="#" class="login-btn microsoft" id="microsoft-login-btn">
                     <i class="fab fa-microsoft mr-3"></i> Continue with Microsoft
-                </a>
-                <a href="#" class="login-btn guest" id="guest-login-btn">
+                </a> -->
+                <a href="#" class="login-btn" id="guest-login-btn">
                     <i class="fas fa-user-secret mr-3"></i> Continue as Guest
                 </a>
             </div>
             
             <div class="text-center mt-6 text-sm text-gray-500">
-                By continuing, you agree to our <a href="#" class="text-primary hover:underline">Terms of Service</a> and <a href="#" class="text-primary hover:underline">Privacy Policy</a>.
+                By continuing, you agree to our <a href="#" class="text-blue-600 hover:underline">Terms of Service</a> and <a href="#" class="text-blue-600 hover:underline">Privacy Policy</a>.
             </div>
         </div>
     </div>
 
-    <!-- Particles.js -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize particles.js
-            particlesJS('particles-js', {
-                "particles": {
-                    "number": {
-                        "value": 80,
-                        "density": {
-                            "enable": true,
-                            "value_area": 800
-                        }
-                    },
-                    "color": {
-                        "value": "#ffffff"
-                    },
-                    "shape": {
-                        "type": "circle",
-                        "stroke": {
-                            "width": 0,
-                            "color": "#000000"
-                        },
-                        "polygon": {
-                            "nb_sides": 5
-                        }
-                    },
-                    "opacity": {
-                        "value": 0.5,
-                        "random": false,
-                        "anim": {
-                            "enable": false,
-                            "speed": 1,
-                            "opacity_min": 0.1,
-                            "sync": false
-                        }
-                    },
-                    "size": {
-                        "value": 3,
-                        "random": true,
-                        "anim": {
-                            "enable": false,
-                            "speed": 40,
-                            "size_min": 0.1,
-                            "sync": false
-                        }
-                    },
-                    "line_linked": {
-                        "enable": true,
-                        "distance": 150,
-                        "color": "#ffffff",
-                        "opacity": 0.4,
-                        "width": 1
-                    },
-                    "move": {
-                        "enable": true,
-                        "speed": 2,
-                        "direction": "none",
-                        "random": false,
-                        "straight": false,
-                        "out_mode": "out",
-                        "bounce": false,
-                        "attract": {
-                            "enable": false,
-                            "rotateX": 600,
-                            "rotateY": 1200
-                        }
-                    }
-                },
-                "interactivity": {
-                    "detect_on": "canvas",
-                    "events": {
-                        "onhover": {
-                            "enable": true,
-                            "mode": "grab"
-                        },
-                        "onclick": {
-                            "enable": true,
-                            "mode": "push"
-                        },
-                        "resize": true
-                    },
-                    "modes": {
-                        "grab": {
-                            "distance": 140,
-                            "line_linked": {
-                                "opacity": 1
-                            }
-                        },
-                        "bubble": {
-                            "distance": 400,
-                            "size": 40,
-                            "duration": 2,
-                            "opacity": 8,
-                            "speed": 3
-                        },
-                        "repulse": {
-                            "distance": 200,
-                            "duration": 0.4
-                        },
-                        "push": {
-                            "particles_nb": 4
-                        },
-                        "remove": {
-                            "particles_nb": 2
-                        }
-                    }
-                },
-                "retina_detect": true
-            });
-
-            // Initialize particles.js for CTA section
-            particlesJS('particles-js-2', {
-                "particles": {
-                    "number": {
-                        "value": 40,
-                        "density": {
-                            "enable": true,
-                            "value_area": 800
-                        }
-                    },
-                    "color": {
-                        "value": "#ffffff"
-                    },
-                    "shape": {
-                        "type": "circle",
-                        "stroke": {
-                            "width": 0,
-                            "color": "#000000"
-                        },
-                        "polygon": {
-                            "nb_sides": 5
-                        }
-                    },
-                    "opacity": {
-                        "value": 0.3,
-                        "random": false,
-                        "anim": {
-                            "enable": false,
-                            "speed": 1,
-                            "opacity_min": 0.1,
-                            "sync": false
-                        }
-                    },
-                    "size": {
-                        "value": 3,
-                        "random": true,
-                        "anim": {
-                            "enable": false,
-                            "speed": 40,
-                            "size_min": 0.1,
-                            "sync": false
-                        }
-                    },
-                    "line_linked": {
-                        "enable": true,
-                        "distance": 150,
-                        "color": "#ffffff",
-                        "opacity": 0.2,
-                        "width": 1
-                    },
-                    "move": {
-                        "enable": true,
-                        "speed": 1,
-                        "direction": "none",
-                        "random": false,
-                        "straight": false,
-                        "out_mode": "out",
-                        "bounce": false,
-                        "attract": {
-                            "enable": false,
-                            "rotateX": 600,
-                            "rotateY": 1200
-                        }
-                    }
-                },
-                "interactivity": {
-                    "detect_on": "canvas",
-                    "events": {
-                        "onhover": {
-                            "enable": false,
-                            "mode": "grab"
-                        },
-                        "onclick": {
-                            "enable": false,
-                            "mode": "push"
-                        },
-                        "resize": true
-                    }
-                },
-                "retina_detect": true
-            });
-
             // Modal functionality
-            const loginLink = document.getElementById('login-link');
-            const getStartedLink = document.getElementById('get-started-link');
-            const callToActionLink = document.getElementById('call-to-action-link');
             const loginModal = document.getElementById('login-modal');
+            const loginLinks = ['login-link', 'get-started-link', 'call-to-action-link'];
             const closeModalButton = document.getElementById('close-modal');
-            
-            // Login buttons
-            const googleLoginBtn = document.getElementById('google-login-btn');
-            const microsoftLoginBtn = document.getElementById('microsoft-login-btn');
             const guestLoginBtn = document.getElementById('guest-login-btn');
             
-            // FAQ functionality
-            const faqQuestions = document.querySelectorAll('.faq-question');
-            
-            // Demo video
-            const playButton = document.getElementById('play-button');
-            const demoVideo = document.getElementById('demo-video');
-            
-            // Open modal function
             const openModal = () => {
                 loginModal.classList.add('active');
                 document.body.style.overflow = 'hidden';
             };
             
-            // Close modal function
             const closeModal = () => {
                 loginModal.classList.remove('active');
                 document.body.style.overflow = '';
             };
             
-            // Event listeners for modal
-            if (loginLink) loginLink.addEventListener('click', (e) => { e.preventDefault(); openModal(); });
-            if (getStartedLink) getStartedLink.addEventListener('click', (e) => { e.preventDefault(); openModal(); });
-            if (callToActionLink) callToActionLink.addEventListener('click', (e) => { e.preventDefault(); openModal(); });
-            if (closeModalButton) closeModalButton.addEventListener('click', closeModal);
-            
-            // Close modal when clicking outside
-            loginModal.addEventListener('click', (e) => {
-                if (e.target === loginModal) {
-                    closeModal();
+            loginLinks.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        openModal();
+                    });
                 }
             });
             
-            // Login button handlers
-            if (googleLoginBtn) googleLoginBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                console.log('Google login clicked');
-                closeModal();
+            if (closeModalButton) closeModalButton.addEventListener('click', closeModal);
+            
+            loginModal.addEventListener('click', (e) => {
+                if (e.target === loginModal) closeModal();
             });
             
-            if (microsoftLoginBtn) microsoftLoginBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                console.log('Microsoft login clicked');
-                closeModal();
-            });
-            
-            if (guestLoginBtn) guestLoginBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                console.log('Guest login clicked - redirecting to guest_login');
-                window.location.href = 'guest_login';
-            });
-            
-            // FAQ functionality
-            faqQuestions.forEach(question => {
-                question.addEventListener('click', () => {
-                    const answer = question.nextElementSibling;
-                    const icon = question.querySelector('i');
-                    
-                    // Toggle answer visibility
-                    answer.classList.toggle('hidden');
-                    
-                    // Rotate icon
-                    icon.classList.toggle('rotate-180');
-                    
-                    // Close other open answers
-                    faqQuestions.forEach(q => {
-                        if (q !== question) {
-                            q.nextElementSibling.classList.add('hidden');
-                            q.querySelector('i').classList.remove('rotate-180');
-                        }
-                    });
-                });
-            });
-            
-            // Demo video play button
-            if (playButton) {
-                playButton.addEventListener('click', () => {
-                    playButton.style.display = 'none';
-                    demoVideo.classList.remove('hidden');
-                    demoVideo.src += "&autoplay=1";
+            if (guestLoginBtn) {
+                guestLoginBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.location.href = 'guest_login';
                 });
             }
             
-            // Smooth scrolling for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
+            // FAQ functionality
+            const faqQuestions = document.querySelectorAll('.faq-question');
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', () => {
+                    const answer = question.nextElementSibling;
+                    const icon = question.querySelector('.faq-icon');
+                    const isActive = answer.classList.contains('active');
                     
-                    const targetId = this.getAttribute('href');
-                    if (targetId === '#') return;
+                    // Close all FAQs
+                    document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('active'));
+                    document.querySelectorAll('.faq-icon').forEach(i => i.classList.remove('rotate'));
                     
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth'
-                        });
+                    // Open clicked FAQ if it wasn't active
+                    if (!isActive) {
+                        answer.classList.add('active');
+                        icon.classList.add('rotate');
                     }
                 });
             });
-            
-            // Animate stats counter
-            const animateCounter = (element, target, duration = 2000) => {
-                const start = 0;
-                const increment = target / (duration / 16);
-                let current = start;
-                
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= target) {
-                        clearInterval(timer);
-                        current = target;
-                    }
-                    element.textContent = Math.floor(current).toLocaleString();
-                }, 16);
-            };
-            
-            // Initialize GSAP animations
-            gsap.registerPlugin(ScrollTrigger);
-            
-            // Animate elements on scroll
-            gsap.utils.toArray('.feature-card, .testimonial-card, .pricing-card').forEach(element => {
-                gsap.from(element, {
-                    scrollTrigger: {
-                        trigger: element,
-                        start: "top 80%",
-                        toggleActions: "play none none none"
-                    },
-                    y: 50,
-                    opacity: 0,
-                    duration: 0.8,
-                    ease: "power2.out"
-                });
-            });
-            
-            // Animate hero elements
-            gsap.from('.hero-content', {
-                duration: 1,
-                y: 50,
-                opacity: 0,
-                ease: "power2.out"
-            });
-            
-            // Animate stats when in view
-            ScrollTrigger.create({
-                trigger: ".stat-item",
-                start: "top 80%",
-                onEnter: () => {
-                    animateCounter(document.getElementById('stat1'), 25000);
-                    animateCounter(document.getElementById('stat2'), 1200000);
-                    animateCounter(document.getElementById('stat3'), 350000);
-                    animateCounter(document.getElementById('stat4'), 4800);
-                }
-            });
-            
-            // Create AI brain animation
-            const createAIBrain = () => {
-                const brainContainer = document.querySelector('.ai-brain');
-                const width = brainContainer.offsetWidth;
-                const height = brainContainer.offsetHeight;
-                
-                // Create neurons
-                for (let i = 0; i < 30; i++) {
-                    const neuron = document.createElement('div');
-                    neuron.className = 'neuron';
-                    neuron.style.left = `${Math.random() * width}px`;
-                    neuron.style.top = `${Math.random() * height}px`;
-                    neuron.style.animationDelay = `${Math.random() * 2}s`;
-                    brainContainer.appendChild(neuron);
-                }
-                
-                // Create connections
-                const neurons = document.querySelectorAll('.neuron');
-                neurons.forEach((neuron, i) => {
-                    if (i < neurons.length - 1) {
-                        const nextNeuron = neurons[i + 1];
-                        const neuronRect = neuron.getBoundingClientRect();
-                        const nextNeuronRect = nextNeuron.getBoundingClientRect();
-                        
-                        const length = Math.sqrt(
-                            Math.pow(nextNeuronRect.left - neuronRect.left, 2) + 
-                            Math.pow(nextNeuronRect.top - neuronRect.top, 2)
-                        );
-                        
-                        const angle = Math.atan2(
-                            nextNeuronRect.top - neuronRect.top,
-                            nextNeuronRect.left - neuronRect.left
-                        ) * 180 / Math.PI;
-                        
-                        const connection = document.createElement('div');
-                        connection.className = 'connection';
-                        connection.style.width = `${length}px`;
-                        connection.style.left = `${neuronRect.left - brainContainer.getBoundingClientRect().left + neuronRect.width / 2}px`;
-                        connection.style.top = `${neuronRect.top - brainContainer.getBoundingClientRect().top + neuronRect.height / 2}px`;
-                        connection.style.transform = `rotate(${angle}deg)`;
-                        connection.style.animationDelay = `${Math.random() * 2}s`;
-                        brainContainer.appendChild(connection);
-                    }
-                });
-            };
-            
-            // Initialize AI brain animation
-            createAIBrain();
         });
     </script>
-    <script src='https://www.noupe.com/embed/01988afacd457a1099d98d25faf946bd29b6.js'></script>
+
 </body>
-</html> 
+</html>
