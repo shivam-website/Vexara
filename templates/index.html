@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vexara AI Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link
       rel="icon"
       href="/static/images/vexara-new1-removebg-preview.png"
@@ -51,7 +53,7 @@
     --sidebar-bg: #f9f9f9; /* Dark background for sidebar */
     --sidebar-text: #413229;
     --chat-bg: #fffefe; /* White chat background */
-    --user-message-bg: #e1eefb; /* Lighter blue for user messages, or a very light gray if preferred */
+    --user-message-bg: #f5f4f5; /* Lighter blue for user messages, or a very light gray if preferred */
     --bot-message-bg: transparent;
     /* Very light gray for bot messages */
     --code-bg: #2d2d2d; /* Dark code blocks */
@@ -77,7 +79,7 @@
     --sidebar-bg: #1a1a1a; /* Distinct from main background */
     --sidebar-text: #e0e0e0;
     --chat-bg: #212121;
-    --user-message-bg: #243447; /* A softer shade for user messages */
+    --user-message-bg: #333537; /* A softer shade for user messages */
     --bot-message-bg: transparent;
     --code-bg: #1e1e1e;
     --code-text-color: #f0f0f0;
@@ -793,7 +795,7 @@
     justify-content: center;
     align-items: center;
     color: var(--text-light);
-    font-size: 1.2rem;
+    font-size: 1rem;
     text-align: center;
     padding-bottom: 100px; /* Space for the input area */
     gap: 5px;
@@ -851,7 +853,7 @@
     margin-left: auto;
     margin-right: 0; /* Adjusted for responsiveness */
     padding: 14px 18px;
-    border-radius: 12px 12px 4px 12px; /* Rounded with unique flair */
+    border-radius: 24px; /* Rounded with unique flair */
     max-width: 70%;
     font-weight: 500;
     color: #f0f0f0;
@@ -1193,61 +1195,17 @@
     border-radius: 28px;
   }
 
-  .input-container::before {
-    content: "";
-    background: linear-gradient(
-      45deg,
-      #ff6b6b,
-      #ff9f43,
-      #1dd1a1,
-      #54a0ff,
-      #5f27cd,
-      #f368e0,
-      #ff2088,
-      #0146f9,
-      #0aedf5
-    );
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    background-size: 600%;
-    z-index: -1;
-    width: calc(100% + 4px);
-    height: calc(100% + 4px);
-    filter: blur(18px);
-    animation: glowing 20s linear infinite;
-    transition: opacity 1s ease-in-out;
-    border-radius: 30px;
-    opacity: 0;
-  }
 
-  .input-container:focus-within::before {
-    opacity: 1;
-  }
 
-  @keyframes glowing {
-    0% {
-      background-position: 0 0;
-    }
-    50% {
-      background-position: 400% 0;
-    }
-    75% {
-      background-position: 200% 0;
-    }
-    100% {
-      background-position: 0 0;
-    }
-  }
 
-  .input-container:focus-within {
-    box-shadow: 0 0 0 2px rgba(16, 163, 127, 0.25),
-      inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  /* .input-container:focus-within {
+    box-shadow: 0 0 0 2px rgba(163, 16, 16, 0.25),
+      inset 0 1px 2px rgba(186, 61, 61, 0.05);
   }
   .dark-mode .input-container:focus-within {
-    box-shadow: 0 0 0 2px rgba(16, 163, 127, 0.25),
+    box-shadow: 0 0 0 2px rgba(220, 102, 23, 0.25),
       inset 0 1px 2px rgba(255, 255, 255, 0.1);
-  }
+  } */
 
   /* ✅ Bigger Icon Buttons */
   .input-icon-btn,
@@ -1395,7 +1353,8 @@ background: rgba(0, 0, 0, 0.05);
     .input-container.voice-active #voice-talk-btn {
       order: 1;
       margin-right: 4px; /* Space between mic and indicator */
-      margin-left: 0; /* Remove auto-margin */
+      margin-left: 20px;
+      padding-left: 20px; /* Remove auto-margin */
     }
 
     .input-container.voice-active .voice-indicator-area {
@@ -2262,7 +2221,7 @@ animation: pulse 1.5s infinite;
     margin-left: auto;
     margin-right: 0;
     padding: 14px 18px;
-    border-radius: 12px 12px 4px 12px;
+    border-radius: 24px;
     max-width: 70%;
     font-weight: 500;
     color: #111827;
@@ -2278,7 +2237,7 @@ animation: pulse 1.5s infinite;
     margin-right: auto;
     margin-left: 0;
     padding: 14px 18px;
-    border-radius: 12px 12px 12px 4px;
+    border-radius: 18px 18px 4px 18px; 
     border: none;
     max-width: 100%;
     color: black;
@@ -2362,7 +2321,7 @@ transition: var(--transition);
 white-space: pre-wrap;
 word-wrap: break-word;
 scrollbar-width: thin;
-scrollbar-color: #10a37f transparent;
+scrollbar-color: var(--primary-color) transparent;
 flex: 1;
 margin-bottom: 8px;
 }
@@ -2373,7 +2332,7 @@ display: flex;
 align-items: center;
 justify-content: space-between;
 width: 100%;
-height: 48px;
+height: 38px;
 }
 
 /* Left and right side icons */
@@ -2468,12 +2427,12 @@ display: flex;
 @media (max-width: 768px) {
 .input-container {
 padding: 10px 12px;
-min-height: 90px;
+min-height: 50px;
 }
 
 #text-input {
 font-size: 1.1rem;
-min-height: 50px;
+min-height: 10px;
 max-height: 120px;
 margin-bottom: 6px;
 }
@@ -2498,15 +2457,15 @@ gap: 8px; /* smaller gap for smaller screens */
 cursor: text;
 }
 
-.input-container:focus-within {
+/* .input-container:focus-within {
 box-shadow: 0 0 0 2px rgba(16, 163, 127, 0.25),
 inset 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
+} */
+/* 
 .dark-mode .input-container:focus-within {
 box-shadow: 0 0 0 2px rgba(16, 163, 127, 0.25),
 inset 0 1px 2px rgba(255, 255, 255, 0.1);
-}
+} */
 
 /* Loader positioning */
 .loader {
@@ -2574,12 +2533,13 @@ margin-right: 0;
     align-items: flex-end;
     /* FIX 1: Set horizontal padding to 0, rely on .input-area padding */
     padding: 10px 0; 
+    height: 125px;
   }
 
   #text-input {
     flex: 1;
-    min-height: 48px;
-    padding: 0px 0px;
+    min-height: 10px;
+    padding: 0px 0px 10px 10px;
     font-size: 18px;
   }
   
@@ -2588,16 +2548,20 @@ margin-right: 0;
     width: 34px; 
     height: 34px;
     padding: 0;
+    margin-right: 10px;
   }
   
   .input-icon-btn {
     width: 34px; 
     height: 34px;
     padding: 4px;
+    padding-left: 10px;
   }
 
   /* ... rest of your mobile styles ... */
 }
+  
+
       
       /* CSS Variables for ChatGPT-like theming */
       
@@ -2623,7 +2587,7 @@ margin-right: 0;
         <div class="sidebar-logo">
           <!-- <i class="fas fa-robot"></i> -->
           <img src="/static/images/vexara-new1-removebg-preview.png" alt="V" />
-          <span style="font-family: 'Satoshi'"><h2>Vexara</h2></span>
+          <span style="font-family: 'Baskerville'"><h3 >Vexara</h3></span>
         </div>
         <!-- Renamed hideSidebarBtn to sidebarToggleButton for general use -->
         <!-- In your HTML -->
@@ -2708,7 +2672,7 @@ margin-right: 0;
       <div class="top-bar" style="display: flex;
           align-items: center;
           justify-content: left;" >
-        <h2 >Vexara</h2> 
+        <h2 style="font-weight: 450; font-style:'Baskerville';" >Vexara</h2> 
         <div class="top-bar-title">
           
           <i class="fa-solid fa-plus new-chat-btn" onclick="startNewChat()"></i>
@@ -2717,13 +2681,11 @@ margin-right: 0;
 
       <div class="chat-container" id="chatbox" role="log" aria-live="polite">
         <!-- Initial New Chat Placeholder -->
-        <div id="new-chat-placeholder" class="new-chat-placeholder">
-          <img src="/static/images/vexara-new1-removebg-preview.png" alt="V" />
-          <span class="title" style="font-family: 'Manrope'"
-            >Hi, I'm Vexara.</span
-          >
-          <p>Developed by a Student for Students.</p>
+        <div id="new-chat-placeholder" style="display: flex; align-items: center; gap: 8px; font-family: 'Segoe UI', 'Inter', sans-serif; font-size: 24px; font-weight: 600; color: #e5e5e5;">
+          <img src="/static/images/vexara-new1-removebg-preview.png" alt="V" style="width: 40px; height: 40px; object-fit: contain; filter: hue-rotate(220deg);" />
+          <span>How can I help you?</span>
         </div>
+        
           <div class="loader" id="loader" aria-live="polite" aria-atomic="true" style="display: none">
     <div class="typing-indicator">
       <div class="typing-dot"></div>
@@ -2763,7 +2725,7 @@ margin-right: 0;
           <!-- Model Selection Buttons -->
 
           <div class="input-container" id="input-container">
-            <textarea
+            <textarea 
               id="text-input"
               name="instruction"
               placeholder="Ask Vexara"
@@ -2809,7 +2771,7 @@ margin-right: 0;
                 
                   <!-- Visible DeepThink Toggle -->
                   <div class="model-option" id="deepthink-toggle" data-active="false">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M420.9 448C428.2 425.7 442.8 405.5 459.3 388.1C492 353.7 512 307.2 512 256C512 150 426 64 320 64C214 64 128 150 128 256C128 307.2 148 353.7 180.7 388.1C197.2 405.5 211.9 425.7 219.1 448L420.8 448zM416 496L224 496L224 512C224 556.2 259.8 592 304 592L336 592C380.2 592 416 556.2 416 512L416 496zM312 176C272.2 176 240 208.2 240 248C240 261.3 229.3 272 216 272C202.7 272 192 261.3 192 248C192 181.7 245.7 128 312 128C325.3 128 336 138.7 336 152C336 165.3 325.3 176 312 176z"/></svg>
+                    <svg width="20" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="icon" aria-label=""><path d="M14.3352 10.0257C14.3352 7.6143 12.391 5.66554 10.0002 5.66537C7.60929 5.66537 5.66528 7.61419 5.66528 10.0257C5.66531 11.5493 6.44221 12.8881 7.61938 13.6683H12.3811C13.558 12.8881 14.3352 11.5491 14.3352 10.0257ZM8.84399 16.9984C9.07459 17.3983 9.50543 17.6683 10.0002 17.6683C10.495 17.6682 10.926 17.3984 11.1565 16.9984H8.84399ZM8.08813 15.6683H11.9114V14.9984H8.08813V15.6683ZM1.66626 9.33529L1.80103 9.34896C2.10381 9.41116 2.3313 9.67914 2.3313 10.0003C2.33115 10.3214 2.10377 10.5896 1.80103 10.6517L1.66626 10.6654H0.833252C0.466091 10.6654 0.168389 10.3674 0.168213 10.0003C0.168213 9.63306 0.465983 9.33529 0.833252 9.33529H1.66626ZM19.1663 9.33529L19.301 9.34896C19.6038 9.41116 19.8313 9.67914 19.8313 10.0003C19.8311 10.3214 19.6038 10.5896 19.301 10.6517L19.1663 10.6654H18.3333C17.9661 10.6654 17.6684 10.3674 17.6682 10.0003C17.6682 9.63306 17.966 9.33529 18.3333 9.33529H19.1663ZM3.0481 3.04818C3.2753 2.82099 3.62593 2.79189 3.88403 2.96224L3.98853 3.04818L4.57739 3.63705L4.66235 3.74154C4.83285 3.99966 4.80464 4.35021 4.57739 4.57748C4.35013 4.80474 3.99958 4.83293 3.74146 4.66244L3.63696 4.57748L3.0481 3.98861L2.96216 3.88412C2.79181 3.62601 2.82089 3.27538 3.0481 3.04818ZM16.012 3.04818C16.2717 2.7886 16.6927 2.78852 16.9524 3.04818C17.2117 3.30786 17.2119 3.72901 16.9524 3.98861L16.3625 4.57748C16.1028 4.83717 15.6818 4.83718 15.4221 4.57748C15.1626 4.31776 15.1625 3.89669 15.4221 3.63705L16.012 3.04818ZM9.33521 1.66634V0.833336C9.33521 0.466067 9.63297 0.168297 10.0002 0.168297C10.3674 0.168472 10.6653 0.466175 10.6653 0.833336V1.66634C10.6653 2.0335 10.3674 2.33121 10.0002 2.33138C9.63297 2.33138 9.33521 2.03361 9.33521 1.66634ZM15.6653 10.0257C15.6653 11.9571 14.7058 13.6634 13.2415 14.6917V16.3333C13.2415 16.7004 12.9444 16.9971 12.5774 16.9974C12.282 18.1473 11.2423 18.9982 10.0002 18.9984C8.75792 18.9984 7.71646 18.1476 7.42114 16.9974C7.05476 16.9964 6.75806 16.7 6.75806 16.3333V14.6917C5.29383 13.6634 4.33523 11.957 4.33521 10.0257C4.33521 6.88608 6.86835 4.33529 10.0002 4.33529C13.132 4.33547 15.6653 6.88618 15.6653 10.0257Z"></path></svg>
                     <span >DeepThink</span>
                   </div>
                   
@@ -2979,7 +2941,7 @@ margin-right: 0;
               </div>
 
               <div class="input-icons-right">
-                <button
+                <button style="margin-right: 10px;"
                   type="button"
                   id="voice-talk-btn"
                   class="input-icon-btn"
@@ -2987,8 +2949,8 @@ margin-right: 0;
                   aria-label="Toggle Voice Talk"
                 >
                   <svg
-                    width="35"
-                    height="35"
+                    width="40"
+                    height="40"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                     xmlns="http://www.w3.org/2000/svg"
@@ -3048,7 +3010,7 @@ margin-right: 0;
           >
             <p
               style="
-                font-size: 0.75rem;
+                font-size: 0.6rem;
                 color: var(--text-color);
                 text-align: center;
                 margin: 0;
@@ -3285,307 +3247,7 @@ margin-right: 0;
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.0/marked.min.js"></script>
-    <script src="/static/app.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const inputContainer = document.querySelector(".input-container");
-        const textInput = document.getElementById("text-input");
-        const sendBtn = document.getElementById("send-btn");
-        const stopBtn = document.getElementById("stop-btn");
-        const fileInput = document.getElementById("file-input");
-        const attachBtn = document.getElementById("attach-file-btn");
-
-        // Focus textarea when clicking anywhere in the container
-        inputContainer.addEventListener("click", function (e) {
-          if (
-            !e.target.closest(".input-icon-btn") &&
-            !e.target.closest(".submit-btn") &&
-            !e.target.closest(".stop-btn") &&
-            e.target !== fileInput
-          ) {
-            textInput.focus();
-          }
-        });
-
-        // Auto-resize textarea
-        textInput.addEventListener("input", function () {
-          this.style.height = "auto";
-          this.style.height = this.scrollHeight + "px";
-        });
-
-        // File input
-        attachBtn.addEventListener("click", function () {
-          fileInput.click();
-        });
-
-        fileInput.addEventListener("change", function () {
-          if (this.files && this.files[0]) {
-            console.log("File selected:", this.files[0].name);
-          }
-        });
-
-        // ✅ Show and hide stop button explicitly
-        function showStopButton() {
-          stopBtn.style.display = "inline-flex";
-          sendBtn.style.display = "none";
-        }
-
-        function hideStopButton() {
-          stopBtn.style.display = "none";
-          sendBtn.style.display = "inline-flex";
-        }
-
-        // When send is clicked
-        sendBtn.addEventListener("click", function () {
-          if (textInput.value.trim() !== "") {
-            showStopButton();
-
-            // Simulate AI response completion
-            setTimeout(function () {
-              hideStopButton();
-            }, 3000);
-          }
-        });
-
-        // Stop button click
-        stopBtn.addEventListener("click", function () {
-          hideStopButton();
-          console.log("AI response stopped");
-        });
-
-        // Initially hide stop button
-        hideStopButton();
-      });
-    </script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const inputContainer = document.querySelector(".input-container");
-        const textInput = document.getElementById("text-input");
-        const sendBtn = document.getElementById("send-btn");
-        const stopBtn = document.getElementById("stop-btn");
-        const fileInput = document.getElementById("file-input");
-        const attachBtn = document.getElementById("attach-file-btn");
-
-        // Focus textarea when clicking anywhere in the container
-        inputContainer.addEventListener("click", function (e) {
-          // Don't focus if clicking on a button or file input
-          if (
-            !e.target.closest(".input-icon-btn") &&
-            !e.target.closest(".submit-btn") &&
-            !e.target.closest(".stop-btn") &&
-            e.target !== fileInput
-          ) {
-            textInput.focus();
-          }
-        });
-
-        // Auto-resize textarea as user types
-        textInput.addEventListener("input", function () {
-          this.style.height = "auto";
-          this.style.height = this.scrollHeight + "px";
-        });
-
-        // File input functionality
-        attachBtn.addEventListener("click", function () {
-          fileInput.click();
-        });
-
-        fileInput.addEventListener("change", function (e) {
-          if (this.files && this.files[0]) {
-            // Handle file selection here
-            console.log("File selected:", this.files[0].name);
-            // You can show a preview or process the file
-          }
-        });
-
-        // Function to show stop button (when AI is responding)
-        function showStopButton() {
-          stopBtn.style.display = "inline-flex";
-          sendBtn.style.display = "none";
-        }
-
-        // Function to hide stop button (when AI is done responding)
-        function hideStopButton() {
-          stopBtn.style.display = "none";
-          sendBtn.style.display = "inline-flex";
-        }
-
-        // Example usage - call these functions when AI starts/stops responding
-        sendBtn.addEventListener("click", function () {
-          if (textInput.value.trim() !== "") {
-            showStopButton();
-
-            // Simulate AI response (remove this in your actual implementation)
-            setTimeout(function () {
-              hideStopButton();
-            }, 3000);
-          }
-        });
-
-        // Stop button functionality
-        stopBtn.addEventListener("click", function () {
-          // Stop AI response logic here
-          hideStopButton();
-          console.log("AI response stopped");
-        });
-
-        // ✅ FIX: Hide the stop button when the page loads
-        hideStopButton();
-      });
-    </script>
-    <script>// Function to show loader at the response position
-function showLoader() {
-  const loader = document.getElementById('loader');
-  loader.style.display = 'block';
-  // Scroll to the loader position
-  loader.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-// Function to hide loader
-function hideLoader() {
-  document.getElementById('loader').style.display = 'none';
-}</script>
-          <script>
-            const deepthinkToggle = document.getElementById("deepthink-toggle");
-            const generalInput = document.getElementById("modelGeneral");
-          
-            deepthinkToggle.addEventListener("click", () => {
-              const isActive = deepthinkToggle.getAttribute("data-active") === "true";
-          
-              if (isActive) {
-                // Switch OFF DeepThink -> select general input
-                deepthinkToggle.setAttribute("data-active", "false");
-                generalInput.checked = true;
-                console.log("🔄 Switched back to General Mode");
-              } else {
-                // Switch ON DeepThink -> create & check a hidden input dynamically
-                deepthinkToggle.setAttribute("data-active", "true");
-          
-                // remove old hidden deepthink if exists
-                let deepthinkInput = document.getElementById("modelDeepThink");
-                if (!deepthinkInput) {
-                  deepthinkInput = document.createElement("input");
-                  deepthinkInput.type = "radio";
-                  deepthinkInput.name = "modelChoice";
-                  deepthinkInput.value = "deep_think";
-                  deepthinkInput.id = "modelDeepThink";
-                  deepthinkInput.style.display = "none";
-                  deepthinkToggle.parentElement.appendChild(deepthinkInput);
-                }
-                deepthinkInput.checked = true;
-          
-                console.log("🧠 DeepThink Mode Activated");
-              }
-            });
-          </script>
-          <script>
-            document.addEventListener("DOMContentLoaded", () => {
-              const webSearchBtn = document.getElementById("web-search-btn");
-              const multiActionForm = document.getElementById("multi-action-form");
-              let isWebSearchEnabled = false;
-          
-              // ✅ Toggle Web Search Mode
-              webSearchBtn.addEventListener("click", () => {
-                isWebSearchEnabled = !isWebSearchEnabled;
-                webSearchBtn.classList.toggle("selected", isWebSearchEnabled);
-              });
-          
-              // ✅ Intercept form submit to include web search flag
-              multiActionForm.addEventListener("submit", async (e) => {
-                e.preventDefault();
-          
-                const textInput = document.getElementById("text-input");
-                const userText = textInput.value.trim();
-                if (!userText) return;
-          
-                // Detect selected model choice
-                const selectedModelRadio = document.querySelector(
-                  "input[name='modelChoice']:checked"
-                );
-                const modelChoice = selectedModelRadio ? selectedModelRadio.value : "general";
-          
-                // Show user message
-                addMessage(userText, "user", null, new Date());
-          
-                // ✅ Perform AI request with web search if enabled
-                if (isWebSearchEnabled) {
-                  await askAI(userText, modelChoice, true);
-                } else {
-                  await askAI(userText, modelChoice, false);
-                }
-              });
-            });
-          </script>
-          
-          <style>
-            /* ✅ Web Search Button Active State */
-            #web-search-btn.selected {
-              background: var(--accent-color);
-              color: white;
-              border-radius: 10px;
-              box-shadow: 0 0 10px var(--accent-color);
-            }
-            /* Thinking Process Styles */
-            
-.thinking {
-  font-size: 0.8rem;
-  color: rgba(128,128,128,0.8); /* greyed out */
-  margin-top: 6px;
-  padding-left: 8px;
-  border-left: 2px dashed #ccc;
-  display: none; /* hidden by default */
-}
-
-.thinking.show {
-  display: block;
-}
-
-.toggle-thinking {
-  font-size: 0.75rem;
-  background: none;
-  border: none;
-  color: #888;
-  cursor: pointer;
-  margin-top: 4px;
-}
-</style>
-
-<script>
-function addBotMessage(content, thinking = null) {
-  const messageDiv = document.createElement("div");
-  messageDiv.classList.add("bot-message");
-
-  // Main AI answer
-  const answerDiv = document.createElement("div");
-  answerDiv.classList.add("answer");
-  answerDiv.innerHTML = content;
-  messageDiv.appendChild(answerDiv);
-
-  // Optional reasoning trace
-  if (thinking) {
-    const thinkingDiv = document.createElement("div");
-    thinkingDiv.classList.add("thinking");
-    thinkingDiv.innerHTML = thinking;
-
-    const toggleBtn = document.createElement("button");
-    toggleBtn.classList.add("toggle-thinking");
-    toggleBtn.textContent = "Show Thinking";
-    toggleBtn.onclick = function () {
-      thinkingDiv.classList.toggle("show");
-      toggleBtn.textContent = thinkingDiv.classList.contains("show")
-        ? "Hide Thinking"
-        : "Show Thinking";
-    };
-
-    messageDiv.appendChild(toggleBtn);
-    messageDiv.appendChild(thinkingDiv);
-  }
-
-  document.querySelector("#chat-container").appendChild(messageDiv);
-  document.querySelector("#chat-container").scrollTop =
-    document.querySelector("#chat-container").scrollHeight;
-}
-  // Global variables for chat management
+    <script>// Global variables for chat management
 let currentChatId = null;
 let sidebarHidden = false; // Tracks if sidebar is manually collapsed on desktop
 let isFullScreen = false; // Tracks if full screen chat mode is active
@@ -4589,9 +4251,8 @@ window.startNewChat = async function (isInitialLoad = false) {
       placeholderDiv.id = "new-chat-placeholder";
       placeholderDiv.className = "new-chat-placeholder";
       placeholderDiv.innerHTML = `
-<img src="/static/images/vexara-new1-removebg-preview.png" alt="V" />
-<span class="title" style="font-family: 'Manrope';">Hi, I'm Vexara.</span>
-<p>Developed by a Student for Students.</p>
+<img src="/static/images/vexara-new1-removebg-preview.png" alt="V" style="width: 40px; height: 40px; object-fit: contain; filter: hue-rotate(220deg);" />
+          <span>How can I help you?</span>
 `;
       chatbox.appendChild(placeholderDiv);
 
@@ -5502,10 +5163,8 @@ async function loadChat(id) {
         placeholderDiv.id = "new-chat-placeholder";
         placeholderDiv.className = "new-chat-placeholder";
         placeholderDiv.innerHTML = `
-      <img src="/static/images/vexara-new1-removebg-preview.png" alt="V">
-          
-          <span class="title" style="font-family: 'Manrope';">Hi, I'm Vexara.</span>
-          <p>Developed by a Student for Students.</p>
+     <img src="/static/images/vexara-new1-removebg-preview.png" alt="V" style="width: 60px; height: 60px;     background-repeat: no-repeat;" />
+          <span style="font-weight=2rem; font-size: 24px; font-weight: 600;">How can I help you?</span>
           
       `;
         chatbox.appendChild(placeholderDiv);
@@ -6074,9 +5733,8 @@ document.addEventListener("DOMContentLoaded", async function () {
               placeholderDiv.id = "new-chat-placeholder";
               placeholderDiv.className = "new-chat-placeholder";
               placeholderDiv.innerHTML = `
-                  <i class="fas fa-robot logo-large" aria-hidden="true"></i>
-                  <span class="title" style="font-family: 'Manrope';">Hi, I'm Vexara.</span>
-                  <p>Developed by a Student for Students.</p>
+                  <<img src="/static/images/vexara-new1-removebg-preview.png" alt="V" style="width: 40px; height: 40px; object-fit: contain; filter: hue-rotate(220deg);" />
+          <span>How can I help you?</span>
                   
               `;
               chatbox.appendChild(placeholderDiv);
@@ -6269,38 +5927,38 @@ document.addEventListener('DOMContentLoaded', () => {
 // Function to manage the visibility of the Voice Talk and Send buttons
 // This runs when the user types or when a response finishes.
 function updateInputButtonState() {
-  // Check if the required elements exist before proceeding
-  const textInput = document.getElementById("text-input");
-  const sendBtn = document.getElementById("send-btn");
-  const voiceTalkBtn = document.getElementById("voice-talk-btn");
-  const stopBtn = document.getElementById("stop-btn");
+    // Check if the required elements exist before proceeding
+    const textInput = document.getElementById("text-input");
+    const sendBtn = document.getElementById("send-btn");
+    const voiceTalkBtn = document.getElementById("voice-talk-btn");
+    const stopBtn = document.getElementById("stop-btn");
 
-  if (!textInput || !sendBtn || !voiceTalkBtn || !stopBtn) return;
+    if (!textInput || !sendBtn || !voiceTalkBtn || !stopBtn) return;
 
-  // We assume the stop button is only visible when a response is generating.
-  const isResponseGenerating = stopBtn.style.display !== "none";
+    // We assume the stop button is only visible when a response is generating.
+    const isResponseGenerating = stopBtn.style.display !== "none";
 
-  // If the AI is busy or Voice Talk is active, do not change the button state.
-  if (isResponseGenerating || window.isVoiceTalkActive) {
-      return;
-  }
+    // If the AI is busy or Voice Talk is active, do not change the button state.
+    if (isResponseGenerating || window.isVoiceTalkActive) {
+        return;
+    }
 
-  // Check if the input field is empty (trimmed)
-  if (textInput.value.trim().length === 0) {
-      // Input is empty: Show Voice Talk, Hide Send
-      voiceTalkBtn.style.display = "flex";
-      sendBtn.style.display = "none";
-  } else {
-      // Input has text: Hide Voice Talk, Show Send
-      voiceTalkBtn.style.display = "none";
-      sendBtn.style.display = "flex";
-  }
+    // Check if the input field is empty (trimmed)
+    if (textInput.value.trim().length === 0) {
+        // Input is empty: Show Voice Talk, Hide Send
+        voiceTalkBtn.style.display = "flex";
+        sendBtn.style.display = "none";
+    } else {
+        // Input has text: Hide Voice Talk, Show Send
+        voiceTalkBtn.style.display = "none";
+        sendBtn.style.display = "flex";
+    }
 }
 
 // Attach the new function to the input field so it updates dynamically as the user types
 const textInput = document.getElementById("text-input");
 if (textInput) {
-  textInput.addEventListener("input", updateInputButtonState);
+    textInput.addEventListener("input", updateInputButtonState);
 }
 
 
@@ -6309,27 +5967,946 @@ if (textInput) {
 // overwrites the old one if it's placed later in the file.
 // This new version calls updateInputButtonState() to show the correct button.
 window.showSendButton = function() {
-  if (window.isVoiceTalkActive) return;
-  document.getElementById("stop-btn").style.display = "none";
-  
-  // Determine whether to show Send or Voice Talk based on input content
-  updateInputButtonState(); 
+    if (window.isVoiceTalkActive) return;
+    document.getElementById("stop-btn").style.display = "none";
+    
+    // Determine whether to show Send or Voice Talk based on input content
+    updateInputButtonState(); 
 }
 
 
 // Page Load Fix: Ensures the correct button state (Voice Talk visible if empty)
 // is set when the page loads, resolving the initial "Stop Response" button issue.
 document.addEventListener('DOMContentLoaded', () => {
-  // Set the initial button state (shows Voice Talk if input is empty)
-  if (typeof updateInputButtonState === 'function') {
-      updateInputButtonState();
-  }
+    // Set the initial button state (shows Voice Talk if input is empty)
+    if (typeof updateInputButtonState === 'function') {
+        updateInputButtonState();
+    }
 });
 
 // ==========================================================
 // END: Code for Voice Talk/Submit Button Toggle and Fixes
 // ==========================================================
+// ==========================================================
+// START: Code for Copy and Edit Functionality
+// ==========================================================
+
+// Global state to manage Read Aloud functionality
+let currentSpeechUtterance = null;
+let currentSpeechButton = null;
+
+// Inline SVG for speaker (Play icon)
+const speakerSVG = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg>';
+
+// Inline SVG for stop (Stop icon)
+const stopSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-stop-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M5 6.5A1.5 1.5 0 0 1 6.5 5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5z"/></svg>';
+
+// Helper to reset the read aloud button visual state
+function resetReadAloudButton(button) {
+  button.innerHTML = speakerSVG;
+  button.title = 'Read aloud';
+  button.setAttribute('aria-label', 'Read message aloud');
+  button.style.color = 'var(--text-color)';
+}
+
+// Function to stop all ongoing speech
+function stopSpeaking() {
+  if (window.speechSynthesis && speechSynthesis.speaking) {
+    speechSynthesis.cancel();
+  }
+  // Reset the button visual state if speech was canceled
+  if (currentSpeechButton) {
+    resetReadAloudButton(currentSpeechButton);
+    currentSpeechUtterance = null;
+    currentSpeechButton = null;
+  }
+}
+
+// Function to read the message content aloud
+function readMessageAloud(button) {
+  if (!('speechSynthesis' in window)) {
+    console.error('Web Speech API is not supported in this browser.');
+    // Simple visual feedback if not supported
+    button.innerHTML = '<span style="color: red; font-size: 10px;">X</span>';
+    setTimeout(() => {
+        resetReadAloudButton(button);
+    }, 2000);
+    return;
+  }
+
+  const messageWrapper = button.closest('.chat-message');
+  const contentElement = messageWrapper ? messageWrapper.querySelector('.message-content') : null;
+  
+  if (!contentElement) {
+    console.error('Message content element not found.');
+    return;
+  }
+
+  const textToSpeak = contentElement.innerText;
+
+  // 1. Check if the current button is the one already speaking (toggle stop)
+  if (currentSpeechButton === button) {
+    stopSpeaking(); // This will also reset the button
+    return;
+  }
+
+  // 2. Stop any existing speech from other buttons
+  if (speechSynthesis.speaking) {
+    stopSpeaking();
+  }
+
+  // 3. Start new speech
+  const utterance = new SpeechSynthesisUtterance(textToSpeak);
+  
+  utterance.onstart = () => {
+    // Set button state to active (stop icon)
+    button.innerHTML = stopSVG;
+    button.title = 'Stop reading';
+    button.setAttribute('aria-label', 'Stop reading aloud');
+    button.style.color = 'var(--text-color, #10b981)'; // Highlight active state
+    currentSpeechButton = button;
+    currentSpeechUtterance = utterance;
+  };
+
+  utterance.onend = () => {
+    // Reset button state
+    if (currentSpeechButton === button) {
+      resetReadAloudButton(button);
+      currentSpeechButton = null;
+      currentSpeechUtterance = null;
+    }
+  };
+
+  utterance.onerror = (event) => {
+    console.error('Speech synthesis error:', event.error);
+    if (currentSpeechButton === button) {
+      resetReadAloudButton(button);
+      currentSpeechButton = null;
+      currentSpeechUtterance = null;
+    }
+  };
+
+  // Speak the text
+  speechSynthesis.speak(utterance);
+}
+
+
+// Function to copy text content to clipboard
+function copyMessageContent(button) {
+  const messageWrapper = button.closest('.chat-message');
+  if (!messageWrapper) return;
+
+  const contentElement = messageWrapper.querySelector('.message-content');
+  if (!contentElement) return;
+
+  const textToCopy = contentElement.innerText;
+
+  // Use the modern Clipboard API if available
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      // Success feedback
+      const originalHTML = button.innerHTML;
+      button.innerHTML = '<i class="fas fa-check"></i>';
+      setTimeout(() => {
+        button.innerHTML = originalHTML;
+      }, 1000);
+    }).catch(err => {
+      console.error('Copy failed with Clipboard API:', err);
+      // Fallback to old method if Clipboard API fails (or for older browsers)
+      fallbackCopyTextToClipboard(textToCopy, button);
+    });
+  } else {
+    // Fallback for older browsers
+    fallbackCopyTextToClipboard(textToCopy, button);
+  }
+}
+
+// Fallback function for copying text
+function fallbackCopyTextToClipboard(textToCopy, button) {
+    const tempTextArea = document.createElement('textarea');
+    tempTextArea.value = textToCopy;
+    tempTextArea.style.position = 'fixed';
+    tempTextArea.style.left = '-9999px';
+    document.body.appendChild(tempTextArea);
+    tempTextArea.focus();
+    tempTextArea.select();
+
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+                button.innerHTML = originalHTML;
+            }, 1000);
+        }
+    } catch (err) {
+        console.error('Copy failed with execCommand:', err);
+    } finally {
+        document.body.removeChild(tempTextArea);
+    }
+}
+// Function to regenerate AI answer
+async function askAI(instruction, modelChoice, performSearch = false, isRegenerate = false) {
+  const textInput = document.getElementById("text-input");
+  const loader = document.getElementById("loader");
+
+  // Show loader BEFORE creating the streaming message
+  loader.style.display = "block";
+  showStopButton(); // Show stop button, hide send button
+  stopSpeaking(); // Stop AI speech if any
+
+  // Initialize AbortController for this request
+  let abortController = new AbortController();
+  const signal = abortController.signal;
+
+  try {
+    const formData = new FormData();
+    
+    // If it's a regenerate request, add cache-busting parameter
+    const finalInstruction = isRegenerate ? 
+      `${instruction} [regenerate:${Date.now()}]` : 
+      instruction;
+    
+    formData.append("instruction", finalInstruction);
+    formData.append("chat_id", currentChatId);
+    formData.append("model_choice", modelChoice);
+    formData.append("web_search", performSearch);
+
+    const response = await fetch(`${window.location.origin}/ask`, {
+      method: "POST",
+      body: formData,
+      signal: signal,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Server error: ${response.status} ${response.statusText} - ${errorText}`
+      );
+    }
+
+    // Hide loader once the actual streaming starts
+    loader.style.display = "none";
+
+    // Create the initial message container for streaming
+    createStreamingBotMessage(new Date());
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+
+    while (!done) {
+      const { value, done: readerDone } = await reader.read();
+      done = readerDone;
+      const chunk = decoder.decode(value, { stream: true });
+      if (chunk) {
+        await appendToStreamingBotMessage(chunk);
+      }
+    }
+
+    // Finalize the streaming message after stream finishes
+    finalizeStreamingBotMessage();
+  } catch (error) {
+    loader.style.display = "none";
+    if (error.name === "AbortError") {
+      console.log("Fetch aborted by user.");
+      if (currentBotMessageContentDiv) {
+        currentBotMessageContentDiv.innerHTML += `<p>*(Response stopped by user)*</p>`;
+      } else {
+        addMessage(`Response stopped by user.`, "bot", null, new Date());
+      }
+    } else {
+      console.error("Error asking AI:", error);
+      if (currentBotMessageContentDiv) {
+        currentBotMessageContentDiv.innerHTML += `<p>Error: ${error.message}</p>`;
+      } else {
+        addMessage(
+          `Sorry, there was an error processing your request: ${error.message}. Please try again.`,
+          "bot",
+          null,
+          new Date()
+        );
+      }
+    }
+    finalizeStreamingBotMessage();
+  } finally {
+    textInput.value = "";
+    textInput.style.height = "auto";
+    textInput.focus();
+    showSendButton();
+    // Reset abortController after potential use
+    if (typeof abortController !== 'undefined') {
+        // Assuming abortController is defined in a scope accessible by showStopButton/showSendButton context
+        // This is a common pattern in the larger chat script, so we'll assume the original context handles this.
+    }
+  }
+}
+// Function to regenerate AI answer
+function regenerateAnswer(button) {
+  const messageWrapper = button.closest('.chat-message');
+  if (!messageWrapper || !messageWrapper.classList.contains('bot-message')) return;
+
+  // Find the previous user message
+  const allMessages = Array.from(document.querySelectorAll('.chat-message'));
+  const currentMessageIndex = allMessages.indexOf(messageWrapper);
+  
+  if (currentMessageIndex === -1 || currentMessageIndex === 0) return;
+  
+  // Look backwards for the most recent user message
+  let userMessage = null;
+  for (let i = currentMessageIndex - 1; i >= 0; i--) {
+    if (allMessages[i].classList.contains('user-message')) {
+      userMessage = allMessages[i];
+      break;
+    }
+  }
+  
+  if (!userMessage) return;
+  
+  // Get the user's original text
+  const userContent = userMessage.querySelector('.message-content');
+  if (!userContent) return;
+  
+  const originalText = userContent.innerText.trim();
+  
+  if (!originalText) {
+    console.error('No original user message text found for regeneration');
+    return;
+  }
+
+  // Show loading state on the regenerate button
+  const originalHTML = button.innerHTML;
+  button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  button.disabled = true;
+
+  // Get the current model choice
+  const modelChoiceInput = document.querySelector('input[name="modelChoice"]:checked');
+  const modelChoice = modelChoiceInput ? modelChoiceInput.value : 'default';
+
+  // Remove the current bot message that we're regenerating
+  messageWrapper.remove();
+
+  // Add the user message again to maintain context
+  if (typeof addMessage === 'function') addMessage(originalText, "user", null, new Date());
+
+  // Call askAI with regenerate flag set to true
+  askAI(originalText, modelChoice, false, true)
+    .finally(() => {
+      // Restore the regenerate button (though it might be rebuilt if message actions are re-run)
+      // This part might not execute if the new message is successfully generated before
+      // this finally block runs, but it's kept for robustness.
+      if (button.parentNode) {
+          button.innerHTML = originalHTML;
+          button.disabled = false;
+      }
+    });
+}
+
+
+// Function to edit user message
+function editUserMessage(button) {
+  const messageWrapper = button.closest('.chat-message');
+  if (!messageWrapper || !messageWrapper.classList.contains('user-message')) return;
+
+  const contentElement = messageWrapper.querySelector('.message-content');
+  if (!contentElement) return;
+
+  const currentText = contentElement.innerText.trim();
+  const actionsContainer = messageWrapper.querySelector('.message-actions');
+
+  if (actionsContainer) actionsContainer.style.display = 'none';
+  contentElement.style.display = 'none';
+
+  // --- Controls Container ---
+  const editWrapper = document.createElement('div');
+  editWrapper.className = 'message-edit-wrapper';
+  editWrapper.style.cssText = `
+    padding: 20px;
+    border-radius: 12px; 
+    background-color: var(--bg-color, #202020);
+    margin: 10px 0;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-height: 120px;
+    position: relative;
+  `;
+
+  // --- Text Area ---
+  const editArea = document.createElement('textarea');
+  editArea.style.cssText = `
+    width: 100%; 
+    height: auto; /* Auto height */
+    min-height: 80px; /* Start taller */
+    padding: 10px 0;
+    border: none;
+    border-radius: 0; 
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    box-sizing: border-box;
+    font: inherit;
+    resize: none;
+    flex-grow: 1;
+    outline: none; /* Removes blue outline */
+    box-shadow: none; /* Ensures no blue glow */
+    font-size: 16px; 
+    line-height: 1.5;
+    margin-bottom: 5px;
+  `;
+  editArea.value = currentText;
+  // --- Controls (Cancel/Send) ---
+  const controls = document.createElement('div');
+  // Position the controls at the bottom right corner
+  controls.style.cssText = 'display: flex; gap: 10px; justify-content: flex-end; align-items: flex-end; padding-top: 10px;';
+  
+  // --- Cancel Button (Themed like the image) ---
+  const cancelBtn = document.createElement('button');
+  cancelBtn.textContent = 'Cancel';
+  // *** STYLING MATCHING IMAGE ***
+  cancelBtn.style.cssText = `
+    padding: 8px 18px; 
+    background: #363636; /* Dark background */
+    color: white; 
+    border: none; 
+    border-radius: 18px; /* Pill shape */
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  `;
+  cancelBtn.onmouseover = () => cancelBtn.style.backgroundColor = '#4a4a4a';
+  cancelBtn.onmouseout = () => cancelBtn.style.backgroundColor = '#363636';
+
+  // --- Save & Resend Button (Themed like the image) ---
+  const saveBtn = document.createElement('button');
+  saveBtn.textContent = 'Send';
+  // *** STYLING MATCHING IMAGE ***
+  saveBtn.style.cssText = `
+    padding: 8px 18px; 
+    background: white; /* Light background */
+    color: #202020; /* Dark text */
+    border: none; 
+    border-radius: 18px; 
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+  `;
+  saveBtn.onmouseover = () => saveBtn.style.backgroundColor = '#f0f0f0';
+  saveBtn.onmouseout = () => saveBtn.style.backgroundColor = 'white';
+
+
+  controls.appendChild(cancelBtn);
+  controls.appendChild(saveBtn);
+
+  editWrapper.appendChild(editArea);
+  editWrapper.appendChild(controls);
+
+  contentElement.parentNode.insertBefore(editWrapper, contentElement.nextSibling);
+
+  editArea.focus();
+
+  cancelBtn.onclick = () => {
+    contentElement.style.display = 'block';
+    if (actionsContainer) actionsContainer.style.display = 'flex';
+    editWrapper.remove();
+  };
+
+  saveBtn.onclick = () => {
+    const newText = editArea.value.trim();
+    if (newText && newText !== currentText) {
+      if (typeof marked !== 'undefined') {
+        contentElement.innerHTML = marked.parse(newText);
+      } else {
+        contentElement.innerText = newText;
+      }
+      
+      contentElement.style.display = 'block';
+      if (actionsContainer) actionsContainer.style.display = 'flex';
+      editWrapper.remove();
+
+      const modelChoiceInput = document.querySelector('input[name="modelChoice"]:checked');
+      const modelChoice = modelChoiceInput ? modelChoiceInput.value : 'default';
+
+      // Assuming these functions exist to handle chat logic
+      if (typeof addMessage === 'function') addMessage(newText, "user", null, new Date());
+      if (typeof askAI === 'function') askAI(newText, modelChoice);
+    } else {
+      cancelBtn.onclick();
+    }
+  };
+}
+
+// Function to add action buttons to messages
+function addMessageActions(messageElement) {
+  if (messageElement.querySelector('.message-actions')) return;
+
+  const isBot = messageElement.classList.contains('bot-message');
+  const isUser = messageElement.classList.contains('user-message');
+  if (!isBot && !isUser) return;
+
+  const actionsContainer = document.createElement('div');
+  actionsContainer.className = 'message-actions';
+
+  // Styling based on message type
+  if (isUser) {
+    actionsContainer.style.cssText = 'display: flex; gap: 5px; justify-content: flex-end; margin-top: 5px; margin-left: 10px;';
+  } else {
+    actionsContainer.style.cssText = 'display: flex; gap: 5px; justify-content: flex-start; margin-top: 5px; margin-right: 10px;';
+  }
+
+  // --- Shared Button Styling ---
+  const buttonStyle = `
+    background: none; 
+    border: none; 
+    cursor: pointer; 
+    padding: 5px; 
+    border-radius: 3px;
+    color: var(--text-color); /* Use a light gray for inactive buttons */
+    transition: color 0.2s;
+  `;
+  
+  // Define active color (e.g., green for like, red for dislike)
+  const likeActiveColor = 'var(--like-color, #10b981)'; // Example green color
+  const dislikeActiveColor = 'var(--dislike-color, #ef4444)'; // Example red color
+
+  // --- Regenerate Button (ONLY for bot messages) ---
+  if (isBot) {
+    const regenerateBtn = document.createElement('button');
+    regenerateBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="icon"><path d="M3.502 16.6663V13.3333C3.502 12.9661 3.79977 12.6683 4.16704 12.6683H7.50004L7.63383 12.682C7.93691 12.7439 8.16508 13.0119 8.16508 13.3333C8.16508 13.6547 7.93691 13.9227 7.63383 13.9847L7.50004 13.9984H5.47465C6.58682 15.2249 8.21842 16.0013 10 16.0013C13.06 16.0012 15.5859 13.711 15.9551 10.7513L15.9854 10.6195C16.0845 10.3266 16.3785 10.1334 16.6973 10.1732C17.0617 10.2186 17.3198 10.551 17.2745 10.9154L17.2247 11.2523C16.6301 14.7051 13.6224 17.3313 10 17.3314C8.01103 17.3314 6.17188 16.5383 4.83208 15.2474V16.6663C4.83208 17.0335 4.53411 17.3311 4.16704 17.3314C3.79977 17.3314 3.502 17.0336 3.502 16.6663ZM4.04497 9.24935C3.99936 9.61353 3.66701 9.87178 3.30278 9.8265C2.93833 9.78105 2.67921 9.44876 2.72465 9.08431L4.04497 9.24935ZM10 2.66829C11.9939 2.66833 13.8372 3.46551 15.1778 4.76204V3.33333C15.1778 2.96616 15.4757 2.66844 15.8428 2.66829C16.2101 2.66829 16.5079 2.96606 16.5079 3.33333V6.66634C16.5079 7.03361 16.2101 7.33138 15.8428 7.33138H12.5098C12.1425 7.33138 11.8448 7.03361 11.8448 6.66634C11.8449 6.29922 12.1426 6.0013 12.5098 6.0013H14.5254C13.4133 4.77488 11.7816 3.99841 10 3.99837C6.93998 3.99837 4.41406 6.28947 4.04497 9.24935L3.38481 9.16634L2.72465 9.08431C3.17574 5.46702 6.26076 2.66829 10 2.66829Z"></path></svg>';
+    regenerateBtn.style.cssText = buttonStyle;
+    regenerateBtn.title = 'Regenerate response';
+    regenerateBtn.setAttribute('aria-label', 'Regenerate AI response');
+    regenerateBtn.onclick = () => regenerateAnswer(regenerateBtn);
+    actionsContainer.appendChild(regenerateBtn);
+  }
+
+  // --- Copy Button ---
+  const copyBtn = document.createElement('button');
+  copyBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="icon"><path d="M12.668 10.667C12.668 9.95614 12.668 9.46258 12.6367 9.0791C12.6137 8.79732 12.5758 8.60761 12.5244 8.46387L12.4688 8.33399C12.3148 8.03193 12.0803 7.77885 11.793 7.60254L11.666 7.53125C11.508 7.45087 11.2963 7.39395 10.9209 7.36328C10.5374 7.33197 10.0439 7.33203 9.33301 7.33203H6.5C5.78896 7.33203 5.29563 7.33195 4.91211 7.36328C4.63016 7.38632 4.44065 7.42413 4.29688 7.47559L4.16699 7.53125C3.86488 7.68518 3.61186 7.9196 3.43555 8.20703L3.36524 8.33399C3.28478 8.49198 3.22795 8.70352 3.19727 9.0791C3.16595 9.46259 3.16504 9.95611 3.16504 10.667V13.5C3.16504 14.211 3.16593 14.7044 3.19727 15.0879C3.22797 15.4636 3.28473 15.675 3.36524 15.833L3.43555 15.959C3.61186 16.2466 3.86474 16.4807 4.16699 16.6348L4.29688 16.6914C4.44063 16.7428 4.63025 16.7797 4.91211 16.8027C5.29563 16.8341 5.78896 16.835 6.5 16.835H9.33301C10.0439 16.835 10.5374 16.8341 10.9209 16.8027C11.2965 16.772 11.508 16.7152 11.666 16.6348L11.793 16.5645C12.0804 16.3881 12.3148 16.1351 12.4688 15.833L12.5244 15.7031C12.5759 15.5594 12.6137 15.3698 12.6367 15.0879C12.6681 14.7044 12.668 14.211 12.668 13.5V10.667ZM13.998 12.665C14.4528 12.6634 14.8011 12.6602 15.0879 12.6367C15.4635 12.606 15.675 12.5492 15.833 12.4688L15.959 12.3975C16.2466 12.2211 16.4808 11.9682 16.6348 11.666L16.6914 11.5361C16.7428 11.3924 16.7797 11.2026 16.8027 10.9209C16.8341 10.5374 16.835 10.0439 16.835 9.33301V6.5C16.835 5.78896 16.8341 5.29563 16.8027 4.91211C16.7797 4.63025 16.7428 4.44063 16.6914 4.29688L16.6348 4.16699C16.4807 3.86474 16.2466 3.61186 15.959 3.43555L15.833 3.36524C15.675 3.28473 15.4636 3.22797 15.0879 3.19727C14.7044 3.16593 14.211 3.16504 13.5 3.16504H10.667C9.9561 3.16504 9.46259 3.16595 9.0791 3.19727C8.79739 3.22028 8.6076 3.2572 8.46387 3.30859L8.33399 3.36524C8.03176 3.51923 7.77886 3.75343 7.60254 4.04102L7.53125 4.16699C7.4508 4.32498 7.39397 4.53655 7.36328 4.91211C7.33985 5.19893 7.33562 5.54719 7.33399 6.00195H9.33301C10.022 6.00195 10.5791 6.00131 11.0293 6.03809C11.4873 6.07551 11.8937 6.15471 12.2705 6.34668L12.4883 6.46875C12.984 6.7728 13.3878 7.20854 13.6533 7.72949L13.7197 7.87207C13.8642 8.20859 13.9292 8.56974 13.9619 8.9707C13.9987 9.42092 13.998 9.97799 13.998 10.667V12.665ZM18.165 9.33301C18.165 10.022 18.1657 10.5791 18.1289 11.0293C18.0961 11.4302 18.0311 11.7914 17.8867 12.1279L17.8203 12.2705C17.5549 12.7914 17.1509 13.2272 16.6553 13.5313L16.4365 13.6533C16.0599 13.8452 15.6541 13.9245 15.1963 13.9619C14.8593 13.9895 14.4624 13.9935 13.9951 13.9951C13.9935 14.4624 13.9895 14.8593 13.9619 15.1963C13.9292 15.597 13.864 15.9576 13.7197 16.2939L13.6533 16.4365C13.3878 16.9576 12.9841 17.3941 12.4883 17.6982L12.2705 17.8203C11.8937 18.0123 11.4873 18.0915 11.0293 18.1289C10.5791 18.1657 10.022 18.165 9.33301 18.165H6.5C5.81091 18.165 5.25395 18.1657 4.80371 18.1289C4.40306 18.0962 4.04235 18.031 3.70606 17.8867L3.56348 17.8203C3.04244 17.5548 2.60585 17.151 2.30176 16.6553L2.17969 16.4365C1.98788 16.0599 1.90851 15.6541 1.87109 15.1963C1.83431 14.746 1.83496 14.1891 1.83496 13.5V10.667C1.83496 9.978 1.83432 9.42091 1.87109 8.9707C1.90851 8.5127 1.98772 8.10625 2.17969 7.72949L2.30176 7.51172C2.60586 7.0159 3.04236 6.6122 3.56348 6.34668L3.70606 6.28027C4.04237 6.136 4.40303 6.07083 4.80371 6.03809C5.14051 6.01057 5.53708 6.00551 6.00391 6.00391C6.00551 5.53708 6.01057 5.14051 6.03809 4.80371C6.0755 4.34588 6.15483 3.94012 6.34668 3.56348L6.46875 3.34473C6.77282 2.84912 7.20856 2.44514 7.72949 2.17969L7.87207 2.11328C8.20855 1.96886 8.56979 1.90385 8.9707 1.87109C9.42091 1.83432 9.978 1.83496 10.667 1.83496H13.5C14.1891 1.83496 14.746 1.83431 15.1963 1.87109C15.6541 1.90851 16.0599 1.98788 16.4365 2.17969L16.6553 2.30176C17.151 2.60585 17.5548 3.04244 17.8203 3.56351L17.8867 3.70608C18.031 4.04235 18.0962 4.40306 18.1289 4.80371C18.1657 5.25395 18.165 5.81091 18.165 6.5V9.33301Z"></path></svg>';
+  copyBtn.style.cssText = buttonStyle;
+  copyBtn.onclick = () => copyMessageContent(copyBtn);
+  actionsContainer.appendChild(copyBtn);
+  
+  // --- Read Aloud Button (ONLY for bot messages, added after copy) ---
+
+
+  // Like & Dislike buttons ONLY for bot messages
+  if (isBot) {
+    // --- Like Button ---
+    const likeBtn = document.createElement('button');
+    likeBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="icon"><path d="M10.9153 1.83987L11.2942 1.88772L11.4749 1.91507C13.2633 2.24201 14.4107 4.01717 13.9749 5.78225L13.9261 5.95901L13.3987 7.6719C13.7708 7.67575 14.0961 7.68389 14.3792 7.70608C14.8737 7.74486 15.3109 7.82759 15.7015 8.03323L15.8528 8.11819C16.5966 8.56353 17.1278 9.29625 17.3167 10.1475L17.347 10.3096C17.403 10.69 17.3647 11.0832 17.2835 11.5098C17.2375 11.7517 17.1735 12.0212 17.096 12.3233L16.8255 13.3321L16.4456 14.7276C16.2076 15.6001 16.0438 16.2356 15.7366 16.7305L15.595 16.9346C15.2989 17.318 14.9197 17.628 14.4866 17.8408L14.2982 17.9258C13.6885 18.1774 12.9785 18.1651 11.9446 18.1651H7.33331C6.64422 18.1651 6.08726 18.1657 5.63702 18.1289C5.23638 18.0962 4.87565 18.031 4.53936 17.8867L4.39679 17.8203C3.87576 17.5549 3.43916 17.151 3.13507 16.6553L3.013 16.4366C2.82119 16.0599 2.74182 15.6541 2.7044 15.1963C2.66762 14.7461 2.66827 14.1891 2.66827 13.5V11.667C2.66827 10.9349 2.66214 10.4375 2.77569 10.0137L2.83722 9.81253C3.17599 8.81768 3.99001 8.05084 5.01397 7.77639L5.17706 7.73928C5.56592 7.66435 6.02595 7.66799 6.66632 7.66799C6.9429 7.66799 7.19894 7.52038 7.33624 7.2803L10.2562 2.16995L10.3118 2.08792C10.4544 1.90739 10.6824 1.81092 10.9153 1.83987ZM7.33136 14.167C7.33136 14.9841 7.33714 15.2627 7.39386 15.4746L7.42999 15.5918C7.62644 16.1686 8.09802 16.6134 8.69171 16.7725L8.87042 16.8067C9.07652 16.8323 9.38687 16.835 10.0003 16.835H11.9446C13.099 16.835 13.4838 16.8228 13.7903 16.6963L13.8997 16.6465C14.1508 16.5231 14.3716 16.3444 14.5433 16.1221L14.6155 16.0166C14.7769 15.7552 14.8968 15.3517 15.1624 14.378L15.5433 12.9824L15.8079 11.9922C15.8804 11.7102 15.9368 11.4711 15.9769 11.2608C16.0364 10.948 16.0517 10.7375 16.0394 10.5791L16.0179 10.4356C15.9156 9.97497 15.641 9.57381 15.2542 9.31253L15.0814 9.20999C14.9253 9.12785 14.6982 9.06544 14.2747 9.03225C13.8477 8.99881 13.2923 8.99807 12.5003 8.99807C12.2893 8.99807 12.0905 8.89822 11.9651 8.72854C11.8398 8.55879 11.8025 8.33942 11.8646 8.13772L12.6556 5.56741L12.7054 5.36331C12.8941 4.35953 12.216 3.37956 11.1878 3.2178L8.49054 7.93948C8.23033 8.39484 7.81431 8.72848 7.33136 8.88967V14.167ZM3.99835 13.5C3.99835 14.2111 3.99924 14.7044 4.03058 15.0879C4.06128 15.4636 4.11804 15.675 4.19854 15.833L4.26886 15.959C4.44517 16.2466 4.69805 16.4808 5.0003 16.6348L5.13019 16.6905C5.27397 16.7419 5.46337 16.7797 5.74542 16.8028C5.97772 16.8217 6.25037 16.828 6.58722 16.8311C6.41249 16.585 6.27075 16.3136 6.1712 16.0215L6.10968 15.8194C5.99614 15.3956 6.00128 14.899 6.00128 14.167V9.00296C5.79386 9.0067 5.65011 9.01339 5.53741 9.02737L5.3587 9.06057C4.76502 9.21965 4.29247 9.66448 4.09601 10.2412L4.06085 10.3584C4.00404 10.5705 3.99835 10.8493 3.99835 11.667V13.5Z"></path></svg>';
+    likeBtn.style.cssText = buttonStyle;
+
+    // --- Dislike Button ---
+    const dislikeBtn = document.createElement('button');
+    dislikeBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="icon"><path d="M12.6687 5.83304C12.6687 5.22006 12.6649 4.91019 12.6394 4.70413L12.6062 4.52542C12.4471 3.93179 12.0022 3.45922 11.4255 3.26272L11.3083 3.22757C11.0963 3.17075 10.8175 3.16507 9.99974 3.16507H8.0554C7.04558 3.16507 6.62456 3.17475 6.32982 3.26175L6.2097 3.30374C5.95005 3.41089 5.71908 3.57635 5.53392 3.78616L5.45677 3.87796C5.30475 4.0748 5.20336 4.33135 5.03392 4.91702L4.83763 5.6221L4.45677 7.01761C4.24829 7.78204 4.10326 8.31846 4.02318 8.73929C3.94374 9.15672 3.94298 9.39229 3.98119 9.56448L4.03587 9.75784C4.18618 10.1996 4.50043 10.5702 4.91771 10.7901L5.05052 10.8477C5.20009 10.9014 5.40751 10.9429 5.72533 10.9678C6.15231 11.0012 6.70771 11.002 7.49974 11.002C7.71076 11.002 7.90952 11.1018 8.0349 11.2715C8.14465 11.4201 8.18683 11.6067 8.15404 11.7862L8.13548 11.8623L7.34447 14.4326C7.01523 15.5033 7.71404 16.6081 8.81126 16.7813L11.5095 12.0606L11.5827 11.9405C11.8445 11.5461 12.2289 11.2561 12.6687 11.1094V5.83304ZM17.3318 8.33304C17.3318 8.97366 17.3364 9.43432 17.2615 9.82327L17.2234 9.98538C16.949 11.0094 16.1821 11.8233 15.1872 12.1621L14.9861 12.2237C14.5624 12.3372 14.0656 12.3321 13.3337 12.3321C13.0915 12.3321 12.8651 12.4453 12.7204 12.6348L12.6638 12.7198L9.74388 17.8301C9.61066 18.0631 9.35005 18.1935 9.08372 18.1602L8.70579 18.1123C6.75379 17.8682 5.49542 15.9213 6.07396 14.041L6.60033 12.3272C6.22861 12.3233 5.90377 12.3161 5.62083 12.294C5.18804 12.26 4.79914 12.1931 4.44701 12.0391L4.29857 11.9668C3.52688 11.5605 2.95919 10.8555 2.72533 10.0205L2.68333 9.85257C2.58769 9.42154 2.62379 8.97768 2.71654 8.49026C2.80865 8.00634 2.97082 7.41139 3.17357 6.668L3.55443 5.27249L3.74583 4.58011C3.9286 3.94171 4.10186 3.45682 4.40404 3.06546L4.53685 2.9053C4.85609 2.54372 5.25433 2.25896 5.70189 2.07425L5.93626 1.99222C6.49455 1.82612 7.15095 1.83499 8.0554 1.83499H12.6667C13.3558 1.83499 13.9128 1.83434 14.363 1.87112C14.8208 1.90854 15.2266 1.98789 15.6033 2.17972L15.821 2.30179C16.317 2.6059 16.7215 3.04226 16.987 3.56351L17.0535 3.70608C17.1977 4.04236 17.2629 4.40311 17.2956 4.80374C17.3324 5.25398 17.3318 5.81094 17.3318 6.50003V8.33304ZM13.9978 10.9961C14.3321 10.9901 14.5013 10.977 14.6413 10.9395L14.7585 10.9033C15.3353 10.7069 15.7801 10.2353 15.9392 9.64163L15.9724 9.46292C15.998 9.25682 16.0017 8.94657 16.0017 8.33304V6.50003C16.0017 5.78899 16.0008 5.29566 15.9695 4.91214C15.9464 4.6301 15.9086 4.44069 15.8572 4.2969L15.8015 4.16702C15.6475 3.86478 15.4133 3.6119 15.1257 3.43558L14.9997 3.36526C14.8418 3.28477 14.6302 3.228 14.2546 3.19729C14.0221 3.1783 13.7491 3.17109 13.4118 3.168C13.6267 3.47028 13.7914 3.81126 13.8904 4.18069L13.9275 4.34378C13.981 4.62163 13.9947 4.93582 13.9978 5.3262V10.9961Z"></path></svg>';
+    dislikeBtn.style.cssText = buttonStyle;
+
+    // --- Helper to get the path element inside the SVG ---
+    const getPath = (btn) => btn.querySelector('svg path');
+
+    // --- Toggle Logic Implementation ---
+    likeBtn.onclick = () => {
+      const path = getPath(likeBtn);
+      const isCurrentlyActive = likeBtn.classList.contains('active');
+      const inactiveColor = 'var(--text-color, #aaa)';
+
+      if (isCurrentlyActive) {
+        // Toggle off (remove like, show dislike)
+        likeBtn.classList.remove('active');
+        path.style.fill = inactiveColor;
+        dislikeBtn.style.display = 'block';
+      } else {
+        // Toggle on (add like, fill icon, hide dislike)
+        likeBtn.classList.add('active');
+        path.style.fill = likeActiveColor; // Set to active color
+        dislikeBtn.style.display = 'none';
+        
+        // Ensure dislike is inactive/hidden/unfilled
+        dislikeBtn.classList.remove('active');
+        getPath(dislikeBtn).style.fill = inactiveColor;
+      }
+    };
+
+    dislikeBtn.onclick = () => {
+      const path = getPath(dislikeBtn);
+      const isCurrentlyActive = dislikeBtn.classList.contains('active');
+      const inactiveColor = 'var(--text-color-inactive, #aaa)';
+
+      if (isCurrentlyActive) {
+        // Toggle off (remove dislike, show like)
+        dislikeBtn.classList.remove('active');
+        path.style.fill = inactiveColor;
+        likeBtn.style.display = 'block';
+      } else {
+        // Toggle on (add dislike, fill icon, hide like)
+        dislikeBtn.classList.add('active');
+        path.style.fill = dislikeActiveColor; // Set to active color
+        likeBtn.style.display = 'none';
+        
+        // Ensure like is inactive/hidden/unfilled
+        likeBtn.classList.remove('active');
+        getPath(likeBtn).style.fill = inactiveColor;
+      }
+    };
+
+    actionsContainer.appendChild(likeBtn);
+    actionsContainer.appendChild(dislikeBtn);
+  }
+    if (isBot) {
+    const readAloudBtn = document.createElement('button');
+    // Initial state setup using the reset helper
+    resetReadAloudButton(readAloudBtn); 
+    readAloudBtn.style.cssText = buttonStyle;
+    readAloudBtn.onclick = () => readMessageAloud(readAloudBtn);
+    actionsContainer.appendChild(readAloudBtn);
+  }
+
+  // --- Edit Button ---
+  if (isUser) {
+    const editBtn = document.createElement('button');
+    editBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M9.94073 1.34948C10.7047 0.902375 11.6503 0.90248 12.4143 1.34948C12.706 1.52022 12.9687 1.79124 13.3104 2.1329C13.652 2.47454 13.9231 2.73727 14.0938 3.029C14.5408 3.79301 14.5409 4.73862 14.0938 5.50257C13.9231 5.79422 13.652 6.0571 13.3104 6.39867L6.65929 13.0498C6.28065 13.4284 6.00692 13.7108 5.6654 13.9097C5.32388 14.1085 4.94312 14.2074 4.42702 14.3498L3.24391 14.6762C2.77524 14.8054 2.34535 14.9263 2.00128 14.9685C1.65193 15.0112 1.17961 15.0014 0.810733 14.6326C0.44189 14.2637 0.432076 13.7914 0.474829 13.442C0.517004 13.098 0.63787 12.668 0.767151 12.1994L1.09349 11.0163C1.23585 10.5002 1.33478 10.1194 1.53356 9.77791C1.73246 9.43639 2.01487 9.16266 2.39352 8.78402L9.04463 2.1329C9.38622 1.79132 9.64908 1.52023 9.94073 1.34948ZM15.5427 14.8399H7.5522L8.96704 13.425H15.5427V14.8399ZM3.39379 9.78429C2.96497 10.2131 2.84241 10.3437 2.75706 10.4901C2.6718 10.6366 2.61858 10.8079 2.4573 11.3926L2.13096 12.5757C2.0018 13.0439 1.92191 13.3419 1.8886 13.5536C2.10038 13.5204 2.39869 13.4417 2.86761 13.3123L4.05072 12.986C4.63541 12.8247 4.80666 12.7715 4.9532 12.6862C5.09965 12.6009 5.23019 12.4783 5.65902 12.0495L10.721 6.9865L8.45574 4.72128L3.39379 9.78429ZM11.7 2.57085C11.3774 2.38205 10.9777 2.38205 10.6551 2.57085C10.5602 2.62653 10.4487 2.72937 10.0449 3.13317L9.45601 3.72101L11.7212 5.98623L12.3101 5.3984C12.7139 4.99464 12.8168 4.88314 12.8725 4.78825C13.0612 4.46567 13.0612 4.06592 12.8725 3.74333C12.8168 3.64834 12.7145 3.53758 12.3101 3.13317C11.9057 2.72869 11.795 2.62647 11.7 2.57085Z"></path></svg>';
+    editBtn.style.cssText = buttonStyle;
+    editBtn.onclick = () => editUserMessage(editBtn);
+    actionsContainer.appendChild(editBtn);
+  }
+
+  const messageContent = messageElement.querySelector('.message-content');
+  if (messageContent) {
+    messageContent.parentNode.insertBefore(actionsContainer, messageContent.nextSibling); 
+  } else {
+    messageElement.appendChild(actionsContainer);
+  }
+}
+
+// Observer to add buttons to new messages
+const chatbox = document.getElementById('chatbox');
+if (chatbox) {
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((node) => {
+        if (node.nodeType === 1 && node.classList.contains('chat-message')) {
+          requestAnimationFrame(() => addMessageActions(node));
+        }
+      });
+    });
+  });
+
+  observer.observe(chatbox, { childList: true });
+
+  window.addEventListener('load', () => {
+    const existingMessages = chatbox.querySelectorAll('.chat-message');
+    existingMessages.forEach(msg => addMessageActions(msg));
+  });
+}
+
+
+// ==========================================================
+// END: Code for Copy, Edit, Regenerate, and Read Aloud Functionality
+// ==========================================================
 </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const inputContainer = document.querySelector(".input-container");
+        const textInput = document.getElementById("text-input");
+        const sendBtn = document.getElementById("send-btn");
+        const stopBtn = document.getElementById("stop-btn");
+        const fileInput = document.getElementById("file-input");
+        const attachBtn = document.getElementById("attach-file-btn");
+
+        // Focus textarea when clicking anywhere in the container
+        inputContainer.addEventListener("click", function (e) {
+          if (
+            !e.target.closest(".input-icon-btn") &&
+            !e.target.closest(".submit-btn") &&
+            !e.target.closest(".stop-btn") &&
+            e.target !== fileInput
+          ) {
+            textInput.focus();
+          }
+        });
+
+        // Auto-resize textarea
+        textInput.addEventListener("input", function () {
+          this.style.height = "auto";
+          this.style.height = this.scrollHeight + "px";
+        });
+
+        // File input
+        attachBtn.addEventListener("click", function () {
+          fileInput.click();
+        });
+
+        fileInput.addEventListener("change", function () {
+          if (this.files && this.files[0]) {
+            console.log("File selected:", this.files[0].name);
+          }
+        });
+
+        // ✅ Show and hide stop button explicitly
+        function showStopButton() {
+          stopBtn.style.display = "inline-flex";
+          sendBtn.style.display = "none";
+        }
+
+        function hideStopButton() {
+          stopBtn.style.display = "none";
+          sendBtn.style.display = "inline-flex";
+        }
+
+        // When send is clicked
+        sendBtn.addEventListener("click", function () {
+          if (textInput.value.trim() !== "") {
+            showStopButton();
+
+            // Simulate AI response completion
+            setTimeout(function () {
+              hideStopButton();
+            }, 3000);
+          }
+        });
+
+        // Stop button click
+        stopBtn.addEventListener("click", function () {
+          hideStopButton();
+          console.log("AI response stopped");
+        });
+
+        // Initially hide stop button
+        hideStopButton();
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const inputContainer = document.querySelector(".input-container");
+        const textInput = document.getElementById("text-input");
+        const sendBtn = document.getElementById("send-btn");
+        const stopBtn = document.getElementById("stop-btn");
+        const fileInput = document.getElementById("file-input");
+        const attachBtn = document.getElementById("attach-file-btn");
+
+        // Focus textarea when clicking anywhere in the container
+        inputContainer.addEventListener("click", function (e) {
+          // Don't focus if clicking on a button or file input
+          if (
+            !e.target.closest(".input-icon-btn") &&
+            !e.target.closest(".submit-btn") &&
+            !e.target.closest(".stop-btn") &&
+            e.target !== fileInput
+          ) {
+            textInput.focus();
+          }
+        });
+
+        // Auto-resize textarea as user types
+        textInput.addEventListener("input", function () {
+          this.style.height = "auto";
+          this.style.height = this.scrollHeight + "px";
+        });
+
+        // File input functionality
+        attachBtn.addEventListener("click", function () {
+          fileInput.click();
+        });
+
+        fileInput.addEventListener("change", function (e) {
+          if (this.files && this.files[0]) {
+            // Handle file selection here
+            console.log("File selected:", this.files[0].name);
+            // You can show a preview or process the file
+          }
+        });
+
+        // Function to show stop button (when AI is responding)
+        function showStopButton() {
+          stopBtn.style.display = "inline-flex";
+          sendBtn.style.display = "none";
+        }
+
+        // Function to hide stop button (when AI is done responding)
+        function hideStopButton() {
+          stopBtn.style.display = "none";
+          sendBtn.style.display = "inline-flex";
+        }
+
+        // Example usage - call these functions when AI starts/stops responding
+        sendBtn.addEventListener("click", function () {
+          if (textInput.value.trim() !== "") {
+            showStopButton();
+
+            // Simulate AI response (remove this in your actual implementation)
+            setTimeout(function () {
+              hideStopButton();
+            }, 3000);
+          }
+        });
+
+        // Stop button functionality
+        stopBtn.addEventListener("click", function () {
+          // Stop AI response logic here
+          hideStopButton();
+          console.log("AI response stopped");
+        });
+
+        // ✅ FIX: Hide the stop button when the page loads
+        hideStopButton();
+      });
+    </script>
+    <script>// Function to show loader at the response position
+function showLoader() {
+  const loader = document.getElementById('loader');
+  loader.style.display = 'block';
+  // Scroll to the loader position
+  loader.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Function to hide loader
+function hideLoader() {
+  document.getElementById('loader').style.display = 'none';
+}</script>
+          <script>
+            const deepthinkToggle = document.getElementById("deepthink-toggle");
+            const generalInput = document.getElementById("modelGeneral");
+          
+            deepthinkToggle.addEventListener("click", () => {
+              const isActive = deepthinkToggle.getAttribute("data-active") === "true";
+          
+              if (isActive) {
+                // Switch OFF DeepThink -> select general input
+                deepthinkToggle.setAttribute("data-active", "false");
+                generalInput.checked = true;
+                console.log("🔄 Switched back to General Mode");
+              } else {
+                // Switch ON DeepThink -> create & check a hidden input dynamically
+                deepthinkToggle.setAttribute("data-active", "true");
+          
+                // remove old hidden deepthink if exists
+                let deepthinkInput = document.getElementById("modelDeepThink");
+                if (!deepthinkInput) {
+                  deepthinkInput = document.createElement("input");
+                  deepthinkInput.type = "radio";
+                  deepthinkInput.name = "modelChoice";
+                  deepthinkInput.value = "deep_think";
+                  deepthinkInput.id = "modelDeepThink";
+                  deepthinkInput.style.display = "none";
+                  deepthinkToggle.parentElement.appendChild(deepthinkInput);
+                }
+                deepthinkInput.checked = true;
+          
+                console.log("🧠 DeepThink Mode Activated");
+              }
+            });
+          </script>
+          <script>
+            document.addEventListener("DOMContentLoaded", () => {
+              const webSearchBtn = document.getElementById("web-search-btn");
+              const multiActionForm = document.getElementById("multi-action-form");
+              let isWebSearchEnabled = false;
+          
+              // ✅ Toggle Web Search Mode
+              webSearchBtn.addEventListener("click", () => {
+                isWebSearchEnabled = !isWebSearchEnabled;
+                webSearchBtn.classList.toggle("selected", isWebSearchEnabled);
+              });
+          
+              // ✅ Intercept form submit to include web search flag
+              multiActionForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+          
+                const textInput = document.getElementById("text-input");
+                const userText = textInput.value.trim();
+                if (!userText) return;
+          
+                // Detect selected model choice
+                const selectedModelRadio = document.querySelector(
+                  "input[name='modelChoice']:checked"
+                );
+                const modelChoice = selectedModelRadio ? selectedModelRadio.value : "general";
+          
+                // Show user message
+                addMessage(userText, "user", null, new Date());
+          
+                // ✅ Perform AI request with web search if enabled
+                if (isWebSearchEnabled) {
+                  await askAI(userText, modelChoice, true);
+                } else {
+                  await askAI(userText, modelChoice, false);
+                }
+              });
+            });
+          </script>
+          
+          <style>
+            /* ✅ Web Search Button Active State */
+            #web-search-btn.selected {
+              background: var(--accent-color);
+              color: white;
+              border-radius: 10px;
+              box-shadow: 0 0 10px var(--accent-color);
+            }
+            /* Thinking Process Styles */
+            
+.thinking {
+  font-size: 0.8rem;
+  color: rgba(128,128,128,0.8); /* greyed out */
+  margin-top: 6px;
+  padding-left: 8px;
+  border-left: 2px dashed #ccc;
+  display: none; /* hidden by default */
+}
+
+.thinking.show {
+  display: block;
+}
+
+.toggle-thinking {
+  font-size: 0.75rem;
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  margin-top: 4px;
+}
+</style>
+
+<script>
+function addBotMessage(content, thinking = null) {
+  const messageDiv = document.createElement("div");
+  messageDiv.classList.add("bot-message");
+
+  // Main AI answer
+  const answerDiv = document.createElement("div");
+  answerDiv.classList.add("answer");
+  answerDiv.innerHTML = content;
+  messageDiv.appendChild(answerDiv);
+
+  // Optional reasoning trace
+  if (thinking) {
+    const thinkingDiv = document.createElement("div");
+    thinkingDiv.classList.add("thinking");
+    thinkingDiv.innerHTML = thinking;
+
+    const toggleBtn = document.createElement("button");
+    toggleBtn.classList.add("toggle-thinking");
+    toggleBtn.textContent = "Show Thinking";
+    toggleBtn.onclick = function () {
+      thinkingDiv.classList.toggle("show");
+      toggleBtn.textContent = thinkingDiv.classList.contains("show")
+        ? "Hide Thinking"
+        : "Show Thinking";
+    };
+
+    messageDiv.appendChild(toggleBtn);
+    messageDiv.appendChild(thinkingDiv);
+  }
+
+  document.querySelector("#chat-container").appendChild(messageDiv);
+  document.querySelector("#chat-container").scrollTop =
+    document.querySelector("#chat-container").scrollHeight;
+}
+</script>
+    
 
   </body>
 </html>
