@@ -42,11 +42,11 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", str(uuid.uuid4()))
 # --- API KEYS ---
 # IMPORTANT: For production, load these from secure environment variables!
 # Example: os.environ.get("GOOGLE_GEMINI_API_KEY")
-GOOGLE_GEMINI_API_KEY = os.environ.get("GOOGLE_GEMINI_API_KEY", "AIzaSyAvnhpZee6OfasDj15yBxexQ9fy8V81gf0") # Your Google Gemini API Key
+GOOGLE_GEMINI_API_KEY = os.environ.get("GOOGLE_GEMINI_API_KEY", ) # Your Google Gemini API Key
 AWAN_API_KEY = os.environ.get("AWAN_API_KEY", "21f7fbb7-1209-4039-a7cc-dd0a6de383c3") # Your Awan API Key
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "") # Your Groq API Key
-OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "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") # Your OpenRouter API Key
-SERPER_API_KEY = os.environ.get("SERPER_API_KEY", "bb48b607349e5e050312a72459a8886e24a0edbc") # Your Serper API Key
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", ") # Your OpenRouter API Key
+SERPER_API_KEY = os.environ.get("SERPER_API_KEY", "b") # Your Serper API Key
 
 # --- API Endpoints and Models ---
 # Changed Gemini API URL to use gemini-2.0-flash
@@ -1078,6 +1078,7 @@ def user_info():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+
 
 
 
