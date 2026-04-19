@@ -20,14 +20,14 @@ app = Flask(app_name)
 
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-app.secret_key = os.environ.get("FLASK_SECRET_KEY", str(uuid.uuid4()))
+app.secret_key = os.getenv("FLASK_SECRET_KEY", str(uuid.uuid4()))
 
 # --- API KEYS ---
-GOOGLE_GEMINI_API_KEY = os.environ.get("GOOGLE_GEMINI_API_KEY")
-AWAN_API_KEY = os.environ.get("AWAN_API_KEY")
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
-OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
-SERPER_API_KEY = os.environ.get("SERPER_API_KEY")
+GOOGLE_GEMINI_API_KEY = os.getenv("GOOGLE_GEMINI_API_KEY")
+AWAN_API_KEY =os.getenv("AWAN_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+SERPER_API_KEY = os.getenv("SERPER_API_KEY")
 
 # --- API Endpoints ---
 GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
