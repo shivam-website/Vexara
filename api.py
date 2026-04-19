@@ -75,24 +75,24 @@ def increment_daily_message_count(user_id):
             del user_message_counts[user_id][d_str]
 
 # OAuth configuration
-google_bp = make_google_blueprint(
-    client_id="978102306464-qdjll3uos10m1nd5gcnr9iql9688db58.apps.googleusercontent.com",
-    client_secret="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",
-    redirect_url="/google_login/authorized",
-    scope=["openid", "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"]
-)
-app.register_blueprint(google_bp, url_prefix="/google_login")
+# google_bp = make_google_blueprint(
+#     client_id="978102306464-qdjll3uos10m1nd5gcnr9iql9688db58.apps.googleusercontent.com",
+#     client_secret="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",
+#     redirect_url="/google_login/authorized",
+#     scope=["openid", "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"]
+# )
+# app.register_blueprint(google_bp, url_prefix="/google_login")
 
-oauth = OAuth(app)
-microsoft = oauth.register(
-    name='microsoft',
-    client_id="your_microsoft_client_id",
-    client_secret="your_microsoft_client_secret",
-    access_token_url='https://login.microsoftonline.com/common/oauth2/v2.0/token',
-    authorize_url='https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
-    api_base_url='https://graph.microsoft.com/v1.0/',
-    client_kwargs={'scope': 'User.Read'}
-)
+# oauth = OAuth(app)
+# microsoft = oauth.register(
+#     name='microsoft',
+#     client_id="your_microsoft_client_id",
+#     client_secret="your_microsoft_client_secret",
+#     access_token_url='https://login.microsoftonline.com/common/oauth2/v2.0/token',
+#     authorize_url='https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+#     api_base_url='https://graph.microsoft.com/v1.0/',
+#     client_kwargs={'scope': 'User.Read'}
+# )
 
 # --- SEE SYSTEM PROMPT (CRITICAL FOR EXAM-FOCUSED ANSWERS) ---
 SEE_SYSTEM_PROMPT = """You are Vexara, a Math tutor for Class 10 SEE students in Nepal.
@@ -585,22 +585,22 @@ def user_info():
     user_email = session.get('user', None)
     return jsonify({"user_email": user_email})
 
-@app.route('/google_login/authorized')
-def google_login_authorized():
-    """Handles Google OAuth callback."""
-    if not google.authorized:
-        return redirect(url_for("login"))
-    try:
-        user_info = google.get("/oauth2/v2/userinfo")
-        if user_info.ok:
-            session['user'] = user_info.json().get("email")
-            session['user_id'] = f"google_{user_info.json().get('id')}"
-            return redirect(url_for('index'))
-        else:
-            return redirect(url_for('login'))
-    except Exception as e:
-        print(f"Error during Google login: {e}")
-        return redirect(url_for('login'))
+# @app.route('/google_login/authorized')
+# def google_login_authorized():
+#     """Handles Google OAuth callback."""
+#     if not google.authorized:
+#         return redirect(url_for("login"))
+#     try:
+#         user_info = google.get("/oauth2/v2/userinfo")
+#         if user_info.ok:
+#             session['user'] = user_info.json().get("email")
+#             session['user_id'] = f"google_{user_info.json().get('id')}"
+#             return redirect(url_for('index'))
+#         else:
+#             return redirect(url_for('login'))
+#     except Exception as e:
+#         print(f"Error during Google login: {e}")
+#         return redirect(url_for('login'))
 
 @app.route('/')
 def index():
