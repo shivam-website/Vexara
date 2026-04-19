@@ -4,8 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vexara AI Assistant</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <link rel="manifest" href="/manifest.json">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
     <link
       rel="icon"
       href="/static/images/vexara-new1-removebg-preview.png"
@@ -41,2538 +51,8 @@
       rel="stylesheet"
       href="https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css"
     />
-    <!-- <link rel="stylesheet" href="/static/style.css"> -->
-    <style>
-      :root {
-    --primary-color: #8a8a8b; /* ChatGPT green */
-    --primary-light: #18cd9f;
-    --accent-color: #6a0dad; /* A subtle purple/blue for some accents */
-    --bg-color: #ffffff; /* Light gray for body background */
-    --text-color: #303030; /* Darker text */
-    --text-light: #606060;
-    --sidebar-bg: #f9f9f9; /* Dark background for sidebar */
-    --sidebar-text: #413229;
-    --chat-bg: #fffefe; /* White chat background */
-    --user-message-bg: #f5f4f5; /* Lighter blue for user messages, or a very light gray if preferred */
-    --bot-message-bg: transparent;
-    /* Very light gray for bot messages */
-    --code-bg: #2d2d2d; /* Dark code blocks */
-    --code-text-color: #f8f8f2; /* Light text for code */
-    --border-radius: 10px; /* Slightly more rounded corners for main elements */
-    --border-radius-sm: 6px; /* Smaller radius for buttons/inputs */
-    --shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Softer shadows */
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-    --web-search: rgba(0, 0, 0, 0.2);
-    --transition: all 0.2s ease-in-out; /* Smooth transitions */
-    --model-text-color: white;
-  }
+    <link rel="stylesheet" href="/static/style.css">
 
-  /* Dark Mode Variables */
-  .dark-mode {
-    --model-text-color: white;
-    --primary-color: #929292;
-    --primary-light: #52a167;
-    --accent-color: #6a0dad; /* A deeper, more subtle purple */
-    --bg-color: #212121; /* Very dark background with a hint of gray */
-    --text-color: #f0f0f0; /* Soft, readable gray for primary text */
-    --text-light: #7c7c7c; /* Subtle gray for secondary text */
-    --sidebar-bg: #1a1a1a; /* Distinct from main background */
-    --sidebar-text: #e0e0e0;
-    --chat-bg: #212121;
-    --user-message-bg: #333537; /* A softer shade for user messages */
-    --bot-message-bg: transparent;
-    --code-bg: #1e1e1e;
-    --code-text-color: #f0f0f0;
-    --shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Stronger shadow for depth */
-    --shadow-md: 0 6px 10px rgba(0, 0, 0, 0.6);
-    --web-search: rgba(255, 255, 255, 0.439);
-  }
-
-  /* Base Styles */
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
-      "SF Pro Display", sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    transition: var(--transition);
-    display: flex;
-    min-height: 100vh; /* Ensures body takes full viewport height */
-    overflow: hidden; /* Prevents body scroll when sidebar is fixed */
-  }
-
-  /* Sidebar Styles */
-  .sidebar {
-    width: 260px; /* Slightly narrower like ChatGPT */
-    background: var(--sidebar-bg);
-    color: var(--sidebar-text);
-    padding: 16px; /* Reduced padding slightly */
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    flex-shrink: 0;
-    transition: width 0.3s ease, padding 0.3s ease, transform 0.3s ease;
-    overflow-x: hidden;
-    position: relative;
-    z-index: 100;
-    border-right: 1px solid rgba(48, 48, 48, 0.099); /* Subtle border */
-  }
-  .dark-mode .sidebar {
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
-  }
-
-  .sidebar.collapsed {
-    width: 70px; /* Collapsed width */
-    padding: 16px 10px; /* Adjust padding for collapsed state */
-    min-width: 70px; /* Ensures it collapses to this width */
-    background-color: #ffffff;
-    border-right: 1px solid rgba(48, 48, 48, 0.099);
-  }
-  .dark-mode .sidebar.sidebar.collapsed {
-    background-color: #212121;
-    border-right: 1px solid #2c2c2c;
-  }
-
-  /* Main Content Styles */
-  .main {
-    flex: 1; /* Takes remaining space */
-    display: flex;
-    flex-direction: column;
-    height: 100vh; /* Ensure main also takes full viewport height */
-    margin-left: 260px; /* Default margin for desktop, equals sidebar width */
-    transition: margin-left 0.5s ease;
-    position: relative; /* For z-index context */
-  }
-
-  .main.full-width {
-    /* Applied when sidebar is collapsed on desktop */
-    margin-left: 150px; /* Adjusted margin when sidebar is collapsed */
-  }
-
-  .main.full-screen {
-    /* For true full screen chat (sidebar hidden) */
-    margin-left: 0;
-    width: 100%;
-  }
-
-  /* Floating sidebar toggle button */
-  #showSidebarBtn {
-    display: none;
-    position: fixed;
-    top: -10px;
-    left: 15px;
-    z-index: 100;
-    background: transparent; /* Use transparent */
-    color: black; /* Match sidebar text color */
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-size: 1.2rem;
-    cursor: ew-resize;
-    box-shadow: none; /* Remove shadow for a clean flat look */
-    transition: var(--transition);
-    align-items: center;
-    justify-content: center;
-    margin-top: 120px;
-  }
-  .dark-mode #showSidebarBtn {
-    color: white;
-  }
-  .dark-mode .sidebar-show-btn {
-    color: white;
-  }
-
-  /* Optional hover effect */
-  .dark-mode #showSidebarBtn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: scale(1.05);
-  }
-  #showSidebarBtn:hover {
-    background: #dee2ec;
-    transform: scale(1.05);
-  }
-
-  /* Sidebar Toggle button inside the sidebar header */
-  .sidebar-toggle {
-    background: none;
-    border: none;
-    color: var(--sidebar-text);
-    font-size: 1.1rem; /* Slightly smaller for internal toggle */
-    cursor: ew-resize;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    transition: var(--transition);
-  }
-
-  .sidebar-toggle:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .sidebar.collapsed .sidebar-toggle {
-    transform: rotate(180deg); /* Rotate for collapsed state */
-  }
-  .dark-mode .sidebar.collapsed .sidebar-toggle:hover {
-    background: rgba(255, 255, 255, 0.5);
-  }
-
-  /* Responsive Adjustments */
-  @media (min-width: 769px) {
-    .main {
-      margin-left: 260px; /* Default margin for desktop */
-    }
-    .sidebar.collapsed + .main {
-      /* When sidebar is collapsed, main takes full width */
-      margin-left: 70px; /* Adjusted margin when sidebar is collapsed */
-    }
-    /* #showSidebarBtn is now used on desktop too when sidebar is fully hidden */
-  }
-
-  @media (max-width: 768px) {
-    /* On mobile, sidebar is fixed and slides out */
-    .sidebar {
-      position: fixed;
-      left: 0;
-      top: 0;
-      height: 100%;
-      transform: translateX(-100%); /* Hidden off-screen */
-      width: 260px; /* Fixed width when visible */
-      z-index: 100; /* Ensure it's above main content */
-      box-shadow: var(--shadow-md);
-    }
-    .sidebar.visible {
-      /* Class to show sidebar on mobile */
-      transform: translateX(0);
-    }
-    .main {
-      margin-left: 0; /* Main content always full width on mobile */
-      width: 100%;
-    }
-    #showSidebarBtn {
-      display: flex !important;
-      position: fixed;
-      top: -110px; /* Show floating button on mobile */
-      left: 1%;
-    }
-    .sidebar-toggle {
-      display: none;
-      visibility: hidden;
-    }
-
-    /* Hide most sidebar content when collapsed on desktop, or when mobile */
-    .sidebar.collapsed .sidebar-header span,
-    .sidebar.collapsed .new-chat-btn span,
-    .sidebar.collapsed #chat-history-list,
-    .sidebar.collapsed .sidebar-footer > *:not(.sidebar-toggle) {
-      /* Exclude toggle for specific hide */
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.1s ease;
-    }
-    /* Show content when not collapsed on desktop, or when mobile and visible */
-    .sidebar:not(.collapsed) .sidebar-header span,
-    .sidebar:not(.collapsed) .new-chat-btn span,
-    .sidebar:not(.collapsed) #chat-history-list,
-    .sidebar:not(.collapsed) .sidebar-footer > *:not(.sidebar-toggle) {
-      opacity: 1;
-      pointer-events: all;
-    }
-  }
-  sidebar.collapsed #chat-history-list {
-    display: none;
-  }
-
-  /* Sidebar Content */
-  .sidebar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    /* border-bottom: 1px solid rgba(48, 48, 48, 0.099); */
-  }
-
-  /* Logo Styling */
-  .sidebar-logo {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: #413229;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    white-space: nowrap;
-    transition: all 0.3s ease;
-  }
-  .dark-mode .sidebar-logo {
-    color: white;
-  }
-  .sidebar-logo span {
-    position: relative;
-    left: 50%;
-    font-weight: bolder;
-  }
-
-  /* ✅ Hide image by default (sidebar open) */
-  .sidebar-logo img {
-    display: none;
-  }
-
-  /* ✅ Show only when sidebar is collapsed */
-  .sidebar.collapsed .sidebar-logo img {
-    display: inline-block;
-    height: 60px;
-    width: 60px;
-    /* background-size: cover; */
-    background-repeat: no-repeat;
-    padding: 8px;
-    /* border-radius: 24px;  */
-    transition: all 0.3s ease;
-  }
-
-  /* Hover effect for a modern feel */
-  .sidebar.collapsed .sidebar-logo img:hover {
-    cursor: pointer;
-    transform: rotate(360deg); /* Slight zoom on hover */
-  }
-
-  /* Hide text only in collapsed mode */
-  .sidebar.collapsed .sidebar-logo span {
-    display: none;
-  }
-  .new-chat-btn {
-    background: #fefeff; /* No background color */
-    color: #413229;
-    border: none;
-    padding: 12px;
-    border-radius: 24px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: var(--transition);
-    font-weight: 500;
-    box-shadow: none; /* Optional: remove shadow if you want clean transparency */
-  }
-  .dark-mode .new-chat-btn {
-    color: white;
-    background: #212327;
-  }
-  .dark-mode .new-chat-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .new-chat-btn:hover {
-    background: #dee2ec; /* Or transparent if you don’t want any hover bg */
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
-  }
-
-  .sidebar.collapsed .new-chat-btn {
-    padding: 25px;
-    margin-top: 40px;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    z-index: 10;
-    background: none;
-
-    /* padding-bottom: 10px; */
-  }
-  .sidebar.collapsed .new-chat-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .sidebar.collapsed .new-chat-btn span {
-    display: none;
-  }
-
-  #chat-history-list {
-    flex: 1;
-    overflow-y: auto;
-    margin-bottom: 20px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary-color) rgba(255, 255, 255, 0.1);
-  }
-
-  #chat-history-list::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  #chat-history-list::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-  }
-
-  #chat-history-list::-webkit-scrollbar-thumb {
-    background-color: var(--primary-color);
-    border-radius: 10px;
-  }
-
-  .chat-link {
-    padding: 10px 12px;
-    border-radius: 24px;
-    margin-bottom: 6px;
-    cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: var(--transition);
-    color: var(--sidebar-text);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.95rem;
-    position: relative; /* For positioning action buttons */
-  }
-
-  .chat-link:hover {
-    background: rgba(255, 255, 255, 1);
-  }
-  .dark-mode .chat-link:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .chat-link.active {
-    background: rgba(
-      255,
-      255,
-      255,
-      1
-    ); /* More subtle active state for history */
-    font-weight: 500;
-  }
-  .dark-mode .chat-link.active {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .sidebar.collapsed .chat-link {
-    width: 50px; /* Square for icons */
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    font-size: 1.1rem;
-    border-radius: 50%; /* Make them circular when collapsed */
-    display: none;
-  }
-
-  .sidebar.collapsed .chat-link span {
-    display: none;
-  }
-
-  /* Chat Link Actions (Rename/Delete) */
-  .chat-link-actions {
-    display: flex;
-    gap: 5px;
-    margin-left: auto; /* Push to the right */
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
-    pointer-events: none; /* Initially non-interactive */
-  }
-
-  .chat-link:hover .chat-link-actions,
-  .chat-link.active .chat-link-actions {
-    /* Show actions on hover or when active */
-    opacity: 1;
-    pointer-events: all;
-  }
-
-  .chat-link-actions button {
-    background: none;
-    border: none;
-    color: var(--sidebar-text);
-    font-size: 0.85rem;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 4px;
-    transition: background 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .chat-link-actions button:hover {
-    background: rgba(255, 255, 255, 0.2);
-  }
-
-  .chat-link-actions button.delete-chat-btn {
-    color: #ff6b6b; /* Red for delete */
-  }
-  .chat-link-actions button.delete-chat-btn:hover {
-    background: rgba(255, 107, 107, 0.3);
-  }
-
-  .sidebar.collapsed .chat-link-actions {
-    display: none; /* Hide actions when sidebar is collapsed */
-  }
-
-  .sidebar-footer {
-    padding-top: 15px;
-    border-top: 1px solid rgba(48, 48, 48, 0.099);
-  }
-  .dark-mode .sidebar-footer {
-    padding-top: 15px;
-    border-top: 1px solid rgba(48, 48, 48, 1);
-  }
-  /* .dark-mode .sidebar-footer{
-        border-top: 12px solid rgba(255, 255, 255, 0.896);
-    } */
-
-  .sidebar-btn {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    padding: 10px 12px;
-    text-align: left;
-    background: none;
-    border: none;
-    color: var(--sidebar-text);
-    border-radius: 24px;
-    margin-bottom: 6px;
-    cursor: pointer;
-    transition: var(--transition);
-    text-decoration: none;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 0.95rem;
-  }
-
-  .dark-mode .sidebar-btn:hover {
-    background: #212327;
-  }
-  .sidebar-btn:hover {
-    background: #dee2ec;
-  }
-
-  .sidebar-btn i {
-    margin-right: 5px;
-    width: 20px; /* Fixed width for icons */
-    text-align: center;
-    font-size: 1rem;
-    /* top: -2rem; */
-  }
-
-  .sidebar.collapsed .sidebar-btn {
-    justify-content: center;
-    padding: 12px 0;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-  }
-
-  .dark-mode .sidebar.collapsed .sidebar-btn:hover {
-    background: #212327;
-  }
-
-  .sidebar.collapsed .sidebar-btn i {
-    margin-right: 0;
-    font-size: 1rem;
-  }
-
-  .sidebar.collapsed .sidebar-btn span {
-    /* NEW: Hide text for sidebar buttons when collapsed */
-    display: none;
-  }
-
-  .user-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: var(--border-radius-sm);
-    margin-bottom: 15px;
-    font-size: 0.9rem;
-    color: var(--sidebar-text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .user-info i {
-    font-size: 1.2rem;
-    color: var(--accent-color); /* Use accent color for user icon */
-  }
-
-  .user-email {
-    font-weight: 500;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .sidebar.collapsed .user-info {
-    justify-content: center;
-    padding: 10px 0;
-    width: 50px;
-    height: 50px;
-    margin: 0 auto 15px auto;
-    border-radius: 50%;
-  }
-
-  .sidebar.collapsed .user-info i {
-    font-size: 1.4rem;
-    margin-right: 0;
-  }
-
-  .sidebar.collapsed .user-info .user-email {
-    display: none;
-  }
-
-  /* Top Bar Styles (Main content header) */
-  .top-bar {
-    padding: 12px 20px;
-    background-color: #fffefe;
-    display: flex;
-    width: 100%;
-    justify-content: flex-end;
-    align-items: center;
-    z-index: 10;
-    height: 3rem;
-    /* visibility: hidden; */
-    border-bottom: 1.5px solid #efefef;
-    border-bottom-color: #f4f5f4;
-    font-family: "Satoshi";
-  }
-  .dark-mode .top-bar {
-    border: none;
-    background-color: #212121;
-  }
-
-  @media (max-width: 768px) {
-    .top-bar{
-      /* visibility: visible; */
-      border: none;
-    }
-    .top-bar h2{
-      position: fixed;
-      left: 40%;
-    }
-  }
-
-  .top-bar-title {
-    font-weight: 600;
-    font-size: 1.1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    color: var(--text-color);
-  }
-
-  .top-bar-title i {
-    color: black; /* Accent color for the logo in top bar */
-    /* text-shadow: 0 0 5px rgba(24, 205, 159, 0.3); */
-    height: 45px;
-    width: 45px;
-    right: 30px;
-    top: 1px;
-    position: fixed;
-  }
-  .top-bar-title i:hover {
-    background: white;
-  }
-  .dark-mode .top-bar-title i {
-    color: white;
-    background-color: #212121;
-  }
-
-  .top-bar-actions {
-    display: flex;
-    gap: 8px;
-  }
-
-  .action-btn {
-    background: none;
-    border: none;
-    color: var(--text-color);
-    font-size: 1.1rem;
-
-    padding: 6px;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--transition);
-  }
-
-  /* .action-btn:hover {
-        background: rgba(0, 0, 0, 0.05);
-    }
-
-    .dark-mode .action-btn:hover {
-        background: rgba(255, 255, 255, 0.1);
-    } */
-
-  /* Full screen button with tooltip */
-  .full-screen-btn {
-    position: relative;
-  }
-
-  .full-screen-btn .tooltip {
-    position: absolute;
-    bottom: 120%; /* Position above button */
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8); /* Darker tooltip background */
-    color: white;
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease-in-out;
-    z-index: 100;
-    margin-bottom: 8px;
-  }
-
-  .full-screen-btn:hover .tooltip {
-    opacity: 1;
-  }
-
-  /* Chat Container Styles */
-  .chat-container {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    background-color: var(--chat-bg);
-    color: #fefeff;
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary-color) var(--chat-bg);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 10px; /* Spacing between messages */
-    font-size: 1rem;
-    line-height: 1.6;
-    scroll-behavior: smooth;
-  }
-
-  .chat-container::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  .chat-container::-webkit-scrollbar-track {
-    background: var(--chat-bg);
-    border-radius: 10px;
-  }
-
-  .chat-container::-webkit-scrollbar-thumb {
-    background-color: var(--primary-color);
-    border-radius: 10px;
-    border: 2px solid var(--chat-bg);
-  }
-
-  .chat-container::-webkit-scrollbar-thumb:hover {
-    background-color: var(--primary-light);
-  }
-
-  /* Initial New Chat Screen */
-  .new-chat-placeholder {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: var(--text-color);
-    font-size: 1rem;
-    text-align: center;
-    padding-bottom: 100px; /* Space for the input area */
-    gap: 5px;
-  }
-  .new-chat-placeholder .input-area {
-    position: relative;
-    bottom: 50%;
-    margin-bottom: 1000px;
-  }
-
-  .new-chat-placeholder .title {
-    font-size: 2rem;
-    font-weight: 600;
-    color: var(--text-color);
-  }
-  .new-chat-placeholder img {
-    height: 60px;
-    width: 60px;
-    background-size: cover;
-    background-repeat: no-repeat;
-  }
-.new-chat-placeholder span{
-  font-size: 28px;
-  font-weight: 400;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
-  /* Individual Chat Message Styles */
-  .chat-message {
-    /* Max width to keep messages readable, centered in the chat container */
-    max-width: 768px; /* Standard readable width for content */
-    margin-left: auto; /* For user messages */
-    margin-right: auto; /* For bot messages */
-    padding: 16px 20px;
-    border-radius: var(--border-radius);
-    word-break: break-word;
-    position: relative;
-    background-color: var(--bot-message-bg);
-    color: var(--text-color);
-    font-size: 1rem;
-    transition: var(--transition);
-    box-shadow: var(--shadow);
-    animation: fadeIn 0.3s ease-out; /* Fade in animation for new messages */
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* User Messages */
-  .user-message {
-    background-color: var(--user-message-bg);
-    margin-left: auto;
-    margin-right: 0; /* Adjusted for responsiveness */
-    padding: 14px 18px;
-    border-radius: 24px; /* Rounded with unique flair */
-    max-width: 70%;
-    font-weight: 500;
-    color: #f0f0f0;
-    line-height: 1.6;
-    word-break: break-word;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    animation: slideInRight 0.25s ease-out;
-    backdrop-filter: blur(6px);
-  }
-
-  /* Bot Messages */
-  .bot-message {
-    background-color: var(--bot-message-bg);
-    margin-right: auto;
-    margin-left: 0; /* Adjusted for responsiveness */
-    padding: 14px 18px;
-    border-radius: 12px 12px 12px 4px;
-    border: none;
-    max-width: 100%;
-    color: black;
-    font-weight: 400;
-    line-height: 1.6;
-    word-break: break-word;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    animation: slideInLeft 0.25s ease-out;
-    backdrop-filter: blur(6px);
-    background: transparent !important;
-    box-shadow: none !important;
-    border: none !important;
-  }
-  @media (max-width: 768px) {
-    .bot-message {
-      max-width: 100%;
-    }
-  }
-  /* Animations */
-  @keyframes slideInRight {
-    from {
-      opacity: 0;
-      transform: translateX(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  @keyframes slideInLeft {
-    from {
-      opacity: 0;
-      transform: translateX(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  .message-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-    font-weight: 600;
-    font-size: 0.9em;
-    color: var(--text-light); /* Make header text slightly lighter */
-  }
-
-  .message-timestamp {
-    font-weight: normal;
-    font-size: 0.8em;
-    opacity: 0.7;
-    margin-left: auto; /* Push timestamp to the right */
-    color: var(--text-light);
-    display: none;
-  }
-
-  .message-header i {
-    margin-right: 8px;
-    color: var(--primary-color);
-  }
-
-  .message-content {
-    margin-top: 10px;
-    color: var(--text-color);
-  }
-
-  .message-content p {
-    margin-bottom: 10px; /* Space between paragraphs in messages */
-  }
-
-  .message-content p:last-child {
-    margin-bottom: 0; /* No extra margin on last paragraph */
-  }
-
-  /* Code Block Styles */
-  /* ===== CODE BLOCK STYLE ===== */
-  .code-block {
-    background-color: #1e1e1e; /* Dark editor-like background */
-    border-radius: 6px;
-    margin: 1rem 0;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border: 1px solid #333;
-  }
-
-  .code-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #252526; /* Slightly darker header */
-    padding: 8px 12px;
-    color: #9cdcfe; /* VS Code-like blue text */
-    font-size: 0.85rem;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    border-bottom: 1px solid #1a1a1a;
-  }
-
-  .code-language {
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .code-header-actions {
-    display: flex;
-    gap: 8px;
-  }
-
-  .code-header button {
-    background: #3a3d41;
-    border: none;
-    color: #d4d4d4;
-    padding: 4px 10px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 0.75rem;
-    font-family: inherit;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .code-header button:hover {
-    background: #2e2e2e;
-    color: #ffffff;
-  }
-
-  .code-header button i {
-    font-size: 0.8rem;
-  }
-
-  pre {
-    background-color: #1e1e1e !important;
-    padding: 16px !important;
-    margin: 0 !important;
-    overflow-x: auto;
-    white-space: pre;
-    tab-size: 2;
-    line-height: 1.5;
-  }
-
-  code {
-    font-family: "Cascadia Code", "Consolas", "Monaco", "Andale Mono",
-      "Ubuntu Mono", monospace !important;
-    font-size: 0.9rem !important;
-    color: #d4d4d4 !important; /* Default text color */
-  }
-
-  /* ===== SYNTAX HIGHLIGHTING COLORS ===== */
-  .token.comment,
-  .token.prolog,
-  .token.doctype,
-  .token.cdata {
-    color: #6a9955; /* Green */
-  }
-
-  .token.punctuation {
-    color: #d4d4d4; /* Light gray */
-  }
-
-  .token.property,
-  .token.tag,
-  .token.boolean,
-  .token.number,
-  .token.constant,
-  .token.symbol,
-  .token.deleted {
-    color: #b5cea8; /* Light green */
-  }
-
-  .token.selector,
-  .token.attr-name,
-  .token.string,
-  .token.char,
-  .token.builtin,
-  .token.inserted {
-    color: #ce9178; /* Orange */
-  }
-
-  .token.operator,
-  .token.entity,
-  .token.url,
-  .language-css .token.string,
-  .style .token.string {
-    color: #d4d4d4; /* Light gray */
-  }
-
-  .token.atrule,
-  .token.attr-value,
-  .token.keyword {
-    color: #569cd6; /* Blue */
-  }
-
-  .token.function,
-  .token.class-name {
-    color: #dcdcaa; /* Yellow */
-  }
-
-  .token.regex,
-  .token.important,
-  .token.variable {
-    color: #d16969; /* Red */
-  }
-
-  /* ================================
-✅ Improved ChatGPT-like Input Area
-================================== */
-
-  .input-area {
-    padding: 10px; /* Adjusted padding */
-    background-color: var(--chat-bg);
-    position: sticky;
-    bottom: 0;
-    z-index: 10;
-  }
-
-  .input-container {
-    display: flex;
-    gap: 8px;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto; /* Centered */
-    align-items: flex-end;
-    position: relative;
-    background: rgba(0, 0, 0, 0.03);
-    border-radius: 28px;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
-    padding: 10px 14px;
-    border: 2px solid #4d5050;
-
-    transition: box-shadow 0.2s ease;
-  }
-
-  .dark-mode .input-container {
-    background: #313130;
-    /* border: 1px solid #606060; */
-    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1);
-  }
-
-  .main.full-screen .input-container {
-    max-width: 900px;
-  }
-  .main.full-width .input-container {
-    max-width: 835px;
-  }
-  /* .main.full-width { Applied when sidebar is collapsed on desktop
-        margin-right:90px;
-    } */
-
-  /* ✅ Improved Text Input */
-  /* ✨ Responsive Growing Textarea */
-  #text-input {
-    flex: 1;
-    min-width: 0;
-    max-width: 100%;
-    padding: 10px 0px;
-    text-align: start;
-    z-index: 10;
-
-    border: none;
-    background: transparent;
-    color: var(--text-color);
-    font-size: 1.25rem;
-    resize: none; /* Prevent manual resize */
-    overflow-y: auto; /* Will scroll after max-height is reached */
-    min-height: 90px;
-    max-height: 200px; /* Stop growing after this */
-    line-height: 1.5;
-    border-radius: var(--border-radius-sm);
-    transition: height 0.15s ease-in-out;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    scrollbar-width: thin;
-    scrollbar-color: #10a37f transparent;
-  }
-
-  /* ✅ Custom Scrollbar Styling for WebKit (Chrome, Edge, Safari) */
-  #text-input::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  #text-input::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  #text-input::-webkit-scrollbar-thumb {
-    background-color: #10a37f;
-    border-radius: 3px;
-    border: 1px solid transparent;
-  }
-
-  #text-input::-webkit-scrollbar-thumb:hover {
-    background-color: #0e8e6e;
-  }
-
-  #text-input:focus {
-    outline: none;
-  }
-
-  /* Glowing Input Container */
-  .input-container {
-    position: relative;
-    z-index: 0;
-    display: flex;
-    align-items: center;
-    border-radius: 28px;
-  }
-
-  .input-container::after {
-    content: "";
-    z-index: -1;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: var(--chat-bg);
-    left: 0;
-    top: 0;
-    border-radius: 28px;
-  }
-
-
-
-
-  /* .input-container:focus-within {
-    box-shadow: 0 0 0 2px rgba(163, 16, 16, 0.25),
-      inset 0 1px 2px rgba(186, 61, 61, 0.05);
-  }
-  .dark-mode .input-container:focus-within {
-    box-shadow: 0 0 0 2px rgba(220, 102, 23, 0.25),
-      inset 0 1px 2px rgba(255, 255, 255, 0.1);
-  } */
-
-  /* ✅ Bigger Icon Buttons */
-  .input-icon-btn,
-  .submit-btn,
-  .stop-btn {
-    background: none;
-    border: none;
-    color: #2d2d2c;
-
-    cursor: pointer;
-    font-size: 1.3rem;
-    padding: 8px;
-    margin-left: 0px;
-    border-radius: 50%;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 42px; /* Larger buttons */
-    height: 42px;
-    flex-shrink: 0;
-  }
-  /* .input-icon-btn{
-background: rgba(0, 0, 0, 0.05);
-} */
-
-  .input-icon-btn:hover,
-  .submit-btn:hover {
-    background: rgba(0, 0, 0, 0.05);
-    color: var(--text-color);
-  }
-  .dark-mode .input-icon-btn:hover,
-  .dark-mode .submit-btn:hover {
-    background: #424343;
-    /* color: var(--text-color); */
-    color: white;
-  }
-  .dark-mode .input-icon-btn,
-  .dark-mode .submit-btn,
-  .dark-mode.stop-btn {
-    color: #e5e5e4;
-  }
-  /* Active Send Button */
-  .submit-btn.active {
-    background-color: #000000;
-    color: white;
-  }
-  .dark-mode .submit-btn.active {
-    background-color: white;
-    color: black;
-  }
-  .submit-btn.active:hover {
-    background-color: #5d5b5b;
-  }
-
-  /* Stop Button (visible when AI responds) */
-  .stop-btn {
-    display: none;
-  }
-
-  /* When the AI is responding, hide the send button and show the stop button */
-  .input-container.ai-responding .send-btn {
-    display: none;
-  }
-
-  .input-container.ai-responding .stop-btn {
-    display: block;
-  }
-  .stop-btn:hover {
-    background: rgba(255, 107, 107, 0.1);
-  }
-
-  /* Image Preview in Input Area */
-  .image-preview-container {
-    display: none; /* Hidden by default */
-    flex-direction: column;
-    gap: 10px;
-    padding: 10px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    margin-bottom: 10px;
-    align-items: flex-start;
-    position: relative;
-  }
-  .dark-mode .image-preview-container {
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-
-  .image-preview-container img {
-    max-width: 70px;
-    max-height: 70px;
-    border-radius: var(--border-radius-sm);
-    object-fit: contain;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: var(--shadow);
-  }
-  .dark-mode .image-preview-container img {
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-
-  .clear-image-btn {
-    position: absolute;
-    top: 5px;
-    left: 65px;
-    background: rgba(0, 0, 0, 0.6);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .clear-image-btn:hover {
-    background: rgba(0, 0, 0, 0.8);
-  }
-
-  /* Responsive adjustments for input */
-  @media (max-width: 768px) {
-    .input-container {
-      flex-wrap: nowrap; /* Keep on one line for mobile too */
-      align-items: flex-end;
-      padding-right: 1px;
-      padding-left: 1px;
-    }
-
-    #text-input {
-      flex: 1;
-      min-height: 88px; /* Adjusted min-height for mobile */
-      padding: 0px 0px;
-      font-size: 18px;
-    }
-
-    .submit-btn,
-    .stop-btn {
-      width: 38px;
-      height: 38px;
-      padding: 0px;
-    }
-
-    /* Adjust spacing when voice mode is active */
-    .input-container.voice-active #voice-talk-btn {
-      order: 1;
-      margin-right: 4px; /* Space between mic and indicator */
-      margin-left: 20px;
-      padding-left: 20px; /* Remove auto-margin */
-    }
-
-    .input-container.voice-active .voice-indicator-area {
-      flex: 1 1 auto; /* Take remaining horizontal space */
-      order: 2;
-    }
-    /* Hide full-screen toggle button on mobile */
-    .top-bar-actions .full-screen-btn {
-      display: none;
-    }
-  }
-  @media (max-width: 768px) {
-    .input-icon-btn {
-      width: 38px;
-      height: 38px;
-      padding: 4px;
-    }
-  }
-
-  /* Loading Indicator */
-  .loader {
-    display: none; /* Hidden by default */
-    padding: 16px;
-    text-align: center;
-    color: var(--text-color);
-    font-size: 0.95rem;
-    opacity: 0.7;
-    animation: fadeIn 0.3s ease-in-out;
-  }
-
-  .typing-indicator {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 6px;
-    padding: 12px;
-    height: 32px;
-    animation: fadeIn 0.3s ease-in-out;
-  }
-
-  .typing-dot {
-    width: 8px;
-    height: 8px;
-    background-color: var(--primary-color, #2563eb);
-    border-radius: 50%;
-    opacity: 0.4;
-    animation: typingDotAnimation 1.4s infinite ease-in-out;
-  }
-
-  .typing-dot:nth-child(2) {
-    animation-delay: 0.2s;
-  }
-
-  .typing-dot:nth-child(3) {
-    animation-delay: 0.4s;
-  }
-
-  @keyframes typingDotAnimation {
-    0%,
-    80%,
-    100% {
-      transform: scale(0.8);
-      opacity: 0.4;
-    }
-    40% {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(5px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .typing-dot:nth-child(1) {
-    animation-delay: 0s;
-  }
-
-  .typing-dot:nth-child(2) {
-    animation-delay: 0.2s;
-  }
-
-  .typing-dot:nth-child(3) {
-    animation-delay: 0.4s;
-  }
-
-  /* Enhanced Typing Animation */
-  @keyframes typingAnimation {
-    0%,
-    80%,
-    100% {
-      transform: translateY(0);
-      opacity: 0.4;
-    }
-    40% {
-      transform: translateY(-8px);
-      opacity: 1;
-    } /* More pronounced bounce */
-  }
-
-  /* Special Message Components */
-  .message-section {
-    margin-bottom: 16px;
-  }
-
-  .section-title {
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: var(--primary-color);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .section-title i {
-    font-size: 0.9rem;
-  }
-
-  .example-item {
-    background: rgba(0, 0, 0, 0.05);
-    padding: 10px 12px;
-    border-radius: 6px;
-    margin-bottom: 8px;
-    border-left: 3px solid var(--primary-color);
-    transition: var(--transition);
-  }
-
-  .example-item:hover {
-    background: rgba(0, 0, 0, 0.08);
-  }
-
-  .dark-mode .example-item {
-    background: rgba(255, 255, 255, 0.05);
-  }
-
-  .dark-mode .example-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-  }
-
-  .example-title {
-    font-weight: 500;
-    margin-bottom: 5px;
-  }
-
-  .message-with-image {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .message-images-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 10px;
-  }
-
-  .message-images-container img {
-    max-width: 100%;
-    max-height: 300px;
-    border-radius: var(--border-radius-sm);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: var(--shadow);
-    object-fit: contain;
-  }
-
-  .dark-mode .message-images-container img {
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-
-  .uploaded-image-preview {
-    max-width: 100%;
-    max-height: 300px;
-    border-radius: var(--border-radius-sm);
-    margin-top: 10px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: var(--shadow);
-    object-fit: contain;
-  }
-
-  .dark-mode .uploaded-image-preview {
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-
-  /* Camera Options (for mobile) */
-  .camera-options {
-    display: none; /* Hidden by default, shown on mobile for image upload */
-    position: fixed;
-    bottom: 80px; /* Position above the input area */
-    left: 0;
-    right: 0;
-    background: var(
-      --sidebar-bg
-    ); /* Use sidebar background for consistency */
-    padding: 16px;
-    border-radius: 16px 16px 0 0; /* Rounded top corners */
-    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    animation: slideUp 0.3s ease-out; /* Slide up animation */
-  }
-
-  @keyframes slideUp {
-    from {
-      transform: translateY(100%);
-    }
-    to {
-      transform: translateY(0);
-    }
-  }
-
-  .camera-option {
-    padding: 14px;
-    margin: 8px 0;
-    background: var(--primary-color);
-    color: white;
-    border-radius: var(--border-radius-sm);
-    text-align: center;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    font-weight: 500;
-    position: relative; /* For the hidden input */
-    overflow: hidden; /* Hide the overflow of the input */
-  }
-  .camera-option:hover {
-    background: var(--primary-light);
-  }
-  .camera-option.cancel {
-    background: #ff6b6b; /* Red for cancel */
-  }
-  .camera-option.cancel:hover {
-    background: #e65a5a;
-  }
-
-  /* Make hidden file inputs fill their parent .camera-option */
-  .camera-option input[type="file"] {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0; /* Make it completely transparent */
-    cursor: pointer;
-    z-index: 1; /* Ensure it's clickable above the div content */
-  }
-
-  /* Message Actions (e.g., Summarize) */
-  .message-actions {
-    margin-top: 12px;
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end; /* Align actions to the right */
-    display: none;
-  }
-
-  .message-action-btn {
-    background: rgba(
-      0,
-      0,
-      0,
-      0.05
-    ); /* Light background for action buttons */
-    color: var(--text-color);
-    border: none;
-    padding: 6px 12px;
-    border-radius: var(--border-radius-sm);
-    cursor: pointer;
-    font-size: 0.85rem;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .dark-mode .message-action-btn {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .message-action-btn:hover {
-    background: rgba(0, 0, 0, 0.1);
-  }
-  .dark-mode .message-action-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-  }
-
-  /* Confirmation Modal Styles */
-  .modal {
-    display: none; /* Hidden by default */
-    position: fixed;
-    z-index: 1000;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.6);
-    animation: fadeIn 0.2s ease-out;
-  }
-
-  .modal-content {
-    background: var(--chat-bg);
-    padding: 24px;
-    border-radius: var(--border-radius);
-    max-width: 90%;
-    width: 400px;
-    text-align: center;
-    box-shadow: var(--shadow-md);
-  }
-
-  .modal-content h3 {
-    margin-top: 0;
-    margin-bottom: 16px;
-    color: var(--text-color);
-    font-size: 1.2rem;
-  }
-
-  .modal-content p {
-    margin-bottom: 24px;
-    color: var(--text-light);
-  }
-
-  .modal-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-  }
-
-  .modal-btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: var(--border-radius-sm);
-    cursor: pointer;
-    font-weight: 500;
-    transition: var(--transition);
-    flex: 1; /* Distribute space evenly */
-    max-width: 120px; /* Max width for buttons */
-  }
-
-  .modal-btn.confirm {
-    background-color: #ff6b6b; /* Red for destructive action */
-    color: white;
-  }
-
-  .modal-btn.confirm:hover {
-    background-color: #e65a5a;
-  }
-
-  .modal-btn.cancel {
-    background-color: rgba(0, 0, 0, 0.05);
-    color: var(--text-color);
-  }
-
-  .dark-mode .modal-btn.cancel {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-
-  .modal-btn.cancel:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-  }
-  .dark-mode .modal-btn.cancel:hover {
-    background: rgba(255, 255, 255, 0.2);
-  }
-
-  /* Full screen mode adjustments */
-  body.full-screen-mode .sidebar {
-    transform: translateX(-100%);
-  }
-
-  body.full-screen-mode .main {
-    margin-left: 0;
-    width: 100%;
-  }
-
-  body.full-screen-mode #showSidebarBtn {
-    display: flex; /* Show floating button when in full screen */
-  }
-
-  /* Tooltip (general) */
-  .tooltip-container {
-    position: relative;
-    display: inline-block;
-  }
-
-  .tooltip {
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(
-      0,
-      0,
-      0,
-      0.8
-    ); /* Tooltip background matches text color */
-    color: white; /* Tooltip text matches background color */
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s;
-    z-index: 100;
-    margin-bottom: 8px;
-  }
-
-  .tooltip-container:hover .tooltip {
-    opacity: 1;
-  }
-
-  /* Gradient accent for some elements (if desired) */
-  .gradient-accent {
-    background: linear-gradient(
-      135deg,
-      var(--primary-color),
-      var(--primary-light)
-    );
-  }
-
-  /* Pulse animation for new messages */
-  @keyframes pulse {
-    0% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.01);
-    } /* Subtle pulse */
-    100% {
-      transform: scale(1);
-    }
-  }
-
-  .pulse {
-    animation: pulse 0.5s ease;
-  }
-  /* Style for model selection toggle */
-  .model-select-group {
-display: flex;
-justify-content: center;
-gap: 12px;
-padding: 0.5rem 0;
-flex-wrap: wrap; /* Allows wrapping on small screens */
-}
-
-/* Base style: use Web Search button style for both */
-.model-option,
-#web-search-btn {
-display: flex;
-align-items: center;
-justify-content: center;
-gap: 8px;
-padding: 6px 10px;       /* slightly smaller than before */
-border: 1px solid var(--web-search); /* same as web search btn */
-border-radius: 30px;
-font-size: 0.9rem;        /* slightly smaller text */
-font-weight: 500;
-color: var(--text-color);
-background-color: var(--bg-color);
-cursor: pointer;
-transition: all 0.25s ease;
-text-align: center;
-line-height: 1;
-min-width: 100px;          /* slightly smaller width */
-user-select: none;
-}
-
-/* Active DeepThink toggle */
-.model-option[data-active="true"] {
-background: var(--accent-color);
-border-color: var(--accent-color);
-color: var(--model-text-color);
-box-shadow: 0 2px 6px rgba(16, 163, 127, 0.3);
-}
-
-/* Hover effect (desktop only) */
-@media (hover: hover) {
-/* .model-option:hover, */
-#web-search-btn:hover {
-background-color: rgba(16, 163, 127, 0.06);
-border-color: var(--primary-color);
-}
-}
-
-/* Icons */
-.model-option svg,
-#web-search-btn svg {
-width: 18px;   /* slightly smaller */
-height: 18px;
-flex-shrink: 0;
-display: block;
-fill: currentColor;
-}
-
-/* Text inside buttons */
-.model-option span,
-#web-search-btn span {
-font-size: 0.9rem;
-font-weight: 500;
-color: var(--text-color);
-}
-
-/* Mobile adjustments */
-@media (max-width: 480px) {
-.model-option,
-#web-search-btn {
-    font-size: 12px;
-    padding: 5px 10px;
-    gap: 6px; /* take equal space if multiple buttons */
-}
-
-.model-option i,
-#web-search-btn svg {
-width: 16px;
-height: 16px;
-}
-
-.model-option span,
-#web-search-btn span {
-font-size: 0.8rem;
-}
-}
-.model-option[data-active="true"] i {
-color: var(--model-text-color); /* primary accent */
-animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-0% { transform: scale(1); opacity: 0.8; }
-50% { transform: scale(1.15); opacity: 1; }
-100% { transform: scale(1); opacity: 0.8; }
-}
-
-
-
-  /* NEW: Voice Mode Overlay Styles */
-  #voice-mode-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #202123; /* Dark background similar to ChatGPT */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; /* Ensure it's on top */
-    color: white;
-    transition: opacity 0.3s ease;
-    opacity: 0;
-    pointer-events: none; /* Initially non-interactive */
-  }
-
-  #voice-mode-overlay.active {
-    opacity: 1;
-    pointer-events: auto; /* Make interactive when active */
-  }
-
-  #voice-mode-overlay .status-text {
-    font-size: 1.1rem;
-    margin-bottom: 20px;
-    color: #a0a0a0; /* Lighter grey for status */
-  }
-
-  #voice-mode-overlay .control-buttons {
-    position: absolute;
-    bottom: 50px; /* Position at the bottom */
-    display: flex;
-    gap: 20px;
-  }
-
-  #voice-mode-overlay .control-button {
-    background-color: #404040; /* Darker grey for buttons */
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    font-size: 1.8rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    transition: background-color 0.2s ease, transform 0.2s ease;
-  }
-
-  #voice-mode-overlay .control-button:hover {
-    background-color: #555;
-    transform: translateY(-2px);
-  }
-
-  #voice-mode-overlay .control-button.mic-active {
-    background-color: var(--primary-color); /* Green when active */
-  }
-  #voice-mode-overlay .control-button.mic-active:hover {
-    background-color: var(--primary-light);
-  }
-
-  #voice-mode-overlay .control-button.screen-share-active {
-    background-color: #ff6b6b; /* Red for active screen share */
-  }
-  #voice-mode-overlay .control-button.screen-share-active:hover {
-    background-color: #e65a5a;
-  }
-
-  #voice-circle-canvas {
-    background-color: transparent; /* Canvas background */
-    border-radius: 50%; /* Make it circular */
-    /* Initial size, will be dynamic */
-    width: 200px;
-    height: 200px;
-    max-width: 80vw; /* Responsive sizing */
-    max-height: 80vw;
-  }
-
-  /* NEW: Screen Share Preview Container */
-  #screen-share-preview-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8); /* Dark overlay */
-    z-index: 999; /* Below voice mode overlay */
-    display: none; /* Hidden by default */
-    justify-content: center;
-    align-items: center;
-  }
-
-  #screen-share-preview-video {
-    max-width: 90%;
-    max-height: 90%;
-    border: 2px solid var(--primary-color);
-    border-radius: var(--border-radius);
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-  }
-
-  /* NEW: Code Update Modal */
-  #codeUpdateModal {
-    display: none; /* Hidden by default */
-    position: fixed;
-    z-index: 1001; /* Above other modals */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.7);
-  }
-
-  #codeUpdateModal .modal-content {
-    max-width: 800px;
-    width: 90%;
-    height: 80%;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-  }
-
-  #codeUpdateModal textarea {
-    flex: 1;
-    width: 100%;
-    min-height: 150px;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid var(--text-light);
-    border-radius: var(--border-radius-sm);
-    background-color: var(--code-bg);
-    color: var(--code-text-color);
-    font-family: "Fira Code", monospace;
-    font-size: 0.9rem;
-    resize: vertical;
-  }
-
-  #codeUpdateModal select {
-    padding: 8px;
-    margin-bottom: 15px;
-    border-radius: var(--border-radius-sm);
-    border: 1px solid var(--text-light);
-    background-color: var(--bg-color);
-    color: var(--text-color);
-  }
-
-  /* New CSS for ChatGPT-like talking animation (when AI is speaking) */
-  #talking-animation {
-    position: fixed;
-    bottom: 90px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 10px 18px;
-    background-color: rgba(0, 0, 0, 0.7);
-    border-radius: 999px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    color: white;
-    font-size: 0.9rem;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease-in-out;
-    z-index: 999;
-  }
-
-  #talking-animation.active {
-    opacity: 1;
-  }
-
-  .talking-animation-bars {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .talking-bar {
-    width: 4px;
-    height: 16px;
-    background-color: #10a37f;
-    border-radius: 2px;
-    transform-origin: bottom;
-    animation: barWave 1.2s infinite ease-in-out;
-    opacity: 0.7;
-  }
-
-  .talking-bar:nth-child(1) {
-    animation-delay: 0s;
-  }
-  .talking-bar:nth-child(2) {
-    animation-delay: 0.1s;
-  }
-  .talking-bar:nth-child(3) {
-    animation-delay: 0.2s;
-  }
-  .talking-bar:nth-child(4) {
-    animation-delay: 0.3s;
-  }
-  .talking-bar:nth-child(5) {
-    animation-delay: 0.4s;
-  }
-
-  @keyframes barWave {
-    0%,
-    100% {
-      transform: scaleY(0.6);
-      opacity: 0.5;
-    }
-    50% {
-      transform: scaleY(1.4);
-      opacity: 1;
-    }
-  }
-  body {
-    font-family: "Inter";
-  }
-
-  /* Enhanced Chat Container */
-  .chat-container {
-    flex: 1;
-    width: 100%;
-    max-width: 800px;
-    padding: 20px 0;
-    overflow-y: auto;
-    background-color: var(--chat-bg);
-    color: #fefeff;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 10px;
-    font-size: 1rem;
-    line-height: 1.6;
-    scroll-behavior: smooth;
-    margin: 0 auto;
-    position: relative;
-    transition: all 0.3s ease;
-  }
-
-  /* Improved scrollbar for WebKit browsers (Chrome, Safari, Edge) */
-  .chat-container::-webkit-scrollbar {
-    width: 10px;
-  }
-
-  .chat-container::-webkit-scrollbar-track {
-    background: transparent;
-    border-radius: 10px;
-    margin: 5px 0;
-  }
-
-  .chat-container::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    border: 2px solid transparent;
-    background-clip: padding-box;
-  }
-
-  .chat-container::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.3);
-    border: 2px solid transparent;
-    background-clip: padding-box;
-  }
-
-  .dark-mode .chat-container::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-  }
-
-  .dark-mode .chat-container::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
-  }
-
-  /* Improved scrollbar for Firefox */
-  .chat-container {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-  }
-
-  .dark-mode .chat-container {
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-  }
-
-  /* Chat container adjustments when sidebar is open */
-  .sidebar:not(.collapsed) + .main .chat-container {
-    max-width: 800px;
-    padding: 20px 15px;
-  }
-
-  /* Chat container adjustments when sidebar is collapsed */
-  .sidebar.collapsed + .main .chat-container {
-    max-width: 900px;
-    padding: 20px 25px;
-  }
-
-  /* Mobile adjustments */
-  @media (max-width: 768px) {
-    .chat-container {
-      max-width: 100%;
-      padding: 15px 10px;
-    }
-
-    .sidebar:not(.collapsed) + .main .chat-container,
-    .sidebar.collapsed + .main .chat-container {
-      max-width: 100%;
-      padding: 15px 10px;
-    }
-  }
-
-  /* Enhanced message styling for better appearance */
-  .user-message {
-    background-color: var(--user-message-bg);
-    margin-left: auto;
-    margin-right: 0;
-    padding: 14px 18px;
-    border-radius: 24px;
-    max-width: 70%;
-    font-weight: 500;
-    color: #111827;
-    line-height: 1.6;
-    word-break: break-word;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    animation: slideInRight 0.25s ease-out;
-    backdrop-filter: blur(6px);
-  }
-
-  .bot-message {
-    background-color: var(--bot-message-bg);
-    margin-right: auto;
-    margin-left: 0;
-    padding: 14px 18px;
-    border-radius: 18px 18px 4px 18px; 
-    border: none;
-    max-width: 100%;
-    color: black;
-    font-weight: 400;
-    line-height: 1.6;
-    word-break: break-word;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    animation: slideInLeft 0.25s ease-out;
-    backdrop-filter: blur(6px);
-    background: transparent !important;
-    box-shadow: none !important;
-    border: none !important;
-  }
-
-  /* Add subtle border to messages in dark mode */
-  .dark-mode .user-message {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .dark-mode .bot-message {
-    border: 1px solid rgba(255, 255, 255, 0.05);
-  }
-
-  /* Adjust message width based on sidebar state */
-  .sidebar:not(.collapsed) + .main .user-message,
-  .sidebar:not(.collapsed) + .main .bot-message {
-    max-width: 75%;
-  }
-
-  .sidebar.collapsed + .main .user-message,
-  .sidebar.collapsed + .main .bot-message {
-    max-width: 85%;
-  }
-
-  @media (max-width: 768px) {
-    .user-message,
-    .bot-message {
-      max-width: 90% !important;
-    }
-  }
-
-/* Improved Input Container */
-.input-container {
-display: flex;
-flex-direction: column;
-width: 100%;
-margin: 0 auto;
-position: relative;
-background: rgba(0, 0, 0, 0.03);
-border-radius: 28px;
-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
-padding: 14px;
-border: 2px solid #3536361e;
-transition: box-shadow 0.2s ease;
-box-sizing: border-box;
-min-height: 130px;
-}
-
-.dark-mode .input-container {
-background: #313130;
-border: 1px solid #3f3e3e;
-box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1);
-}
-
-/* Textarea that takes full width and height above icons */
-#text-input {
-width: 100%;
-padding: 0;
-text-align: start;
-border: none;
-background: transparent;
-color: var(--text-color);
-font-size: 1.25rem;
-resize: none;
-overflow-y: auto;
-min-height: 30px;
-line-height: 1.5;
-max-height: 150px;
-border-radius: var(--border-radius-sm);
-transition: var(--transition);
-white-space: pre-wrap;
-word-wrap: break-word;
-scrollbar-width: thin;
-scrollbar-color: var(--primary-color) transparent;
-flex: 1;
-margin-bottom: 8px;
-}
-
-/* Container for icons at the bottom */
-.input-icons-row {
-display: flex;
-align-items: center;
-justify-content: space-between;
-width: 100%;
-height: 38px;
-}
-
-/* Left and right side icons */
-.input-icons-left,
-.input-icons-right {
-display: flex;
-gap: 12px; /* smaller gap for mobile-friendliness */
-align-items: center;
-}
-
-/* Icon buttons (mic, send, stop, file) */
-.input-icon-btn,
-.submit-btn,
-.stop-btn {
-background: none;
-border: none;
-color: var(--text-color);
-cursor: pointer;
-font-size: 1.3rem;
-padding: 8px;
-border-radius: 50%;
-transition: all 0.2s ease;
-display: flex;
-align-items: center;
-justify-content: center;
-width: 44px;
-height: 44px;
-flex-shrink: 0;
-position: relative;
-}
-
-/* Hover & active effects */
-.input-icon-btn:hover,
-.submit-btn:hover,
-.stop-btn:hover {
-background: rgba(0, 0, 0, 0.05);
-}
-
-.dark-mode .input-icon-btn:hover,
-.dark-mode .submit-btn:hover {
-background: #424343;
-color: white;
-}
-
-.submit-btn.active {
-background-color: #000;
-color: white;
-}
-
-.dark-mode .submit-btn.active {
-background-color: white;
-color: black;
-}
-
-/* File input covering button */
-.file-input-wrapper {
-position: relative;
-display: inline-block;
-}
-
-.file-input-wrapper input[type="file"] {
-position: absolute;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-opacity: 0;
-cursor: pointer;
-z-index: 2;
-font-weight: 600;
-}
-
-/* Voice indicator area */
-.voice-indicator-area {
-display: none;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-background: transparent;
-border-radius: var(--border-radius-sm);
-padding: 6px 0;
-gap: 4px;
-width: 100%;
-}
-
-/* Show voice area when active */
-.input-container.voice-active .voice-indicator-area {
-display: flex;
-}
-
-/* Mobile adjustments */
-@media (max-width: 768px) {
-.input-container {
-padding: 10px 12px;
-min-height: 50px;
-}
-
-#text-input {
-font-size: 1.1rem;
-min-height: 10px;
-max-height: 120px;
-margin-bottom: 6px;
-}
-
-.input-icon-btn,
-.submit-btn,
-.stop-btn {
-width: 38px;
-height: 38px;
-font-size: 1.1rem;
-padding: 6px;
-}
-
-.input-icons-left,
-.input-icons-right {
-gap: 8px; /* smaller gap for smaller screens */
-}
-}
-
-/* Focus effect */
-.input-container {
-cursor: text;
-}
-
-/* .input-container:focus-within {
-box-shadow: 0 0 0 2px rgba(16, 163, 127, 0.25),
-inset 0 1px 2px rgba(0, 0, 0, 0.05);
-} */
-/* 
-.dark-mode .input-container:focus-within {
-box-shadow: 0 0 0 2px rgba(16, 163, 127, 0.25),
-inset 0 1px 2px rgba(255, 255, 255, 0.1);
-} */
-
-/* Loader positioning */
-.loader {
-padding: 16px;
-text-align: center;
-color: var(--text-color);
-font-size: 0.95rem;
-opacity: 0.7;
-animation: fadeIn 0.3s ease-in-out;
-margin: 20px auto;
-max-width: 768px;
-width: 100%;
-}
-
-.chat-container .loader {
-align-self: center;
-margin-left: 0;
-margin-right: 0;
-}
-/* "Thinking" Message & Dots */
-.thinking-message {
-    font-size: 1.25rem;
-    color: var(--text-color);
-    margin: 1rem 0;
-    padding: 10px;
-    border-radius: 10px;
-    width: fit-content;
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    background-color: var(--bot-message-bg);
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-.thinking-dot {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    background-color: var(--primary-color);
-    border-radius: 50%;
-    animation: thinkingDot 1.4s infinite ease-in-out;
-}
-
-.thinking-dot:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.thinking-dot:nth-child(3) {
-    animation-delay: 0.4s;
-}
-
-@keyframes thinkingDot {
-    0%, 80%, 100% {
-        transform: scale(0);
-        opacity: 0.4;
-    }
-    40% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-@media (max-width: 768px) {
-  .input-container {
-    flex-wrap: nowrap;
-    align-items: flex-end;
-    /* FIX 1: Set horizontal padding to 0, rely on .input-area padding */
-    padding: 10px 0; 
-    height: 125px;
-  }
-
-  #text-input {
-    flex: 1;
-    min-height: 10px;
-    padding: 0px 0px 10px 10px;
-    font-size: 18px;
-  }
-  
-  /* FIX 2: Reduce button/icon size for safety on narrowest devices */
-  .submit-btn, .stop-btn {
-    width: 34px; 
-    height: 34px;
-    padding: 0;
-    margin-right: 10px;
-  }
-  
-  .input-icon-btn {
-    width: 34px; 
-    height: 34px;
-    padding: 4px;
-    padding-left: 10px;
-  }
-
-  /* ... rest of your mobile styles ... */
-}
-  
-
-      
-      /* CSS Variables for ChatGPT-like theming */
-      
-/* Web Search Button matching DeepThink size */
-
-
-    </style>
   </head>
   <body>
     <div id="talking-animation">
@@ -2591,7 +71,7 @@ margin-right: 0;
         <div class="sidebar-logo">
           <!-- <i class="fas fa-robot"></i> -->
           <img src="/static/images/vexara-new1-removebg-preview.png" alt="V" />
-          <span style="font-family: 'Baskerville'"><h3 >Vexara</h3></span>
+          <span style="font-family: 'Baskerville'"><h3>Vexara</h3></span>
         </div>
         <!-- Renamed hideSidebarBtn to sidebarToggleButton for general use -->
         <!-- In your HTML -->
@@ -2638,7 +118,7 @@ margin-right: 0;
           aria-label="Toggle Dark Mode"
         >
           <i class="fas fa-moon" aria-hidden="true"></i>
-          <span>Dark Mode</span>
+          <span>Dark Theme</span>
         </button>
         <button
           class="sidebar-btn"
@@ -2673,31 +153,66 @@ margin-right: 0;
     </button>
 
     <div class="main">
-      <div class="top-bar" style="display: flex;
-          align-items: center;
-          justify-content: left;" >
-        <h2 style="font-weight: 450; font-style:'Baskerville';" >Vexara</h2> 
+      <div
+        class="top-bar"
+        style="display: flex; align-items: center; justify-content: left"
+      >
+        <h2 style="font-weight: 450; font-style: 'Baskerville'">Vexara</h2>
         <div class="top-bar-title">
-          
           <i class="fa-solid fa-plus new-chat-btn" onclick="startNewChat()"></i>
         </div>
       </div>
 
       <div class="chat-container" id="chatbox" role="log" aria-live="polite">
         <!-- Initial New Chat Placeholder -->
-        <div id="new-chat-placeholder" style="display: flex; align-items: center; gap: 8px; font-family: 'Segoe UI', 'Inter', sans-serif; font-size: 24px; font-weight: 600; color: #e5e5e5;">
-          <img src="/static/images/vexara-new1-removebg-preview.png" alt="V" style="width: 40px; height: 40px; object-fit: contain;" />
+        <div
+        class="loader"
+        id="loader"
+        aria-live="polite"
+        aria-atomic="true"
+        style="display: none"
+      >
+        <div class="typing-indicator">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      </div>
+        <div
+          id="new-chat-placeholder"
+          style="
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Segoe UI', 'Inter', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: #e5e5e5;
+          "
+        >
+          <img
+            src="/static/images/vexara-new1-removebg-preview.png"
+            alt="V"
+            style="width: 40px; height: 40px; object-fit: contain"
+          />
           <span>How can I help you?</span>
         </div>
-        
-          <div class="loader" id="loader" aria-live="polite" aria-atomic="true" style="display: none">
-    <div class="typing-indicator">
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-    </div>
-  </div>
 
+        <div
+          class="loader"
+          id="loader"
+          aria-live="polite"
+          aria-atomic="true"
+          style="display: none"
+        >
+          <div class="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        </div>
       </div>
 
       <!-- Input Area at the bottom -->
@@ -2729,7 +244,7 @@ margin-right: 0;
           <!-- Model Selection Buttons -->
 
           <div class="input-container" id="input-container">
-            <textarea 
+            <textarea
               id="text-input"
               name="instruction"
               placeholder="Ask Vexara"
@@ -2749,7 +264,18 @@ margin-right: 0;
                     title="Attach File"
                     aria-label="Attach File"
                   >
-                    <svg width="22" height="26" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.5498 9.75006V5.00006H6.9502V9.75006C6.9502 10.33 7.4201 10.7999 8 10.7999C8.5799 10.7999 9.0498 10.33 9.0498 9.75006V4.50006C9.0498 2.95366 7.7964 1.70026 6.25 1.70026C4.7036 1.70026 3.4502 2.95366 3.4502 4.50006V9.75006C3.4502 12.263 5.4871 14.2999 8 14.2999C10.5129 14.2999 12.5498 12.263 12.5498 9.75006V4.00006H13.9502V9.75006C13.9502 13.0362 11.2861 15.7003 8 15.7003C4.71391 15.7003 2.0498 13.0362 2.0498 9.75006V4.50006C2.04981 2.18047 3.9304 0.299867 6.25 0.299866C8.5696 0.299866 10.4502 2.18046 10.4502 4.50006V9.75006C10.4502 11.1032 9.3531 12.2003 8 12.2003C6.6469 12.2003 5.5498 11.1032 5.5498 9.75006Z" fill="currentColor"></path></svg>
+                    <svg
+                      width="22"
+                      height="26"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M5.5498 9.75006V5.00006H6.9502V9.75006C6.9502 10.33 7.4201 10.7999 8 10.7999C8.5799 10.7999 9.0498 10.33 9.0498 9.75006V4.50006C9.0498 2.95366 7.7964 1.70026 6.25 1.70026C4.7036 1.70026 3.4502 2.95366 3.4502 4.50006V9.75006C3.4502 12.263 5.4871 14.2999 8 14.2999C10.5129 14.2999 12.5498 12.263 12.5498 9.75006V4.00006H13.9502V9.75006C13.9502 13.0362 11.2861 15.7003 8 15.7003C4.71391 15.7003 2.0498 13.0362 2.0498 9.75006V4.50006C2.04981 2.18047 3.9304 0.299867 6.25 0.299866C8.5696 0.299866 10.4502 2.18046 10.4502 4.50006V9.75006C10.4502 11.1032 9.3531 12.2003 8 12.2003C6.6469 12.2003 5.5498 11.1032 5.5498 9.75006Z"
+                        fill="currentColor"
+                      ></path>
+                    </svg>
                   </button>
                   <!-- Hidden file input, now outside the button for precise control -->
                   <input
@@ -2761,7 +287,10 @@ margin-right: 0;
                     aria-label="Upload image file"
                   />
                 </div>
-                <div class="model-select-group" aria-label="Toggle DeepThink Mode">
+                <div
+                  class="model-select-group"
+                  aria-label="Toggle DeepThink Mode"
+                >
                   <!-- Hidden General Option (keeps backend happy) -->
                   <input
                     type="radio"
@@ -2770,182 +299,270 @@ margin-right: 0;
                     value="general"
                     checked
                     aria-checked="true"
-                    style="display:none;"
+                    style="display: none"
                   />
-                
-                  <!-- Visible DeepThink Toggle -->
-                  <div class="model-option" id="deepthink-toggle" data-active="false">
-                    <svg width="20" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="icon" aria-label=""><path d="M14.3352 10.0257C14.3352 7.6143 12.391 5.66554 10.0002 5.66537C7.60929 5.66537 5.66528 7.61419 5.66528 10.0257C5.66531 11.5493 6.44221 12.8881 7.61938 13.6683H12.3811C13.558 12.8881 14.3352 11.5491 14.3352 10.0257ZM8.84399 16.9984C9.07459 17.3983 9.50543 17.6683 10.0002 17.6683C10.495 17.6682 10.926 17.3984 11.1565 16.9984H8.84399ZM8.08813 15.6683H11.9114V14.9984H8.08813V15.6683ZM1.66626 9.33529L1.80103 9.34896C2.10381 9.41116 2.3313 9.67914 2.3313 10.0003C2.33115 10.3214 2.10377 10.5896 1.80103 10.6517L1.66626 10.6654H0.833252C0.466091 10.6654 0.168389 10.3674 0.168213 10.0003C0.168213 9.63306 0.465983 9.33529 0.833252 9.33529H1.66626ZM19.1663 9.33529L19.301 9.34896C19.6038 9.41116 19.8313 9.67914 19.8313 10.0003C19.8311 10.3214 19.6038 10.5896 19.301 10.6517L19.1663 10.6654H18.3333C17.9661 10.6654 17.6684 10.3674 17.6682 10.0003C17.6682 9.63306 17.966 9.33529 18.3333 9.33529H19.1663ZM3.0481 3.04818C3.2753 2.82099 3.62593 2.79189 3.88403 2.96224L3.98853 3.04818L4.57739 3.63705L4.66235 3.74154C4.83285 3.99966 4.80464 4.35021 4.57739 4.57748C4.35013 4.80474 3.99958 4.83293 3.74146 4.66244L3.63696 4.57748L3.0481 3.98861L2.96216 3.88412C2.79181 3.62601 2.82089 3.27538 3.0481 3.04818ZM16.012 3.04818C16.2717 2.7886 16.6927 2.78852 16.9524 3.04818C17.2117 3.30786 17.2119 3.72901 16.9524 3.98861L16.3625 4.57748C16.1028 4.83717 15.6818 4.83718 15.4221 4.57748C15.1626 4.31776 15.1625 3.89669 15.4221 3.63705L16.012 3.04818ZM9.33521 1.66634V0.833336C9.33521 0.466067 9.63297 0.168297 10.0002 0.168297C10.3674 0.168472 10.6653 0.466175 10.6653 0.833336V1.66634C10.6653 2.0335 10.3674 2.33121 10.0002 2.33138C9.63297 2.33138 9.33521 2.03361 9.33521 1.66634ZM15.6653 10.0257C15.6653 11.9571 14.7058 13.6634 13.2415 14.6917V16.3333C13.2415 16.7004 12.9444 16.9971 12.5774 16.9974C12.282 18.1473 11.2423 18.9982 10.0002 18.9984C8.75792 18.9984 7.71646 18.1476 7.42114 16.9974C7.05476 16.9964 6.75806 16.7 6.75806 16.3333V14.6917C5.29383 13.6634 4.33523 11.957 4.33521 10.0257C4.33521 6.88608 6.86835 4.33529 10.0002 4.33529C13.132 4.33547 15.6653 6.88618 15.6653 10.0257Z"></path></svg>
-                    <span >DeepThink</span>
-                  </div>
-                  
-                </div>
-<!-- ===== Web Search Toggle (replace your old button with this) ===== -->
-<label id="web-search-toggle" class="web-search-toggle" title="Enable web search" role="switch" aria-checked="false">
-  <input id="web-search-checkbox" type="checkbox" aria-label="Enable web search" />
-  <!-- Keep your SVG icon for visual match -->
-  <span class="web-search-icon" aria-hidden="true">
-    <svg width="20" height="24" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: currentColor;">
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M7.00003 0.150452C10.7832 0.150452 13.8496 3.21691 13.8496 7.00006C13.8496 10.7832 10.7832 13.8497 7.00003 13.8497C3.21688 13.8497 0.150421 10.7832 0.150421 7.00006C0.150421 3.21691 3.21688 0.150452 7.00003 0.150452ZM5.37796 7.59967C5.4267 9.0321 5.64754 10.2966 5.97366 11.2198C6.15996 11.7471 6.36946 12.1302 6.57327 12.3702C6.77751 12.6106 6.92343 12.6505 7.00003 12.6505C7.07663 12.6505 7.22255 12.6106 7.42679 12.3702C7.6306 12.1302 7.8401 11.7471 8.0264 11.2198C8.35252 10.2966 8.57336 9.0321 8.6221 7.59967H5.37796ZM1.38187 7.59967C1.61456 9.80498 3.11593 11.6305 5.14261 12.336C5.03268 12.1129 4.93227 11.8725 4.8428 11.6192C4.46342 10.5452 4.22775 9.13994 4.17874 7.59967H1.38187ZM9.82132 7.59967C9.77232 9.13994 9.53664 10.5452 9.15726 11.6192C9.06774 11.8726 8.96648 12.1127 8.85648 12.336C10.8836 11.6307 12.3855 9.8053 12.6182 7.59967H9.82132ZM7.00003 1.34967C6.92343 1.34967 6.77751 1.38955 6.57327 1.62994C6.36946 1.86994 6.15996 2.25297 5.97366 2.78033C5.64754 3.70357 5.4267 4.96802 5.37796 6.40045H8.6221C8.57336 4.96802 8.35252 3.70357 8.0264 2.78033C7.8401 2.25297 7.6306 1.86994 7.42679 1.62994C7.22255 1.38955 7.07663 1.34967 7.00003 1.34967ZM8.85648 1.66315C8.96663 1.88662 9.06763 2.12721 9.15726 2.38092C9.53664 3.45494 9.77232 4.86018 9.82132 6.40045H12.6182C12.3855 4.19471 10.8837 2.36834 8.85648 1.66315ZM5.14261 1.66315C3.11578 2.36856 1.61457 4.19503 1.38187 6.40045H4.17874C4.22775 4.86018 4.46342 3.45494 4.8428 2.38092C4.93237 2.12736 5.03253 1.88651 5.14261 1.66315Z" fill="currentColor"></path>
-    </svg>
-  </span>
-  <span class="web-search-label">Search</span>
-</label>
 
-<!-- ===== Styles (paste into your stylesheet or <head>) ===== -->
-<style>
-  .web-search-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    font-size: 0.9rem;        /* slightly smaller text */
-    font-weight: 500;
-    border-radius: 30px;
-    border: 1px solid var(--web-search);
-    cursor: pointer;
-    user-select: none;
-    font-size: 14px;
-    transition: transform .12s ease, box-shadow .12s ease, background .12s ease, color .12s ease;
-    background: transparent;
-    color: var(--text-color, #111);
-  }
-  .web-search-toggle .web-search-icon { display: inline-flex; width:20px; height:20px; align-items:center; justify-content:center; }
-  .web-search-toggle input { display: none; } /* hide native checkbox */
-  /* Selected state */
-  .web-search-toggle.selected {
-    background: var(--accent-color, #6a0dad);
-    color: #fff;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-    transform: translateY(-1px);
-    border: none;
-    
-    
-  }
-  /* .dark-mode.web-search-toggle.selected{
+                  <!-- Visible DeepThink Toggle -->
+                  <div
+                    class="model-option"
+                    id="deepthink-toggle"
+                    data-active="false"
+                  >
+                    <svg
+                      width="20"
+                      height="24"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="icon"
+                      aria-label=""
+                    >
+                      <path
+                        d="M14.3352 10.0257C14.3352 7.6143 12.391 5.66554 10.0002 5.66537C7.60929 5.66537 5.66528 7.61419 5.66528 10.0257C5.66531 11.5493 6.44221 12.8881 7.61938 13.6683H12.3811C13.558 12.8881 14.3352 11.5491 14.3352 10.0257ZM8.84399 16.9984C9.07459 17.3983 9.50543 17.6683 10.0002 17.6683C10.495 17.6682 10.926 17.3984 11.1565 16.9984H8.84399ZM8.08813 15.6683H11.9114V14.9984H8.08813V15.6683ZM1.66626 9.33529L1.80103 9.34896C2.10381 9.41116 2.3313 9.67914 2.3313 10.0003C2.33115 10.3214 2.10377 10.5896 1.80103 10.6517L1.66626 10.6654H0.833252C0.466091 10.6654 0.168389 10.3674 0.168213 10.0003C0.168213 9.63306 0.465983 9.33529 0.833252 9.33529H1.66626ZM19.1663 9.33529L19.301 9.34896C19.6038 9.41116 19.8313 9.67914 19.8313 10.0003C19.8311 10.3214 19.6038 10.5896 19.301 10.6517L19.1663 10.6654H18.3333C17.9661 10.6654 17.6684 10.3674 17.6682 10.0003C17.6682 9.63306 17.966 9.33529 18.3333 9.33529H19.1663ZM3.0481 3.04818C3.2753 2.82099 3.62593 2.79189 3.88403 2.96224L3.98853 3.04818L4.57739 3.63705L4.66235 3.74154C4.83285 3.99966 4.80464 4.35021 4.57739 4.57748C4.35013 4.80474 3.99958 4.83293 3.74146 4.66244L3.63696 4.57748L3.0481 3.98861L2.96216 3.88412C2.79181 3.62601 2.82089 3.27538 3.0481 3.04818ZM16.012 3.04818C16.2717 2.7886 16.6927 2.78852 16.9524 3.04818C17.2117 3.30786 17.2119 3.72901 16.9524 3.98861L16.3625 4.57748C16.1028 4.83717 15.6818 4.83718 15.4221 4.57748C15.1626 4.31776 15.1625 3.89669 15.4221 3.63705L16.012 3.04818ZM9.33521 1.66634V0.833336C9.33521 0.466067 9.63297 0.168297 10.0002 0.168297C10.3674 0.168472 10.6653 0.466175 10.6653 0.833336V1.66634C10.6653 2.0335 10.3674 2.33121 10.0002 2.33138C9.63297 2.33138 9.33521 2.03361 9.33521 1.66634ZM15.6653 10.0257C15.6653 11.9571 14.7058 13.6634 13.2415 14.6917V16.3333C13.2415 16.7004 12.9444 16.9971 12.5774 16.9974C12.282 18.1473 11.2423 18.9982 10.0002 18.9984C8.75792 18.9984 7.71646 18.1476 7.42114 16.9974C7.05476 16.9964 6.75806 16.7 6.75806 16.3333V14.6917C5.29383 13.6634 4.33523 11.957 4.33521 10.0257C4.33521 6.88608 6.86835 4.33529 10.0002 4.33529C13.132 4.33547 15.6653 6.88618 15.6653 10.0257Z"
+                      ></path>
+                    </svg>
+                    <span >Solve</span>
+                  </div>
+                </div>
+                <!-- ===== Web Search Toggle (replace your old button with this) ===== -->
+                <label
+                  id="web-search-toggle"
+                  class="web-search-toggle"
+                  title="Enable web search"
+                  role="switch"
+                  aria-checked="false"
+                >
+                  <input
+                    id="web-search-checkbox"
+                    type="checkbox"
+                    aria-label="Enable web search"
+                  />
+                  <!-- Keep your SVG icon for visual match -->
+                  <span class="web-search-icon" aria-hidden="true">
+                    <svg
+                      width="20"
+                      height="24"
+                      viewBox="0 0 14 14"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      style="color: currentColor"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M7.00003 0.150452C10.7832 0.150452 13.8496 3.21691 13.8496 7.00006C13.8496 10.7832 10.7832 13.8497 7.00003 13.8497C3.21688 13.8497 0.150421 10.7832 0.150421 7.00006C0.150421 3.21691 3.21688 0.150452 7.00003 0.150452ZM5.37796 7.59967C5.4267 9.0321 5.64754 10.2966 5.97366 11.2198C6.15996 11.7471 6.36946 12.1302 6.57327 12.3702C6.77751 12.6106 6.92343 12.6505 7.00003 12.6505C7.07663 12.6505 7.22255 12.6106 7.42679 12.3702C7.6306 12.1302 7.8401 11.7471 8.0264 11.2198C8.35252 10.2966 8.57336 9.0321 8.6221 7.59967H5.37796ZM1.38187 7.59967C1.61456 9.80498 3.11593 11.6305 5.14261 12.336C5.03268 12.1129 4.93227 11.8725 4.8428 11.6192C4.46342 10.5452 4.22775 9.13994 4.17874 7.59967H1.38187ZM9.82132 7.59967C9.77232 9.13994 9.53664 10.5452 9.15726 11.6192C9.06774 11.8726 8.96648 12.1127 8.85648 12.336C10.8836 11.6307 12.3855 9.8053 12.6182 7.59967H9.82132ZM7.00003 1.34967C6.92343 1.34967 6.77751 1.38955 6.57327 1.62994C6.36946 1.86994 6.15996 2.25297 5.97366 2.78033C5.64754 3.70357 5.4267 4.96802 5.37796 6.40045H8.6221C8.57336 4.96802 8.35252 3.70357 8.0264 2.78033C7.8401 2.25297 7.6306 1.86994 7.42679 1.62994C7.22255 1.38955 7.07663 1.34967 7.00003 1.34967ZM8.85648 1.66315C8.96663 1.88662 9.06763 2.12721 9.15726 2.38092C9.53664 3.45494 9.77232 4.86018 9.82132 6.40045H12.6182C12.3855 4.19471 10.8837 2.36834 8.85648 1.66315ZM5.14261 1.66315C3.11578 2.36856 1.61457 4.19503 1.38187 6.40045H4.17874C4.22775 4.86018 4.46342 3.45494 4.8428 2.38092C4.93237 2.12736 5.03253 1.88651 5.14261 1.66315Z"
+                        fill="currentColor"
+                      ></path>
+                    </svg>
+                  </span>
+                  <span class="web-search-label">Search</span>
+                </label>
+
+                <!-- ===== Styles (paste into your stylesheet or <head>) ===== -->
+                <style>
+                  .web-search-toggle {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 6px 10px;
+                    font-size: 0.9rem; /* slightly smaller text */
+                    font-weight: 500;
+                    border-radius: 30px;
+                    border: 1px solid var(--web-search);
+                    cursor: pointer;
+                    user-select: none;
+                    font-size: 14px;
+                    transition: transform 0.12s ease, box-shadow 0.12s ease,
+                      background 0.12s ease, color 0.12s ease;
+                    background: transparent;
+                    color: var(--text-color, #111);
+                  }
+                  .web-search-toggle .web-search-icon {
+                    display: inline-flex;
+                    width: 20px;
+                    height: 20px;
+                    align-items: center;
+                    justify-content: center;
+                  }
+                  .web-search-toggle input {
+                    display: none;
+                  } /* hide native checkbox */
+                  /* Selected state */
+                  .web-search-toggle.selected {
+                    background: var(--accent-color, #6a0dad);
+                    color: #fff;
+                    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+                    transform: translateY(-1px);
+                    border: none;
+                  }
+                  /* .dark-mode.web-search-toggle.selected{
     background: black;
     color: #fff;
     border: 4px solid rgb(255, 255, 255);
   } */
 
-  /* small hover polish */
-  .web-search-toggle:hover { transform: translateY(-0.5px); }
-  .web-search-label { line-height: 1; }
-  @media (max-width: 600px) {
-  .web-search-toggle {
-    font-size: 12px;
-    padding: 5px 10px;
-    gap: 6px;
-  }
-  .web-search-toggle .web-search-icon {
-    width: 18px;
-    height: 18px;
-  }
-}
-</style>
+                  /* small hover polish */
+                  .web-search-toggle:hover {
+                    transform: translateY(-0.5px);
+                  }
+                  .web-search-label {
+                    line-height: 1;
+                  }
+                  @media (max-width: 600px) {
+                    .web-search-toggle {
+                      font-size: 12px;
+                      padding: 5px 10px;
+                      gap: 6px;
+                    }
+                    .web-search-toggle .web-search-icon {
+                      width: 18px;
+                      height: 18px;
+                    }
+                  }
+                </style>
 
-<!-- ===== Script (paste near end of body, after other scripts for safety) ===== -->
-<script>
-  (function () {
-    // Robust initialization after DOM ready
-    function initToggle() {
-      // 1) replace old button if present (removes any old click handler attached by app.js)
-      const oldBtn = document.getElementById("web-search-btn");
-      if (oldBtn) {
-        // create the new label element from the existing markup (we already placed markup above),
-        // but if user didn't paste the label HTML, fallback to creating programmatically:
-        const existingToggle = document.getElementById("web-search-toggle");
-        if (existingToggle) {
-          oldBtn.replaceWith(existingToggle);
-        } else {
-          // nothing to replace with; bail (user should include the HTML snippet)
-          console.warn("web-search-toggle markup not found — please paste the provided label HTML into your page.");
-        }
-      }
+                <!-- ===== Script (paste near end of body, after other scripts for safety) ===== -->
+                <script>
+                  (function () {
+                    // Robust initialization after DOM ready
+                    function initToggle() {
+                      // 1) replace old button if present (removes any old click handler attached by app.js)
+                      const oldBtn = document.getElementById("web-search-btn");
+                      if (oldBtn) {
+                        // create the new label element from the existing markup (we already placed markup above),
+                        // but if user didn't paste the label HTML, fallback to creating programmatically:
+                        const existingToggle =
+                          document.getElementById("web-search-toggle");
+                        if (existingToggle) {
+                          oldBtn.replaceWith(existingToggle);
+                        } else {
+                          // nothing to replace with; bail (user should include the HTML snippet)
+                          console.warn(
+                            "web-search-toggle markup not found — please paste the provided label HTML into your page."
+                          );
+                        }
+                      }
 
-      const label = document.getElementById("web-search-toggle");
-      const checkbox = document.getElementById("web-search-checkbox");
+                      const label =
+                        document.getElementById("web-search-toggle");
+                      const checkbox = document.getElementById(
+                        "web-search-checkbox"
+                      );
 
-      if (!label || !checkbox) {
-        console.warn("Web search toggle elements not found.");
-        return;
-      }
+                      if (!label || !checkbox) {
+                        console.warn("Web search toggle elements not found.");
+                        return;
+                      }
 
-      // 2) restore state from localStorage
-      const saved = localStorage.getItem("vexara_web_search_enabled");
-      const initiallyEnabled = saved === "1";
-      window.isWebSearchEnabled = !!initiallyEnabled;
-      checkbox.checked = window.isWebSearchEnabled;
-      label.classList.toggle("selected", window.isWebSearchEnabled);
-      label.setAttribute("aria-checked", window.isWebSearchEnabled ? "true" : "false");
+                      // 2) restore state from localStorage
+                      const saved = localStorage.getItem(
+                        "vexara_web_search_enabled"
+                      );
+                      const initiallyEnabled = saved === "1";
+                      window.isWebSearchEnabled = !!initiallyEnabled;
+                      checkbox.checked = window.isWebSearchEnabled;
+                      label.classList.toggle(
+                        "selected",
+                        window.isWebSearchEnabled
+                      );
+                      label.setAttribute(
+                        "aria-checked",
+                        window.isWebSearchEnabled ? "true" : "false"
+                      );
 
-      // 3) change handler (update UI + persist)
-      checkbox.addEventListener("change", (e) => {
-        const enabled = !!checkbox.checked;
-        window.isWebSearchEnabled = enabled;
-        localStorage.setItem("vexara_web_search_enabled", enabled ? "1" : "0");
-        label.classList.toggle("selected", enabled);
-        label.setAttribute("aria-checked", enabled ? "true" : "false");
-      });
+                      // 3) change handler (update UI + persist)
+                      checkbox.addEventListener("change", (e) => {
+                        const enabled = !!checkbox.checked;
+                        window.isWebSearchEnabled = enabled;
+                        localStorage.setItem(
+                          "vexara_web_search_enabled",
+                          enabled ? "1" : "0"
+                        );
+                        label.classList.toggle("selected", enabled);
+                        label.setAttribute(
+                          "aria-checked",
+                          enabled ? "true" : "false"
+                        );
+                      });
 
-      // 4) clicking the label toggles the checkbox but prevent accidental form submits / bubbling
-      label.addEventListener("click", function (e) {
-        // prevent click from submitting forms or bubbling; checkbox will toggle as normal
-        e.preventDefault();
-        e.stopPropagation();
-        checkbox.checked = !checkbox.checked;
-        checkbox.dispatchEvent(new Event("change", { bubbles: true }));
-      });
+                      // 4) clicking the label toggles the checkbox but prevent accidental form submits / bubbling
+                      label.addEventListener("click", function (e) {
+                        // prevent click from submitting forms or bubbling; checkbox will toggle as normal
+                        e.preventDefault();
+                        e.stopPropagation();
+                        checkbox.checked = !checkbox.checked;
+                        checkbox.dispatchEvent(
+                          new Event("change", { bubbles: true })
+                        );
+                      });
 
-      // 5) Monkeypatch askAI so existing calls that don't pass performSearch use the checkbox state
-      //    This is safe: if a caller passes true/false explicitly, it will be honored.
-      function wrapAskAIWhenReady() {
-        if (window.askAI && !window._askAIWrapped) {
-          const orig = window.askAI;
-          window.askAI = async function (instruction, modelChoice, performSearch) {
-            if (typeof performSearch === "undefined" || performSearch === null) {
-              performSearch = !!window.isWebSearchEnabled;
-            }
-            return await orig.call(this, instruction, modelChoice, performSearch);
-          };
-          window._askAIWrapped = true;
-          console.log("askAI wrapped to use web-search toggle when performSearch is omitted.");
-        } else if (!window.askAI) {
-          // If askAI not defined yet, try a few times (this won't run forever)
-          let tries = 0;
-          const t = setInterval(() => {
-            tries++;
-            if (window.askAI) {
-              clearInterval(t);
-              wrapAskAIWhenReady();
-            } else if (tries > 30) {
-              clearInterval(t);
-              console.warn("askAI not found after waiting — web-search toggle wrapper not applied.");
-            }
-          }, 100); // try for ~3s
-        }
-      }
-      wrapAskAIWhenReady();
+                      // 5) Monkeypatch askAI so existing calls that don't pass performSearch use the checkbox state
+                      //    This is safe: if a caller passes true/false explicitly, it will be honored.
+                      function wrapAskAIWhenReady() {
+                        if (window.askAI && !window._askAIWrapped) {
+                          const orig = window.askAI;
+                          window.askAI = async function (
+                            instruction,
+                            modelChoice,
+                            performSearch
+                          ) {
+                            if (
+                              typeof performSearch === "undefined" ||
+                              performSearch === null
+                            ) {
+                              performSearch = !!window.isWebSearchEnabled;
+                            }
+                            return await orig.call(
+                              this,
+                              instruction,
+                              modelChoice,
+                              performSearch
+                            );
+                          };
+                          window._askAIWrapped = true;
+                          console.log(
+                            "askAI wrapped to use web-search toggle when performSearch is omitted."
+                          );
+                        } else if (!window.askAI) {
+                          // If askAI not defined yet, try a few times (this won't run forever)
+                          let tries = 0;
+                          const t = setInterval(() => {
+                            tries++;
+                            if (window.askAI) {
+                              clearInterval(t);
+                              wrapAskAIWhenReady();
+                            } else if (tries > 30) {
+                              clearInterval(t);
+                              console.warn(
+                                "askAI not found after waiting — web-search toggle wrapper not applied."
+                              );
+                            }
+                          }, 100); // try for ~3s
+                        }
+                      }
+                      wrapAskAIWhenReady();
 
-      // 6) Expose a global helper (optional) in case other UI wants to show the state
-      window.setWebSearchUI = function (bool) {
-        checkbox.checked = !!bool;
-        checkbox.dispatchEvent(new Event("change", { bubbles: true }));
-      };
-    }
+                      // 6) Expose a global helper (optional) in case other UI wants to show the state
+                      window.setWebSearchUI = function (bool) {
+                        checkbox.checked = !!bool;
+                        checkbox.dispatchEvent(
+                          new Event("change", { bubbles: true })
+                        );
+                      };
+                    }
 
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", initToggle);
-    } else {
-      initToggle();
-    }
-  })();
-</script>
-
+                    if (document.readyState === "loading") {
+                      document.addEventListener("DOMContentLoaded", initToggle);
+                    } else {
+                      initToggle();
+                    }
+                  })();
+                </script>
               </div>
 
               <div class="input-icons-right">
-                <button style="margin-right: 10px;"
+                <button
+                  style="margin-right: 10px"
                   type="button"
                   id="voice-talk-btn"
                   class="input-icon-btn"
@@ -2995,11 +612,6 @@ margin-right: 0;
               aria-live="polite"
               aria-atomic="true"
             >
-              <div class="typing-indicator">
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-              </div>
               <span id="voice-status-text"></span>
             </div>
           </div>
@@ -3036,6 +648,8 @@ margin-right: 0;
         style="display: none"
       >
         <div class="typing-indicator">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
           <div class="typing-dot"></div>
           <div class="typing-dot"></div>
           <div class="typing-dot"></div>
@@ -3250,8 +864,10 @@ margin-right: 0;
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.0/marked.min.js"></script>
-    <script src="/static/app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.0/marked.min.js"></script>  
+    <script src="/static/bott.js"></script>                  
+    <script src="/static/local-voice-module.js?v=3"></script>
+<!-- SECOND -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const inputContainer = document.querySelector(".input-container");
@@ -3399,159 +1015,188 @@ margin-right: 0;
         hideStopButton();
       });
     </script>
-    <script>// Function to show loader at the response position
-function showLoader() {
-  const loader = document.getElementById('loader');
-  loader.style.display = 'block';
-  // Scroll to the loader position
-  loader.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
+    <script>
+      // Function to show loader at the response position
+      function showLoader() {
+        const loader = document.getElementById("loader");
+        loader.style.display = "block";
+        // Scroll to the loader position
+        loader.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
 
-// Function to hide loader
-function hideLoader() {
-  document.getElementById('loader').style.display = 'none';
-}</script>
-          <script>
-            const deepthinkToggle = document.getElementById("deepthink-toggle");
-            const generalInput = document.getElementById("modelGeneral");
-          
-            deepthinkToggle.addEventListener("click", () => {
-              const isActive = deepthinkToggle.getAttribute("data-active") === "true";
-          
-              if (isActive) {
-                // Switch OFF DeepThink -> select general input
-                deepthinkToggle.setAttribute("data-active", "false");
-                generalInput.checked = true;
-                console.log("🔄 Switched back to General Mode");
-              } else {
-                // Switch ON DeepThink -> create & check a hidden input dynamically
-                deepthinkToggle.setAttribute("data-active", "true");
-          
-                // remove old hidden deepthink if exists
-                let deepthinkInput = document.getElementById("modelDeepThink");
-                if (!deepthinkInput) {
-                  deepthinkInput = document.createElement("input");
-                  deepthinkInput.type = "radio";
-                  deepthinkInput.name = "modelChoice";
-                  deepthinkInput.value = "deep_think";
-                  deepthinkInput.id = "modelDeepThink";
-                  deepthinkInput.style.display = "none";
-                  deepthinkToggle.parentElement.appendChild(deepthinkInput);
-                }
-                deepthinkInput.checked = true;
-          
-                console.log("🧠 DeepThink Mode Activated");
-              }
-            });
-          </script>
-          <script>
-            document.addEventListener("DOMContentLoaded", () => {
-              const webSearchBtn = document.getElementById("web-search-btn");
-              const multiActionForm = document.getElementById("multi-action-form");
-              let isWebSearchEnabled = false;
-          
-              // ✅ Toggle Web Search Mode
-              webSearchBtn.addEventListener("click", () => {
-                isWebSearchEnabled = !isWebSearchEnabled;
-                webSearchBtn.classList.toggle("selected", isWebSearchEnabled);
-              });
-          
-              // ✅ Intercept form submit to include web search flag
-              multiActionForm.addEventListener("submit", async (e) => {
-                e.preventDefault();
-          
-                const textInput = document.getElementById("text-input");
-                const userText = textInput.value.trim();
-                if (!userText) return;
-          
-                // Detect selected model choice
-                const selectedModelRadio = document.querySelector(
-                  "input[name='modelChoice']:checked"
-                );
-                const modelChoice = selectedModelRadio ? selectedModelRadio.value : "general";
-          
-                // Show user message
-                addMessage(userText, "user", null, new Date());
-          
-                // ✅ Perform AI request with web search if enabled
-                if (isWebSearchEnabled) {
-                  await askAI(userText, modelChoice, true);
-                } else {
-                  await askAI(userText, modelChoice, false);
-                }
-              });
-            });
-          </script>
-          
-          <style>
-            /* ✅ Web Search Button Active State */
-            #web-search-btn.selected {
-              background: var(--accent-color);
-              color: white;
-              border-radius: 10px;
-              box-shadow: 0 0 10px var(--accent-color);
-            }
-            /* Thinking Process Styles */
-            
-.thinking {
-  font-size: 0.8rem;
-  color: rgba(128,128,128,0.8); /* greyed out */
-  margin-top: 6px;
-  padding-left: 8px;
-  border-left: 2px dashed #ccc;
-  display: none; /* hidden by default */
-}
+      // Function to hide loader
+      function hideLoader() {
+        document.getElementById("loader").style.display = "none";
+      }
+    </script>
+    <script>
+      function copyToClipboard(button) {
+        // Find the <code> element inside the same code block
+        const codeBlock = button.closest('.code-block');
+        const codeElement = codeBlock.querySelector('code');
+        const text = codeElement.innerText;
+      
+        // Copy to clipboard using Clipboard API
+        navigator.clipboard.writeText(text).then(() => {
+          // Change button text temporarily to "Copied!"
+          const originalText = button.innerHTML;
+          button.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> Copied!';
+          button.classList.add('copied');
+      
+          // Restore after 2 seconds
+          setTimeout(() => {
+            button.innerHTML = originalText;
+            button.classList.remove('copied');
+          }, 2000);
+        }).catch(err => {
+          console.error('Failed to copy code: ', err);
+          alert('Failed to copy code.');
+        });
+      }
+      </script>
+      
+    <script>
+      const deepthinkToggle = document.getElementById("deepthink-toggle");
+      const generalInput = document.getElementById("modelGeneral");
 
-.thinking.show {
-  display: block;
-}
+      deepthinkToggle.addEventListener("click", () => {
+        const isActive = deepthinkToggle.getAttribute("data-active") === "true";
 
-.toggle-thinking {
-  font-size: 0.75rem;
-  background: none;
-  border: none;
-  color: #888;
-  cursor: pointer;
-  margin-top: 4px;
-}
-</style>
+        if (isActive) {
+          // Switch OFF DeepThink -> select general input
+          deepthinkToggle.setAttribute("data-active", "false");
+          generalInput.checked = true;
+          console.log("🔄 Switched back to General Mode");
+        } else {
+          // Switch ON DeepThink -> create & check a hidden input dynamically
+          deepthinkToggle.setAttribute("data-active", "true");
 
-<script>
-function addBotMessage(content, thinking = null) {
-  const messageDiv = document.createElement("div");
-  messageDiv.classList.add("bot-message");
+          // remove old hidden deepthink if exists
+          let deepthinkInput = document.getElementById("modelDeepThink");
+          if (!deepthinkInput) {
+            deepthinkInput = document.createElement("input");
+            deepthinkInput.type = "radio";
+            deepthinkInput.name = "modelChoice";
+            deepthinkInput.value = "deep_think";
+            deepthinkInput.id = "modelDeepThink";
+            deepthinkInput.style.display = "none";
+            deepthinkToggle.parentElement.appendChild(deepthinkInput);
+          }
+          deepthinkInput.checked = true;
 
-  // Main AI answer
-  const answerDiv = document.createElement("div");
-  answerDiv.classList.add("answer");
-  answerDiv.innerHTML = content;
-  messageDiv.appendChild(answerDiv);
+          console.log("🧠 DeepThink Mode Activated");
+        }
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const webSearchBtn = document.getElementById("web-search-btn");
+        const multiActionForm = document.getElementById("multi-action-form");
+        let isWebSearchEnabled = false;
 
-  // Optional reasoning trace
-  if (thinking) {
-    const thinkingDiv = document.createElement("div");
-    thinkingDiv.classList.add("thinking");
-    thinkingDiv.innerHTML = thinking;
+        // ✅ Toggle Web Search Mode
+        webSearchBtn.addEventListener("click", () => {
+          isWebSearchEnabled = !isWebSearchEnabled;
+          webSearchBtn.classList.toggle("selected", isWebSearchEnabled);
+        });
 
-    const toggleBtn = document.createElement("button");
-    toggleBtn.classList.add("toggle-thinking");
-    toggleBtn.textContent = "Show Thinking";
-    toggleBtn.onclick = function () {
-      thinkingDiv.classList.toggle("show");
-      toggleBtn.textContent = thinkingDiv.classList.contains("show")
-        ? "Hide Thinking"
-        : "Show Thinking";
-    };
+        // ✅ Intercept form submit to include web search flag
+        multiActionForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
 
-    messageDiv.appendChild(toggleBtn);
-    messageDiv.appendChild(thinkingDiv);
-  }
+          const textInput = document.getElementById("text-input");
+          const userText = textInput.value.trim();
+          if (!userText) return;
 
-  document.querySelector("#chat-container").appendChild(messageDiv);
-  document.querySelector("#chat-container").scrollTop =
-    document.querySelector("#chat-container").scrollHeight;
-}
-</script>
+          // Detect selected model choice
+          const selectedModelRadio = document.querySelector(
+            "input[name='modelChoice']:checked"
+          );
+          const modelChoice = selectedModelRadio
+            ? selectedModelRadio.value
+            : "general";
 
+          // Show user message
+          addMessage(userText, "user", null, new Date());
+
+          // ✅ Perform AI request with web search if enabled
+          if (isWebSearchEnabled) {
+            await askAI(userText, modelChoice, true);
+          } else {
+            await askAI(userText, modelChoice, false);
+          }
+        });
+      });
+    </script>
+
+    <style>
+      /* ✅ Web Search Button Active State */
+      #web-search-btn.selected {
+        background: var(--accent-color);
+        color: white;
+        border-radius: 10px;
+        box-shadow: 0 0 10px var(--accent-color);
+      }
+      /* Thinking Process Styles */
+
+      .thinking {
+        font-size: 0.8rem;
+        color: rgba(128, 128, 128, 0.8); /* greyed out */
+        margin-top: 6px;
+        padding-left: 8px;
+        border-left: 2px dashed #ccc;
+        display: none; /* hidden by default */
+      }
+
+      .thinking.show {
+        display: block;
+      }
+
+      .toggle-thinking {
+        font-size: 0.75rem;
+        background: none;
+        border: none;
+        color: #888;
+        cursor: pointer;
+        margin-top: 4px;
+      }
+    </style>
+
+    <script>
+      function addBotMessage(content, thinking = null) {
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("bot-message");
+
+        // Main AI answer
+        const answerDiv = document.createElement("div");
+        answerDiv.classList.add("answer");
+        answerDiv.innerHTML = content;
+        messageDiv.appendChild(answerDiv);
+
+        // Optional reasoning trace
+        if (thinking) {
+          const thinkingDiv = document.createElement("div");
+          thinkingDiv.classList.add("thinking");
+          thinkingDiv.innerHTML = thinking;
+
+          const toggleBtn = document.createElement("button");
+          toggleBtn.classList.add("toggle-thinking");
+          toggleBtn.textContent = "Show Thinking";
+          toggleBtn.onclick = function () {
+            thinkingDiv.classList.toggle("show");
+            toggleBtn.textContent = thinkingDiv.classList.contains("show")
+              ? "Hide Thinking"
+              : "Show Thinking";
+          };
+
+          messageDiv.appendChild(toggleBtn);
+          messageDiv.appendChild(thinkingDiv);
+        }
+
+        document.querySelector("#chat-container").appendChild(messageDiv);
+        document.querySelector("#chat-container").scrollTop =
+          document.querySelector("#chat-container").scrollHeight;
+      }
+    </script>
   </body>
 </html>
