@@ -8,7 +8,7 @@ from flask import Flask, render_template, request, jsonify, redirect, session, u
 from flask_dance.contrib.google import make_google_blueprint, google
 from authlib.integrations.flask_client import OAuth
 from PIL import Image
-import pytesseract
+# import pytesseract
 import tempfile
 from datetime import datetime, date, timedelta
 from flask_cors import CORS
